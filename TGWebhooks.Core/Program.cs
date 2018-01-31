@@ -19,9 +19,10 @@ namespace TGWebhooks.Core
 		/// </summary>
 		/// <param name="args">The command line arguments</param>
 		/// <returns>A <see cref="Task"/> representing the scope of the <see cref="Program"/></returns>
-        public static Task Main(string[] args)
-        {
-            return webHostBuilder.UseStartup<Application>().Build().RunAsync();
-		}            
+		public static async Task Main(string[] args)
+		{
+			using (var webHost = webHostBuilder.UseStartup<Application>().Build())
+				await webHost.RunAsync();
+		}
     }
 }
