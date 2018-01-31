@@ -20,7 +20,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\" />
+    <Compile Remove="wwwroot\**" />
+    <Content Remove="wwwroot\**" />
+    <EmbeddedResource Remove="wwwroot\**" />
+    <None Remove="wwwroot\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,7 +39,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\TGWebhook.Handler\TGWebhooks.Interface.csproj" />
+    <ProjectReference Include="..\TGWebhook.Interface\TGWebhooks.Interface.csproj" />
   </ItemGroup>
 
   <ItemGroup>
