@@ -90,8 +90,22 @@ namespace TGWebhooks.Core.Controllers
 			var payload = new SimpleJsonSerializer().Deserialize<TPayload>(json);
 
 			var tasks = new List<Task>();
-			foreach (var handler in pluginManager.GetActivePayloadHandlers<TPayload>())
-				tasks.Add(handler.ProcessPayload(payload).ContinueWith((t) => logger.LogUnhandledException(t.Exception), TaskContinuationOptions.OnlyOnFaulted));
+			foreach (var handler in pluginManager.GetActivePayloadHandlers<TPayload>()) {
+				async Task RunHandler()
+				{
+					try
+					{
+						await handler.ProcessPayload(payload);
+					}
+					//To be expected
+					catch (NotImplementedException) { }
+					catch (Exception e)
+					{
+						logger.LogUnhandledException(e);
+					}
+				};
+				tasks.Add(RunHandler());
+			}
 
 			await Task.WhenAll(tasks);
 		}

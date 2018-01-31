@@ -1,5 +1,6 @@
 ﻿using LibGit2Sharp;
 using System;
+using System.Globalization;
 using System.IO;
 using TGWebhooks.Interface;
 
@@ -31,7 +32,7 @@ namespace TGWebhooks.Core
 			try
 			{
 				if (!valid)
-					LibGit2Sharp.Repository.Clone(String.Format("https://github.com/{0}/{1}", gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName), repoPath, new CloneOptions
+					LibGit2Sharp.Repository.Clone(String.Format(CultureInfo.InvariantCulture, "https://github.com/{0}/{1}", gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName), repoPath, new CloneOptions
 					{
 						Checkout = true,
 						RecurseSubmodules = true
