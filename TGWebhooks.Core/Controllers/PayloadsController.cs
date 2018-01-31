@@ -98,7 +98,7 @@ namespace TGWebhooks.Core.Controllers
 						await handler.ProcessPayload(payload);
 					}
 					//To be expected
-					catch (NotImplementedException) { }
+					catch (NotSupportedException) { }
 					catch (Exception e)
 					{
 						logger.LogUnhandledException(e);
@@ -141,8 +141,6 @@ namespace TGWebhooks.Core.Controllers
 				case "pull_request":
 					StartJob<PullRequestEventPayload>();
 					break;
-				default:
-					return NotFound();
 			}			
 
 			return Ok();
