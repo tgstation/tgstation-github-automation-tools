@@ -6,7 +6,7 @@
     <ProjectGuid>44d4daf0-2b21-4833-b70d-0e2693bcb1b1</ProjectGuid>
     <DockerLaunchBrowser>True</DockerLaunchBrowser>
     <DockerServiceUrl>http://{ServiceIPAddress}/api/values</DockerServiceUrl>
-    <DockerServiceName>tgwebhooks.core</DockerServiceName>
+    <DockerServiceName>tgstation-github-automation-tools</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.override.yml">

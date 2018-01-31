@@ -21,7 +21,7 @@ namespace TGWebhooks.Core.Controllers
     sealed class PayloadsController : Controller
 	{
 		/// <summary>
-		/// The <see cref="IConfiguration"/> for the <see cref="PayloadsController"/>
+		/// The <see cref="GitHubConfiguration"/> for the <see cref="PayloadsController"/>
 		/// </summary>
 		readonly GitHubConfiguration gitHubConfiguration;
 		/// <summary>
@@ -36,7 +36,7 @@ namespace TGWebhooks.Core.Controllers
 		/// <summary>
 		/// Convert some <paramref name="bytes"/> to a hex string
 		/// </summary>
-		/// <param name="bytes">The <see cref="byte[]"/> to convert</param>
+		/// <param name="bytes">The <see cref="byte"/> array to convert</param>
 		/// <returns><paramref name="bytes"/> as a hex string</returns>
 		static string ToHexString(byte[] bytes)
 		{
@@ -50,6 +50,8 @@ namespace TGWebhooks.Core.Controllers
 		/// Construct a <see cref="PayloadsController"/>
 		/// </summary>
 		/// <param name="_gitHubConfiguration">The value of <see cref="gitHubConfiguration"/></param>
+		/// <param name="_logger">The value of <see cref="logger"/></param>
+		/// <param name="_pluginManager">The value of <see cref="pluginManager"/></param>
 		public PayloadsController(GitHubConfiguration _gitHubConfiguration, ILogger _logger, IPluginManager _pluginManager)
 		{
 			gitHubConfiguration = _gitHubConfiguration ?? throw new ArgumentNullException(nameof(_gitHubConfiguration));

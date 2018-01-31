@@ -9,14 +9,15 @@
     <LangVersion>latest</LangVersion>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningsAsErrors>NU1605</WarningsAsErrors>
-    <OutputPath>..\bin\Debug\netcoreapp2.0\</OutputPath>
+    <OutputPath>bin\Debug\netcoreapp2.0\</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsAsErrors></WarningsAsErrors>
-    <DocumentationFile>..\bin\Release\netcoreapp2.0\TGWebhooks.Core.xml</DocumentationFile>
-    <OutputPath>..\bin\Release\netcoreapp2.0\</OutputPath>
+    <DocumentationFile>\bin\Release\netcoreapp2.0\TGWebhooks.Core.xml</DocumentationFile>
+    <OutputPath>bin\Release\netcoreapp2.0\</OutputPath>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -39,7 +40,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TGWebhook.Interface\TGWebhooks.Interface.csproj" />
+    <ProjectReference Include="..\TGWebhooks.Interface\TGWebhooks.Interface.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TGWebhooks.Core", "TGWebhoo
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{44D4DAF0-2B21-4833-B70D-0E2693BCB1B1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TGWebhooks.Interface", "TGWebhook.Interface\TGWebhooks.Interface.csproj", "{33E89FEB-8402-4958-AC52-E9F5B106835A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TGWebhooks.PRTagger", "TGWebhooks.PRTagger\TGWebhooks.PRTagger.csproj", "{CFE2A469-122B-487D-B463-745B7F7B5D7A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TGWebhooks.Interface", "TGWebhooks.Interface\TGWebhooks.Interface.csproj", "{408BC9DE-CD53-4E57-A6A5-2498DB54AD06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,14 +25,14 @@ Global
 		{44D4DAF0-2B21-4833-B70D-0E2693BCB1B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44D4DAF0-2B21-4833-B70D-0E2693BCB1B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44D4DAF0-2B21-4833-B70D-0E2693BCB1B1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{33E89FEB-8402-4958-AC52-E9F5B106835A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{33E89FEB-8402-4958-AC52-E9F5B106835A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{33E89FEB-8402-4958-AC52-E9F5B106835A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{33E89FEB-8402-4958-AC52-E9F5B106835A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CFE2A469-122B-487D-B463-745B7F7B5D7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CFE2A469-122B-487D-B463-745B7F7B5D7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CFE2A469-122B-487D-B463-745B7F7B5D7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CFE2A469-122B-487D-B463-745B7F7B5D7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{408BC9DE-CD53-4E57-A6A5-2498DB54AD06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{408BC9DE-CD53-4E57-A6A5-2498DB54AD06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{408BC9DE-CD53-4E57-A6A5-2498DB54AD06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{408BC9DE-CD53-4E57-A6A5-2498DB54AD06}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

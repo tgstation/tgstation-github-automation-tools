@@ -1,8 +1,8 @@
 version: '3'
 
 services:
-  tgwebhooks.core:
-    image: tgwebhooks.core
+  tgstation-github-automation-tools:
+    image: tgstation-github-automation-tools
     build:
       context: .
       dockerfile: TGWebhooks.Core\Dockerfile

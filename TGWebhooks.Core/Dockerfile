@@ -6,13 +6,30 @@ FROM microsoft/aspnetcore-build:2.0-nanoserver-1709 AS build
 WORKDIR /src
 COPY *.sln ./
 COPY TGWebhooks.Core/TGWebhooks.Core.csproj TGWebhooks.Core/
+COPY TGWebhooks.Interface/TGWebhooks.Interface.csproj TGWebhooks.Interface/
+
+#copy all plugins for nuget restore
+COPY TGWebhooks.PRTagger/TGWebhooks.PRTagger.csproj TGWebhooks.PRTagger/
+
 RUN dotnet restore
 COPY . .
 WORKDIR /src/TGWebhooks.Core
 RUN dotnet build -c Release -o /app
 
+#switch to each plugin and build it to /app/Plugins
+WORKDIR /src/TGWebhooks.PRTagger
+RUN dotnet build -c Release -o /app/Plugins
+
 FROM build AS publish
+WORKDIR /src/TGWebhooks.Core
 RUN dotnet publish -c Release -o /app
+
+#switch to each plugin and publish it to /app/Plugins
+WORKDIR /src/TGWebhooks.PRTagger
+RUN dotnet publish -c Release -o /app/Plugins
+
+WORKDIR /app/Plugins
+RUN del "TGWebhooks.Interface.*"
 
 FROM base AS final
 WORKDIR /app
