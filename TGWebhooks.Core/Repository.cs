@@ -35,6 +35,11 @@ namespace TGWebhooks.Core
 		LibGit2Sharp.Repository repositoryObject;
 
 		/// <summary>
+		/// The <see cref="Task"/> associated with creating <see cref="repositoryObject"/>
+		/// </summary>
+		Task startupTask;
+
+		/// <summary>
 		/// Construct a <see cref="Repository"/>
 		/// </summary>
 		/// <param name="gitHubConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the <see cref="GitHubConfiguration"/> to use for determining the <see cref="repositoryObject"/>'s path</param>
@@ -52,32 +57,42 @@ namespace TGWebhooks.Core
 		/// <summary>
 		/// Loads <see cref="repositoryObject"/>, cloning if necessary
 		/// </summary>
-		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
-		async Task EnsureAvailable(CancellationToken cancellationToken) {
-			var repoPath = ioManager.ResolvePath(ioManager.ConcatPath(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName));
-			
-			try
-			{
-				repositoryObject = new LibGit2Sharp.Repository(repoPath);
-				repositoryObject.RemoveUntrackedFiles();
-				repositoryObject.RetrieveStatus();
-			}
-			catch (Exception e)
-			{
-				await logger.LogUnhandledException(e, CancellationToken.None);
-
-				await Task.Factory.StartNew(() => LibGit2Sharp.Repository.Clone(String.Format(CultureInfo.InvariantCulture, "https://github.com/{0}/{1}", gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName), repoPath, new CloneOptions
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		Task EnsureAvailable(CancellationToken cancellationToken)
+		{
+			if (startupTask == null)
+				startupTask = Task.Factory.StartNew(async () =>
 				{
-					Checkout = true,
-					RecurseSubmodules = true,
-					OnProgress = (a) => !cancellationToken.IsCancellationRequested,
-					OnUpdateTips = (a, b , c) => !cancellationToken.IsCancellationRequested,
-					OnTransferProgress = (a) => !cancellationToken.IsCancellationRequested
-				}), cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Current);
-				
-				repositoryObject = new LibGit2Sharp.Repository(repoPath);
-			}
+					var repoPath = ioManager.ResolvePath(ioManager.ConcatPath(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName));
+
+					try
+					{
+						repositoryObject = new LibGit2Sharp.Repository(repoPath);
+						cancellationToken.ThrowIfCancellationRequested();
+						repositoryObject.RemoveUntrackedFiles();
+						cancellationToken.ThrowIfCancellationRequested();
+						repositoryObject.RetrieveStatus();
+					}
+					catch (Exception e)
+					{
+						await logger.LogUnhandledException(e, CancellationToken.None);
+
+						LibGit2Sharp.Repository.Clone(String.Format(CultureInfo.InvariantCulture, "https://github.com/{0}/{1}", gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName), repoPath, new CloneOptions
+						{
+							Checkout = true,
+							RecurseSubmodules = true,
+							OnProgress = (a) => !cancellationToken.IsCancellationRequested,
+							OnUpdateTips = (a, b, c) => !cancellationToken.IsCancellationRequested,
+							OnTransferProgress = (a) => !cancellationToken.IsCancellationRequested
+						});
+
+						cancellationToken.ThrowIfCancellationRequested();
+
+						repositoryObject = new LibGit2Sharp.Repository(repoPath);
+					}
+				}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Current);
+			return startupTask;
 		}
 
 		/// <summary>
@@ -85,7 +100,7 @@ namespace TGWebhooks.Core
 		/// </summary>
 		public void Dispose()
 		{
-			repositoryObject.Dispose();
+			repositoryObject?.Dispose();
 		}
 	}
 }
