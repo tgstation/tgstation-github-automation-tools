@@ -1,5 +1,7 @@
 ﻿using Octokit;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using TGWebhooks.Interface;
 
 namespace TGWebhooks.Core
@@ -7,13 +9,14 @@ namespace TGWebhooks.Core
 	/// <summary>
 	/// Manages reflected <see cref="IPlugin"/>s
 	/// </summary>
-	interface IPluginManager
+	public interface IPluginManager
 	{
 		/// <summary>
 		/// Get all enabled <see cref="IPayloadHandler{TPayload}"/> for a given <typeparamref name="TPayload"/>
 		/// </summary>
 		/// <typeparam name="TPayload">The payload type to get handlers for</typeparam>
-		/// <returns>An <see cref="IEnumerable{T}"/> of <see cref="IPayloadHandler{TPayload}"/> that match the given <typeparamref name="TPayload"/></returns>
-		IEnumerable<IPayloadHandler<TPayload>> GetActivePayloadHandlers<TPayload>() where TPayload : ActivityPayload;
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task{TResult}"/> resulting in a <see cref="List{T}"/> of <see cref="IPayloadHandler{TPayload}"/>s that match the given <typeparamref name="TPayload"/></returns>
+		Task<List<IPayloadHandler<TPayload>>> GetActivePayloadHandlers<TPayload>(CancellationToken cancellationToken) where TPayload : ActivityPayload;
 	}
 }

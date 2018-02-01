@@ -1,5 +1,7 @@
 ﻿using Octokit;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace TGWebhooks.Interface
 {
@@ -34,6 +36,9 @@ namespace TGWebhooks.Interface
 		/// <param name="logger">The <see cref="ILogger"/> for the <see cref="IPlugin"/></param>
 		/// <param name="repository">The <see cref="IRepository"/> for the <see cref="IPlugin"/></param>
 		/// <param name="gitHub">The <see cref="IGitHubManager"/> for the <see cref="IPlugin"/></param>
-		void Configure(ILogger logger, IRepository repository, IGitHubManager gitHub);
+		/// <param name="ioManager">The <see cref="IIOManager"/> for the <see cref="IPlugin"/></param>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		Task Configure(ILogger logger, IRepository repository, IGitHubManager gitHub, IIOManager ioManager, CancellationToken cancellationToken);
 	}
 }

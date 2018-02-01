@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
@@ -7,12 +8,12 @@ namespace TGWebhooks.Core
 	/// <summary>
 	/// Entry <see langword="class"/> for the application
 	/// </summary>
-    static class Program
-    {
+	static class Program
+	{
 		/// <summary>
-		/// The <see cref="IWebHostBuilder"/> for the <see cref="Program"/>
+		/// The <see cref="Func{T, TResult}"/> taking command line arguments and returning the <see cref="IWebHostBuilder"/> for the <see cref="Program"/>
 		/// </summary>
-		static readonly IWebHostBuilder webHostBuilder = WebHost.CreateDefaultBuilder();
+		static readonly Func<string[], IWebHostBuilder> GetWebHostBuilder = args => WebHost.CreateDefaultBuilder(args);
 
 		/// <summary>
 		/// Entry point for the <see cref="Program"/>
@@ -21,8 +22,8 @@ namespace TGWebhooks.Core
 		/// <returns>A <see cref="Task"/> representing the scope of the <see cref="Program"/></returns>
 		public static async Task Main(string[] args)
 		{
-			using (var webHost = webHostBuilder.UseStartup<Application>().Build())
+			using (var webHost = GetWebHostBuilder(args).UseStartup<Application>().Build())
 				await webHost.RunAsync();
 		}
-    }
+	}
 }

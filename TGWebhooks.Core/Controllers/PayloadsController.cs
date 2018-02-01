@@ -1,5 +1,6 @@
 ﻿using Hangfire;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using Octokit;
 using Octokit.Internal;
@@ -16,9 +17,9 @@ namespace TGWebhooks.Core.Controllers
 	/// <summary>
 	/// <see cref="Controller"/> used for recieving GitHub webhooks
 	/// </summary>
-    [Produces("application/json")]
-    [Route("Payloads")]
-    sealed class PayloadsController : Controller
+	[Produces("application/json")]
+	[Route("Payloads")]
+	public sealed class PayloadsController : Controller
 	{
 		/// <summary>
 		/// The <see cref="GitHubConfiguration"/> for the <see cref="PayloadsController"/>
@@ -49,12 +50,14 @@ namespace TGWebhooks.Core.Controllers
 		/// <summary>
 		/// Construct a <see cref="PayloadsController"/>
 		/// </summary>
-		/// <param name="_gitHubConfiguration">The value of <see cref="gitHubConfiguration"/></param>
+		/// <param name="gitHubConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing value of <see cref="gitHubConfiguration"/></param>
 		/// <param name="_logger">The value of <see cref="logger"/></param>
 		/// <param name="_pluginManager">The value of <see cref="pluginManager"/></param>
-		public PayloadsController(GitHubConfiguration _gitHubConfiguration, ILogger _logger, IPluginManager _pluginManager)
+		public PayloadsController(IOptions<GitHubConfiguration> gitHubConfigurationOptions, ILogger _logger, IPluginManager _pluginManager)
 		{
-			gitHubConfiguration = _gitHubConfiguration ?? throw new ArgumentNullException(nameof(_gitHubConfiguration));
+			if(gitHubConfigurationOptions == null)
+				throw new ArgumentNullException(nameof(gitHubConfigurationOptions));
+			gitHubConfiguration = gitHubConfigurationOptions.Value;
 			logger = _logger ?? throw new ArgumentNullException(nameof(_logger));
 			pluginManager = _pluginManager ?? throw new ArgumentNullException(nameof(_pluginManager));
 		}
@@ -87,12 +90,22 @@ namespace TGWebhooks.Core.Controllers
 		/// <typeparam name="TPayload">The payload type to invoke</typeparam>
 		/// <param name="json">The json <see cref="string"/> of the <typeparamref name="TPayload"/></param>
 		/// <returns>A <see cref="Task"/> representing the running handlers</returns>
-		async Task InvokeHandlers<TPayload>(string json) where TPayload : ActivityPayload
+		async Task InvokeHandlers<TPayload>(string json, IJobCancellationToken jobCancellationToken) where TPayload : ActivityPayload
 		{
-			var payload = new SimpleJsonSerializer().Deserialize<TPayload>(json);
+			var cancellationToken = jobCancellationToken.ShutdownToken;
+			TPayload payload;
+			try
+			{
+				payload = new SimpleJsonSerializer().Deserialize<TPayload>(json);
+			}
+			catch (Exception e)
+			{
+				await logger.LogUnhandledException(e, cancellationToken);
+				return;
+			}
 
 			var tasks = new List<Task>();
-			foreach (var handler in pluginManager.GetActivePayloadHandlers<TPayload>()) {
+			foreach (var handler in await pluginManager.GetActivePayloadHandlers<TPayload>(cancellationToken)) {
 				async Task RunHandler()
 				{
 					try
@@ -103,7 +116,7 @@ namespace TGWebhooks.Core.Controllers
 					catch (NotSupportedException) { }
 					catch (Exception e)
 					{
-						logger.LogUnhandledException(e);
+						await logger.LogUnhandledException(e, cancellationToken);
 					}
 				};
 				tasks.Add(RunHandler());
@@ -133,7 +146,7 @@ namespace TGWebhooks.Core.Controllers
 
 			void StartJob<TPayload>() where TPayload : ActivityPayload
 			{
-				BackgroundJob.Enqueue(() => InvokeHandlers<TPayload>(json));
+				BackgroundJob.Enqueue(() => InvokeHandlers<TPayload>(json, JobCancellationToken.Null));
 			};
 			
 			switch (eventName)

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.IO;
 using TGWebhooks.Interface;
 
 namespace TGWebhooks.Core
@@ -17,7 +18,7 @@ namespace TGWebhooks.Core
 		/// <summary>
 		/// The path to the directory the <see cref="Application"/> should use for data files
 		/// </summary>
-		public static readonly string DataDirectory = AppDomain.CurrentDomain.GetData("DataDirectory").ToString();
+		public static string DataDirectory { get; private set; }
 
 		/// <summary>
 		/// The <see cref="IConfiguration"/> for the <see cref="Application"/>
@@ -28,26 +29,40 @@ namespace TGWebhooks.Core
 		/// Construct an <see cref="Application"/>
 		/// </summary>
 		/// <param name="_configuration">The value of <see cref="configuration"/></param>
-		public Application(IConfiguration _configuration)
+		/// <param name="hostingEnvironment">The <see cref="IHostingEnvironment"/> used to determin the <see cref="DataDirectory"/></param>
+		public Application(IConfiguration _configuration, IHostingEnvironment hostingEnvironment)
         {
-            configuration = _configuration;
-        }
+			if (hostingEnvironment == null)
+				throw new ArgumentNullException(nameof(hostingEnvironment));
+            configuration = _configuration ?? throw new ArgumentNullException(nameof(_configuration));
+			DataDirectory = Path.Combine(hostingEnvironment.ContentRootPath, "App_Data");
+		}
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+		/// <summary>
+		/// Configure dependency injected services
+		/// </summary>
+		/// <param name="services">The <see cref="IServiceCollection"/> to configure</param>
         public void ConfigureServices(IServiceCollection services)
         {
 			services.AddHangfire(_ => _.UseMemoryStorage());
             services.AddMvc();
-			services.AddSingleton(configuration.Get<GitHubConfiguration>());
+			services.AddOptions();
+			services.Configure<GitHubConfiguration>(configuration.GetSection(GitHubConfiguration.Section));
 			services.AddSingleton<IPluginManager, PluginManager>();
 			services.AddSingleton<IGitHubManager, GitHubManager>();
 			services.AddSingleton<IRepository, Repository>();
+			services.AddSingleton<ILogger, Logger>();
+			services.AddSingleton<IIOManager, DefaultIOManager>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+		/// <summary>
+		/// Configure the <see cref="Application"/>
+		/// </summary>
+		/// <param name="app">The <see cref="IApplicationBuilder"/> to configure</param>
+		/// <param name="env">The <see cref="IHostingEnvironment"/> to configure</param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
-            if (env.IsDevelopment())
+		{
+			if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
 
 			app.UseHangfireServer();

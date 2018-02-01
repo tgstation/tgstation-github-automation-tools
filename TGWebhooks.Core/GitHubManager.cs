@@ -1,4 +1,5 @@
-﻿using Octokit;
+﻿using Microsoft.Extensions.Options;
+using Octokit;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -14,7 +15,7 @@ namespace TGWebhooks.Core
 		/// <summary>
 		/// The <see cref="GitHubConfiguration"/> for the <see cref="GitHubManager"/>
 		/// </summary>
-		readonly GitHubConfiguration configuration;
+		readonly GitHubConfiguration gitHubConfiguration;
 		/// <summary>
 		/// The <see cref="GitHubClient"/> for the <see cref="GitHubManager"/>
 		/// </summary>
@@ -28,17 +29,19 @@ namespace TGWebhooks.Core
 			if (number < 1)
 				throw new ArgumentOutOfRangeException(nameof(number), number, String.Format(CultureInfo.CurrentCulture, "{0} must be greater than zero!", nameof(number)));
 		}
-		
+
 		/// <summary>
 		/// Construct a <see cref="GitHubManager"/>
 		/// </summary>
-		/// <param name="_configuration">The value of <see cref="configuration"/></param>
-		public GitHubManager(GitHubConfiguration _configuration)
+		/// <param name="gitHubConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the value of <see cref="gitHubConfiguration"/></param>
+		public GitHubManager(IOptions<GitHubConfiguration> gitHubConfigurationOptions)
 		{
-			configuration = _configuration ?? throw new ArgumentNullException(nameof(_configuration));
+			if(gitHubConfigurationOptions == null)
+				throw new ArgumentNullException(nameof(gitHubConfigurationOptions));
+			gitHubConfiguration = gitHubConfigurationOptions.Value;
 			gitHubClient = new GitHubClient(new ProductHeaderValue("tgstation-github-automation-tools"))
 			{
-				Credentials = new Credentials(configuration.PersonalAccessToken)
+				Credentials = new Credentials(gitHubConfiguration.PersonalAccessToken)
 			};
 		}
 

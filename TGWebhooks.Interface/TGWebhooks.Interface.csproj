@@ -5,13 +5,13 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>bin\Debug\netstandard2.0\netstandard2.0\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>bin\Release\netstandard2.0\TGWebhooks.Interface.xml</DocumentationFile>
-    <OutputPath>bin\Release\netstandard2.0\netstandard2.0\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsAsErrors />
     <LangVersion>latest</LangVersion>

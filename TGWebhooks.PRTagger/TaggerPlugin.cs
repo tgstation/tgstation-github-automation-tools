@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Interface;
 
@@ -116,9 +117,10 @@ namespace TGWebhooks.PRTagger
 		}
 
 		/// <inheritdoc />
-		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager)
+		public Task Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, CancellationToken cancellationToken)
 		{
 			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
+			return Task.CompletedTask;
 		}
 
 		/// <inheritdoc />

@@ -5,7 +5,7 @@
     <DockerTargetOS>Windows</DockerTargetOS>
     <ProjectGuid>44d4daf0-2b21-4833-b70d-0e2693bcb1b1</ProjectGuid>
     <DockerLaunchBrowser>True</DockerLaunchBrowser>
-    <DockerServiceUrl>http://{ServiceIPAddress}/api/values</DockerServiceUrl>
+    <DockerServiceUrl>http://{ServiceIPAddress}/Payloads</DockerServiceUrl>
     <DockerServiceName>tgstation-github-automation-tools</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>

@@ -1,9 +1,10 @@
 ﻿using Octokit;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using TGWebhooks.Interface;
 
 namespace TGWebhooks.Core
@@ -15,78 +16,103 @@ namespace TGWebhooks.Core
 		/// Directory relative to the current <see cref="Assembly"/> that contains <see cref="IPlugin"/> <see cref="Assembly"/>s
 		/// </summary>
 		const string PluginDllsDirectory = "Plugins";
-		
+
+		/// <summary>
+		/// The <see cref="ILogger"/> for the <see cref="PluginManager"/>
+		/// </summary>
+		readonly ILogger logger;
+		/// <summary>
+		/// The <see cref="IRepository"/> for the <see cref="PluginManager"/>
+		/// </summary>
+		readonly IRepository repository;
+		/// <summary>
+		/// The <see cref="IGitHubManager"/> for the <see cref="PluginManager"/>
+		/// </summary>
+		readonly IGitHubManager gitHubManager;
+		/// <summary>
+		/// The <see cref="IIOManager"/> for the <see cref="PluginManager"/>
+		/// </summary>
+		readonly IIOManager ioManager;
+
 		/// <summary>
 		/// List of loaded <see cref="IPlugin"/>s
 		/// </summary>
-		readonly IReadOnlyList<IPlugin> plugins;
+		IReadOnlyList<IPlugin> plugins;
 
 		/// <summary>
 		/// Construct a <see cref="PluginManager"/>
 		/// </summary>
-		/// <param name="logger">The <see cref="ILogger"/> for load errors and configuring <see cref="IPlugin"/>s</param>
-		/// <param name="repository">The <see cref="IRepository"/> for configuring <see cref="IPlugin"/>s</param>
-		/// <param name="gitHub">The <see cref="IGitHubManager"/> for configuring <see cref="IPlugin"/>s</param>
-		public PluginManager(ILogger logger, IRepository repository, IGitHubManager gitHub)
+		/// <param name="_logger">The value of <see cref="logger"/></param>
+		/// <param name="_repository">The value of <see cref="repository"/></param>
+		/// <param name="_gitHubManager">The value of <see cref="gitHubManager"/></param>
+		/// <param name="_ioManager">The value of <see cref="ioManager"/></param>
+		public PluginManager(ILogger _logger, IRepository _repository, IGitHubManager _gitHubManager, IIOManager _ioManager)
 		{
-			if(logger == null)
-				throw new ArgumentNullException(nameof(logger));
-			if (repository == null)
-				throw new ArgumentNullException(nameof(repository));
-			if (gitHub == null)
-				throw new ArgumentNullException(nameof(gitHub));
+			logger = _logger ?? throw new ArgumentNullException(nameof(_logger));
+			repository = _repository ?? throw new ArgumentNullException(nameof(_repository));
+			gitHubManager = _gitHubManager ?? throw new ArgumentNullException(nameof(_gitHubManager));
+			ioManager = _ioManager ?? throw new ArgumentNullException(nameof(_ioManager));
+		}
 
+		/// <summary>
+		/// Load <see cref="IPlugin"/>s from <see cref="Assembly"/>s in the <see cref="PluginDllsDirectory"/>
+		/// </summary>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		async Task LoadAllPlugins(CancellationToken cancellationToken) {
 			var assemblyPath = Assembly.GetExecutingAssembly().Location;
-			var pluginDirectory = Path.Combine(Path.GetDirectoryName(assemblyPath), PluginDllsDirectory);
+			var pluginDirectory = ioManager.ConcatPath(ioManager.GetDirectoryName(assemblyPath), PluginDllsDirectory);
+
+#if DEBUG
+			pluginDirectory = @"C:\app\bin\Debug\netstandard2.0\";
+#endif
 
 			var pluginsBuilder = new List<IPlugin>();
 			plugins = pluginsBuilder;
-
-			var dirInfo = new DirectoryInfo(pluginDirectory);
-
-			if (!dirInfo.Exists)
+			
+			if (!await ioManager.DirectoryExists(pluginDirectory, cancellationToken))
 				return;
 
 			bool CompatibilityPredicate(Type x) => x.IsPublic && x.IsClass && !x.IsAbstract && typeof(IPlugin).IsAssignableFrom(x) && x.GetConstructors().Any(y => y.IsPublic && y.GetParameters().Count() == 0);
 
-			foreach (var I in dirInfo.EnumerateFiles("*.dll", SearchOption.TopDirectoryOnly))
+			foreach (var I in await ioManager.GetFilesInDirectory(PluginDllsDirectory, ".dll", cancellationToken))
 				try
 				{
-					var assembly = Assembly.ReflectionOnlyLoadFrom(I.FullName);
+					var assembly = Assembly.ReflectionOnlyLoadFrom(I);
 				
 					var possiblePlugins = assembly.GetTypes().Where(CompatibilityPredicate);
 
 					if (!possiblePlugins.Any())
 						continue;
 
-					Assembly.LoadFrom(I.FullName);
+					Assembly.LoadFrom(I);
 				}
 				catch(Exception e)
 				{
-					logger.LogUnhandledException(e);
+					await logger.LogUnhandledException(e, cancellationToken);
 				}
+
+			var dataIOManager = new ResolvingIOManager(ioManager, Application.DataDirectory);
 
 			//load once from the AppDomain to ensure that we don't instance multiple copies of the same type
 			foreach (var type in AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes().Where(CompatibilityPredicate)))
 				try
 				{
 					var plugin = (IPlugin)Activator.CreateInstance(type);
-					plugin.Configure(logger, repository, gitHub);
+					await plugin.Configure(logger, repository, gitHubManager, dataIOManager, cancellationToken);
 					pluginsBuilder.Add(plugin);
 				}
 				catch (Exception e)
 				{
-					logger.LogUnhandledException(e);
+					await logger.LogUnhandledException(e, cancellationToken);
 				}
 		}
 
 		/// <inheritdoc />
-		public IEnumerable<IPayloadHandler<TPayload>> GetActivePayloadHandlers<TPayload>() where TPayload : ActivityPayload
+		public async Task<List<IPayloadHandler<TPayload>>> GetActivePayloadHandlers<TPayload>(CancellationToken cancellationToken) where TPayload : ActivityPayload
 		{
-			foreach (var plugin in plugins)
-				if (plugin.Enabled)
-					foreach (var handler in plugin.GetPayloadHandlers<TPayload>())
-						yield return handler;
+			await LoadAllPlugins(cancellationToken);
+			return plugins.Where(x => x.Enabled).SelectMany(x => x.GetPayloadHandlers<TPayload>()).ToList();
 		}
 	}
 }
