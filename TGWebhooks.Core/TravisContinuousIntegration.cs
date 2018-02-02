@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Options;
 using Octokit;
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -43,13 +45,20 @@ namespace TGWebhooks.Core
 		/// Construct a <see cref="TravisContinuousIntegration"/>
 		/// </summary>
 		/// <param name="_gitHubManager">The value of <see cref="gitHubManager"/></param>
+		/// <param name="_requestManager">The value of <see cref="requestManager"/></param>
 		/// <param name="travisConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the value of <see cref="travisConfiguration"/></param>
-		public TravisContinuousIntegration(IGitHubManager _gitHubManager, IOptions<TravisConfiguration> travisConfigurationOptions)
+		public TravisContinuousIntegration(IGitHubManager _gitHubManager, IRequestManager _requestManager, IOptions<TravisConfiguration> travisConfigurationOptions)
 		{
 			if (travisConfigurationOptions == null)
 				throw new ArgumentNullException(nameof(travisConfigurationOptions));
 			travisConfiguration = travisConfigurationOptions.Value;
 			gitHubManager = _gitHubManager ?? throw new ArgumentNullException(nameof(_gitHubManager));
+			requestManager = _requestManager ?? throw new ArgumentNullException(nameof(_requestManager));
+		}
+
+		List<string> GetRequestHeaders()
+		{
+			return new List<string> { String.Format(CultureInfo.InvariantCulture, "User-Agent: {0}", Application.UserAgent), String.Format(CultureInfo.InvariantCulture, "Authorization: token {0}", travisConfiguration.APIToken) };
 		}
 
 		/// <inheritdoc />
@@ -76,12 +85,17 @@ namespace TGWebhooks.Core
 		{
 			var statuses = await gitHubManager.GetLatestCommitStatus(repository, pullRequest);
 			var buildNumberRegex = new Regex(@"/builds/([1-9][0-9]*)\?");
+			var tasks = new List<Task>();
 			foreach (var I in statuses.Statuses)
 			{
 				if (!IsTravisStatus(I))
 					continue;
 				var buildNumber = buildNumberRegex.Match(I.TargetUrl).Groups[1].Value;
+
+				var url = String.Format(CultureInfo.InvariantCulture, "https://api.travis-ci.org/build/{0}/restart", buildNumber);
+				tasks.Add(requestManager.RunRequest(url, String.Empty, GetRequestHeaders(), RequestMethod.POST, cancellationToken));
 			}
+			await Task.WhenAll(tasks);
 		}
 	}
 }
