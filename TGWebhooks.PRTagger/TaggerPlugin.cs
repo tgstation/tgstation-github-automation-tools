@@ -121,9 +121,14 @@ namespace TGWebhooks.PRTagger
 		}
 
 		/// <inheritdoc />
-		public Task Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IRequestManager requestManager, CancellationToken cancellationToken)
+		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IRequestManager requestManager)
 		{
 			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
+		}
+
+		/// <inheritdoc />
+		public Task LoadComponents(CancellationToken cancellationToken)
+		{
 			return Task.CompletedTask;
 		}
 

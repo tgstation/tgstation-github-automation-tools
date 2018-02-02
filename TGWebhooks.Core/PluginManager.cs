@@ -43,6 +43,9 @@ namespace TGWebhooks.Core
 		/// </summary>
 		IReadOnlyList<IPlugin> plugins;
 
+		/// <inheritdoc />
+		public IEnumerable<IMergeRequirement> MergeRequirements => plugins.Where(x => x.Enabled).SelectMany(x => x.MergeRequirements).ToList();
+
 		/// <summary>
 		/// Construct a <see cref="PluginManager"/>
 		/// </summary>
@@ -105,7 +108,9 @@ namespace TGWebhooks.Core
 				try
 				{
 					var plugin = (IPlugin)Activator.CreateInstance(type);
-					await plugin.Configure(logger, repository, gitHubManager, dataIOManager, requestManager, cancellationToken);
+					plugin.Configure(logger, repository, gitHubManager, dataIOManager, requestManager);
+					plugin.Enabled = true;
+					await plugin.LoadComponents(cancellationToken);
 					pluginsBuilder.Add(plugin);
 				}
 				catch (Exception e)
@@ -113,19 +118,17 @@ namespace TGWebhooks.Core
 					await logger.LogUnhandledException(e, cancellationToken);
 				}
 		}
-
-		/// <inheritdoc />
-		public async Task<List<IPayloadHandler<TPayload>>> GetActivePayloadHandlers<TPayload>(CancellationToken cancellationToken) where TPayload : ActivityPayload
-		{
-			await LoadAllPlugins(cancellationToken);
-			return plugins.Where(x => x.Enabled).SelectMany(x => x.GetPayloadHandlers<TPayload>()).ToList();
-		}
 		
 		/// <inheritdoc />
-		public async Task<List<IMergeRequirement>> GetActiveMergeRequirements(CancellationToken cancellationToken)
+		public Task LoadComponents(CancellationToken cancellationToken)
 		{
-			await LoadAllPlugins(cancellationToken);
-			return plugins.Where(x => x.Enabled).SelectMany(x => x.MergeRequirements).ToList();
+			return LoadAllPlugins(cancellationToken);
+		}
+
+		/// <inheritdoc />
+		public IEnumerable<IPayloadHandler<TPayload>> GetPayloadHandlers<TPayload>() where TPayload : ActivityPayload
+		{
+			return plugins.Where(x => x.Enabled).SelectMany(x => x.GetPayloadHandlers<TPayload>());
 		}
 	}
 }

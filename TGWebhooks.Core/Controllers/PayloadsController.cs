@@ -28,7 +28,7 @@ namespace TGWebhooks.Core.Controllers
 		/// <summary>
 		/// The <see cref="IPluginManager"/> for the <see cref="PayloadsController"/>
 		/// </summary>
-		readonly IPluginManager pluginManager;
+		readonly IComponentProvider componentProvider;
 		/// <summary>
 		/// The <see cref="ILogger"/> for the <see cref="PayloadsController"/>
 		/// </summary>
@@ -52,14 +52,14 @@ namespace TGWebhooks.Core.Controllers
 		/// </summary>
 		/// <param name="gitHubConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing value of <see cref="gitHubConfiguration"/></param>
 		/// <param name="_logger">The value of <see cref="logger"/></param>
-		/// <param name="_pluginManager">The value of <see cref="pluginManager"/></param>
-		public PayloadsController(IOptions<GitHubConfiguration> gitHubConfigurationOptions, ILogger _logger, IPluginManager _pluginManager)
+		/// <param name="_componentProvider">The value of <see cref="componentProvider"/></param>
+		public PayloadsController(IOptions<GitHubConfiguration> gitHubConfigurationOptions, ILogger _logger, IComponentProvider _componentProvider)
 		{
 			if(gitHubConfigurationOptions == null)
 				throw new ArgumentNullException(nameof(gitHubConfigurationOptions));
 			gitHubConfiguration = gitHubConfigurationOptions.Value;
 			logger = _logger ?? throw new ArgumentNullException(nameof(_logger));
-			pluginManager = _pluginManager ?? throw new ArgumentNullException(nameof(_pluginManager));
+			componentProvider = _componentProvider ?? throw new ArgumentNullException(nameof(_componentProvider));
 		}
 
 		/// <summary>
@@ -104,8 +104,10 @@ namespace TGWebhooks.Core.Controllers
 				return;
 			}
 
+			await componentProvider.LoadComponents(cancellationToken);
+
 			var tasks = new List<Task>();
-			foreach (var handler in await pluginManager.GetActivePayloadHandlers<TPayload>(cancellationToken)) {
+			foreach (var handler in componentProvider.GetPayloadHandlers<TPayload>()) {
 				async Task RunHandler()
 				{
 					try
