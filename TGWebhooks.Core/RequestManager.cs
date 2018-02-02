@@ -30,7 +30,7 @@ namespace TGWebhooks.Core
 
 			using (var requestStream = await request.GetRequestStreamAsync()) {
 				var data = Encoding.UTF8.GetBytes(body);
-				await requestStream.WriteAsync(data, 0, data.Length);
+				await requestStream.WriteAsync(data, 0, data.Length, cancellationToken);
 			}
 
 			try
