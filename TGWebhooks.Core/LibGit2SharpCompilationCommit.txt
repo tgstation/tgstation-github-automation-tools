@@ -1,1 +1,9 @@
-﻿2a8af3a7817a7a5a40a1fa29ee38273bdc76eef7
+﻿The LibGit2Sharp nuget version is a .NET Framework version
+
+The master copy is near releasing a .NET standard version
+
+LibGit2Sharp.dll is manually compiled in release mode based on the following commit:
+
+2a8af3a7817a7a5a40a1fa29ee38273bdc76eef7
+
+TODO: Move to nuget once it updates
