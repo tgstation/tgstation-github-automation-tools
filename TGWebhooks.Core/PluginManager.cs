@@ -33,6 +33,10 @@ namespace TGWebhooks.Core
 		/// The <see cref="IIOManager"/> for the <see cref="PluginManager"/>
 		/// </summary>
 		readonly IIOManager ioManager;
+		/// <summary>
+		/// The <see cref="IRequestManager"/> for the <see cref="PluginManager"/>
+		/// </summary>
+		readonly IRequestManager requestManager;
 
 		/// <summary>
 		/// List of loaded <see cref="IPlugin"/>s
@@ -46,12 +50,14 @@ namespace TGWebhooks.Core
 		/// <param name="_repository">The value of <see cref="repository"/></param>
 		/// <param name="_gitHubManager">The value of <see cref="gitHubManager"/></param>
 		/// <param name="_ioManager">The value of <see cref="ioManager"/></param>
-		public PluginManager(ILogger _logger, IRepository _repository, IGitHubManager _gitHubManager, IIOManager _ioManager)
+		/// <param name="_requestManager">The value of <see cref="requestManager"/></param>
+		public PluginManager(ILogger _logger, IRepository _repository, IGitHubManager _gitHubManager, IIOManager _ioManager, IRequestManager _requestManager)
 		{
 			logger = _logger ?? throw new ArgumentNullException(nameof(_logger));
 			repository = _repository ?? throw new ArgumentNullException(nameof(_repository));
 			gitHubManager = _gitHubManager ?? throw new ArgumentNullException(nameof(_gitHubManager));
 			ioManager = _ioManager ?? throw new ArgumentNullException(nameof(_ioManager));
+			requestManager = _requestManager ?? throw new ArgumentNullException(nameof(_requestManager));
 		}
 
 		/// <summary>
@@ -99,7 +105,7 @@ namespace TGWebhooks.Core
 				try
 				{
 					var plugin = (IPlugin)Activator.CreateInstance(type);
-					await plugin.Configure(logger, repository, gitHubManager, dataIOManager, cancellationToken);
+					await plugin.Configure(logger, repository, gitHubManager, dataIOManager, requestManager, cancellationToken);
 					pluginsBuilder.Add(plugin);
 				}
 				catch (Exception e)
