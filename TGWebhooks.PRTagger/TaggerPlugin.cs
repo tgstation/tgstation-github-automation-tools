@@ -46,14 +46,14 @@ namespace TGWebhooks.PRTagger
 				for (var I = 0; !mergeable.HasValue && I < 3; ++I)
 				{
 					await Task.Delay(I * 1000);
-					mergeable = (await gitHubManager.GetPullRequest(payload.Repository, payload.PullRequest.Number)).Mergeable;
+					mergeable = (await gitHubManager.GetPullRequest(payload.PullRequest.Number)).Mergeable;
 				}
 				return mergeable;
 			};
 
 			var mergeableTask = MergeableCheck();
-			var filesChanged = gitHubManager.GetPullRequestChangedFiles(payload.Repository, payload.PullRequest.Number);
-			var currentLabelsTask = gitHubManager.GetIssueLabels(payload.Repository, payload.PullRequest.Number);
+			var filesChanged = gitHubManager.GetPullRequestChangedFiles(payload.PullRequest.Number);
+			var currentLabelsTask = gitHubManager.GetIssueLabels(payload.PullRequest.Number);
 
 			var labelsToAdd = new List<string>();
 			var labelsToRemove = new List<string>();
@@ -117,7 +117,7 @@ namespace TGWebhooks.PRTagger
 			foreach (var I in currentLabels)
 				newLabels.Add(I.Name);
 
-			await gitHubManager.SetIssueLabels(payload.Repository, payload.PullRequest.Number, newLabels);
+			await gitHubManager.SetIssueLabels(payload.PullRequest.Number, newLabels);
 		}
 
 		/// <inheritdoc />
@@ -127,7 +127,7 @@ namespace TGWebhooks.PRTagger
 		}
 
 		/// <inheritdoc />
-		public Task LoadComponents(CancellationToken cancellationToken)
+		public Task Initialize(CancellationToken cancellationToken)
 		{
 			return Task.CompletedTask;
 		}

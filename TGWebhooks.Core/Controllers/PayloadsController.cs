@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Interface;
 
@@ -90,21 +91,11 @@ namespace TGWebhooks.Core.Controllers
 		/// <typeparam name="TPayload">The payload type to invoke</typeparam>
 		/// <param name="json">The json <see cref="string"/> of the <typeparamref name="TPayload"/></param>
 		/// <returns>A <see cref="Task"/> representing the running handlers</returns>
-		async Task InvokeHandlers<TPayload>(string json, IJobCancellationToken jobCancellationToken) where TPayload : ActivityPayload
+		async Task InvokeHandlers<TPayload>(TPayload payload, IJobCancellationToken jobCancellationToken) where TPayload : ActivityPayload
 		{
 			var cancellationToken = jobCancellationToken.ShutdownToken;
-			TPayload payload;
-			try
-			{
-				payload = new SimpleJsonSerializer().Deserialize<TPayload>(json);
-			}
-			catch (Exception e)
-			{
-				await logger.LogUnhandledException(e, cancellationToken);
-				return;
-			}
 
-			await componentProvider.LoadComponents(cancellationToken);
+			await componentProvider.Initialize(cancellationToken);
 
 			var tasks = new List<Task>();
 			foreach (var handler in componentProvider.GetPayloadHandlers<TPayload>()) {
@@ -132,7 +123,7 @@ namespace TGWebhooks.Core.Controllers
 		/// </summary>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in the <see cref="IActionResult"/> of the POST</returns>
 		[HttpPost]
-		public async Task<IActionResult> Receive()
+		public async Task<IActionResult> Receive(CancellationToken cancellationToken)
 		{
 			if (!Request.Headers.TryGetValue("X-GitHub-Event", out StringValues eventName)
 				|| !Request.Headers.TryGetValue("X-Hub-Signature", out StringValues signature)
@@ -146,21 +137,34 @@ namespace TGWebhooks.Core.Controllers
 			if(!CheckPayloadSignature(json, signature))
 				return Unauthorized();
 
-			void StartJob<TPayload>() where TPayload : ActivityPayload
+			async Task<IActionResult> StartJob<TPayload>() where TPayload : ActivityPayload
 			{
-				BackgroundJob.Enqueue(() => InvokeHandlers<TPayload>(json, JobCancellationToken.Null));
+				TPayload payload;
+				try
+				{
+					payload = new SimpleJsonSerializer().Deserialize<TPayload>(json);
+				}
+				catch (Exception e)
+				{
+					await logger.LogUnhandledException(e, cancellationToken);
+					return BadRequest();
+				}
+
+				//ensure the payload is from the configured sender
+				if (payload.Repository.Owner.Login != gitHubConfiguration.RepoOwner || payload.Repository.Name != gitHubConfiguration.RepoName)
+					return Forbid();
+				
+				BackgroundJob.Enqueue(() => InvokeHandlers<TPayload>(payload, JobCancellationToken.Null));
+				return Ok();
 			};
 			
 			switch (eventName)
 			{
-				case "ping":
-					break;
 				case "pull_request":
-					StartJob<PullRequestEventPayload>();
-					break;
+					return await StartJob<PullRequestEventPayload>();
+				default:
+					return Ok();
 			}			
-
-			return Ok();
 		}
 	}
 }

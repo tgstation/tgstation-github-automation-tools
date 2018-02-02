@@ -9,12 +9,15 @@ using TGWebhooks.Interface;
 namespace TGWebhooks.Core
 {
 	/// <inheritdoc />
-    sealed class Repository : Interface.IRepository, IDisposable
+    sealed class Repository : Interface.IRepository, IInitializable, IDisposable
     {
 		/// <summary>
 		/// Path to the data directory all repositories are stored in
 		/// </summary>
 		const string RepositoriesDirectory = "Repositories";
+
+		/// <inheritdoc />
+		public string Path => repositoryObject.Info.WorkingDirectory;
 
 		/// <summary>
 		/// The <see cref="ILogger"/> for the <see cref="Repository"/>
@@ -40,6 +43,11 @@ namespace TGWebhooks.Core
 		Task startupTask;
 
 		/// <summary>
+		/// Used for guarding writes to <see cref="startupTask"/>
+		/// </summary>
+		SemaphoreSlim semaphore;
+
+		/// <summary>
 		/// Construct a <see cref="Repository"/>
 		/// </summary>
 		/// <param name="gitHubConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the <see cref="GitHubConfiguration"/> to use for determining the <see cref="repositoryObject"/>'s path</param>
@@ -52,55 +60,63 @@ namespace TGWebhooks.Core
 			logger = _logger ?? throw new ArgumentNullException(nameof(_logger));
 			ioManager = new ResolvingIOManager(_ioManager ?? throw new ArgumentNullException(nameof(_ioManager)), _ioManager.ConcatPath(Application.DataDirectory, RepositoriesDirectory));
 			gitHubConfiguration = gitHubConfigurationOptions.Value;
+			semaphore = new SemaphoreSlim(1);
 		}
-
-		/// <summary>
-		/// Loads <see cref="repositoryObject"/>, cloning if necessary
-		/// </summary>
-		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
-		/// <returns>A <see cref="Task"/> representing the running operation</returns>
-		Task EnsureAvailable(CancellationToken cancellationToken)
-		{
-			if (startupTask == null)
-				startupTask = Task.Factory.StartNew(async () =>
-				{
-					var repoPath = ioManager.ResolvePath(ioManager.ConcatPath(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName));
-
-					try
-					{
-						repositoryObject = new LibGit2Sharp.Repository(repoPath);
-						cancellationToken.ThrowIfCancellationRequested();
-						repositoryObject.RemoveUntrackedFiles();
-						cancellationToken.ThrowIfCancellationRequested();
-						repositoryObject.RetrieveStatus();
-					}
-					catch (Exception e)
-					{
-						await logger.LogUnhandledException(e, CancellationToken.None);
-
-						LibGit2Sharp.Repository.Clone(String.Format(CultureInfo.InvariantCulture, "https://github.com/{0}/{1}", gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName), repoPath, new CloneOptions
-						{
-							Checkout = true,
-							RecurseSubmodules = true,
-							OnProgress = (a) => !cancellationToken.IsCancellationRequested,
-							OnUpdateTips = (a, b, c) => !cancellationToken.IsCancellationRequested,
-							OnTransferProgress = (a) => !cancellationToken.IsCancellationRequested
-						});
-
-						cancellationToken.ThrowIfCancellationRequested();
-
-						repositoryObject = new LibGit2Sharp.Repository(repoPath);
-					}
-				}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Current);
-			return startupTask;
-		}
-
+		
 		/// <summary>
 		/// Disposes the <see cref="repositoryObject"/>
 		/// </summary>
 		public void Dispose()
 		{
 			repositoryObject?.Dispose();
+			semaphore.Dispose();
+		}
+
+		/// <inheritdoc />
+		public async Task Initialize(CancellationToken cancellationToken)
+		{
+			using (await SemaphoreSlimContext.Lock(semaphore, cancellationToken))
+				if (startupTask == null)
+					startupTask = Task.Factory.StartNew(async () =>
+					{
+						var repoPath = ioManager.ResolvePath(ioManager.ConcatPath(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName));
+
+						try
+						{
+							repositoryObject = new LibGit2Sharp.Repository(repoPath);
+							cancellationToken.ThrowIfCancellationRequested();
+							repositoryObject.RemoveUntrackedFiles();
+							cancellationToken.ThrowIfCancellationRequested();
+							repositoryObject.RetrieveStatus();
+						}
+						catch (Exception e)
+						{
+							try
+							{
+								await logger.LogUnhandledException(e, cancellationToken);
+
+								LibGit2Sharp.Repository.Clone(String.Format(CultureInfo.InvariantCulture, "https://github.com/{0}/{1}", gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName), repoPath, new CloneOptions
+								{
+									Checkout = true,
+									RecurseSubmodules = true,
+									OnProgress = (a) => !cancellationToken.IsCancellationRequested,
+									OnUpdateTips = (a, b, c) => !cancellationToken.IsCancellationRequested,
+									OnTransferProgress = (a) => !cancellationToken.IsCancellationRequested
+								});
+
+								cancellationToken.ThrowIfCancellationRequested();
+
+								repositoryObject = new LibGit2Sharp.Repository(repoPath);
+							}
+							catch (Exception e2)
+							{
+								startupTask = null;
+								await logger.LogUnhandledException(e2, cancellationToken);
+								throw;
+							}
+						}
+					}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Current);
+			await startupTask;
 		}
 	}
 }

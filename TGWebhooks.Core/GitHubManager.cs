@@ -21,11 +21,12 @@ namespace TGWebhooks.Core
 		/// </summary>
 		readonly GitHubClient gitHubClient;
 
-		static void IssueArgumentCheck(Octokit.Repository repository, int number)
+		/// <summary>
+		/// Validate an <see cref="Issue"/> <paramref name="number"/>
+		/// </summary>
+		/// <param name="number">The number of the <see cref="Issue"/> to validate</param>
+		static void IssueArgumentCheck(int number)
 		{
-			if (repository == null)
-				throw new ArgumentNullException(nameof(repository));
-
 			if (number < 1)
 				throw new ArgumentOutOfRangeException(nameof(number), number, String.Format(CultureInfo.CurrentCulture, "{0} must be greater than zero!", nameof(number)));
 		}
@@ -46,42 +47,39 @@ namespace TGWebhooks.Core
 		}
 
 		/// <inheritdoc />
-		public Task<PullRequest> GetPullRequest(Octokit.Repository repository, int number)
+		public Task<PullRequest> GetPullRequest(int number)
 		{
-			IssueArgumentCheck(repository, number);
-			return gitHubClient.PullRequest.Get(repository.Id, number);
+			IssueArgumentCheck(number);
+			return gitHubClient.PullRequest.Get(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, number);
 		}
 
 		/// <inheritdoc />
-		public Task<IReadOnlyList<Label>> GetIssueLabels(Octokit.Repository repository, int number)
+		public Task<IReadOnlyList<Label>> GetIssueLabels(int number)
 		{
-			IssueArgumentCheck(repository, number);
-			return gitHubClient.Issue.Labels.GetAllForIssue(repository.Id, number);
+			return gitHubClient.Issue.Labels.GetAllForIssue(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, number);
 		}
 
 		/// <inheritdoc />
-		public Task SetIssueLabels(Octokit.Repository repository, int number, IEnumerable<string> newLabels)
+		public Task SetIssueLabels(int number, IEnumerable<string> newLabels)
 		{
-			IssueArgumentCheck(repository, number);
-			return gitHubClient.Issue.Labels.ReplaceAllForIssue(repository.Id, number, newLabels.ToArray());
+			IssueArgumentCheck(number);
+			return gitHubClient.Issue.Labels.ReplaceAllForIssue(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, number, newLabels.ToArray());
 		}
 
 		/// <inheritdoc />
-		public Task<IReadOnlyList<PullRequestFile>> GetPullRequestChangedFiles(Octokit.Repository repository, int number)
+		public Task<IReadOnlyList<PullRequestFile>> GetPullRequestChangedFiles(int number)
 		{
-			IssueArgumentCheck(repository, number);
-			return gitHubClient.PullRequest.Files(repository.Id, number);
+			IssueArgumentCheck(number);
+			return gitHubClient.PullRequest.Files(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, number);
 		}
 
 		/// <inheritdoc />
-		public Task<CombinedCommitStatus> GetLatestCommitStatus(Octokit.Repository repository, PullRequest pullRequest)
+		public Task<CombinedCommitStatus> GetLatestCommitStatus(PullRequest pullRequest)
 		{
-			if (repository == null)
-				throw new ArgumentNullException(nameof(repository));
 			if (pullRequest == null)
 				throw new ArgumentNullException(nameof(pullRequest));
 
-			return gitHubClient.Repository.Status.GetCombined(repository.Id, pullRequest.Head.Sha);
+			return gitHubClient.Repository.Status.GetCombined(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, pullRequest.Head.Sha);
 		}
 	}
 }

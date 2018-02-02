@@ -88,7 +88,7 @@ namespace TGWebhooks.Core
 		/// <inheritdoc />
 		public async Task<ContinuousIntegrationStatus> GetJobStatus(Octokit.Repository repository, PullRequest pullRequest, CancellationToken cancellationToken)
 		{
-			var statuses = await gitHubManager.GetLatestCommitStatus(repository, pullRequest);
+			var statuses = await gitHubManager.GetLatestCommitStatus(pullRequest);
 			var result = ContinuousIntegrationStatus.NotPresent;
 			foreach(var I in statuses.Statuses)
 			{
@@ -107,7 +107,7 @@ namespace TGWebhooks.Core
 		/// <inheritdoc />
 		public async Task TriggerJobRestart(Octokit.Repository repository, PullRequest pullRequest, CancellationToken cancellationToken)
 		{
-			var statuses = await gitHubManager.GetLatestCommitStatus(repository, pullRequest);
+			var statuses = await gitHubManager.GetLatestCommitStatus(pullRequest);
 			var buildNumberRegex = new Regex(@"/builds/([1-9][0-9]*)\?");
 			var tasks = new List<Task>();
 			foreach (var I in statuses.Statuses)

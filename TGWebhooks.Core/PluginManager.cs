@@ -17,6 +17,9 @@ namespace TGWebhooks.Core
 		/// </summary>
 		const string PluginDllsDirectory = "Plugins";
 
+		/// <inheritdoc />
+		public IEnumerable<IMergeRequirement> MergeRequirements => plugins.Where(x => x.Enabled).SelectMany(x => x.MergeRequirements).ToList();
+
 		/// <summary>
 		/// The <see cref="ILogger"/> for the <see cref="PluginManager"/>
 		/// </summary>
@@ -43,9 +46,6 @@ namespace TGWebhooks.Core
 		/// </summary>
 		IReadOnlyList<IPlugin> plugins;
 
-		/// <inheritdoc />
-		public IEnumerable<IMergeRequirement> MergeRequirements => plugins.Where(x => x.Enabled).SelectMany(x => x.MergeRequirements).ToList();
-
 		/// <summary>
 		/// Construct a <see cref="PluginManager"/>
 		/// </summary>
@@ -69,6 +69,9 @@ namespace TGWebhooks.Core
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
 		async Task LoadAllPlugins(CancellationToken cancellationToken) {
+			if (plugins != null)
+				return;
+
 			var assemblyPath = Assembly.GetExecutingAssembly().Location;
 			var pluginDirectory = ioManager.ConcatPath(ioManager.GetDirectoryName(assemblyPath), PluginDllsDirectory);
 
@@ -110,7 +113,7 @@ namespace TGWebhooks.Core
 					var plugin = (IPlugin)Activator.CreateInstance(type);
 					plugin.Configure(logger, repository, gitHubManager, dataIOManager, requestManager);
 					plugin.Enabled = true;
-					await plugin.LoadComponents(cancellationToken);
+					await plugin.Initialize(cancellationToken);
 					pluginsBuilder.Add(plugin);
 				}
 				catch (Exception e)
@@ -120,7 +123,7 @@ namespace TGWebhooks.Core
 		}
 		
 		/// <inheritdoc />
-		public Task LoadComponents(CancellationToken cancellationToken)
+		public Task Initialize(CancellationToken cancellationToken)
 		{
 			return LoadAllPlugins(cancellationToken);
 		}
