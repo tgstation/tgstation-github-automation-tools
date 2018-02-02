@@ -122,14 +122,6 @@ namespace TGWebhooks.Interface
 		Task DeleteDirectory(string path, CancellationToken cancellationToken);
 
 		/// <summary>
-		/// Downloads a file from <paramref name="url"/>
-		/// </summary>
-		/// <param name="url">The URL to download</param>
-		/// <param name="cancellationToken">A <see cref="CancellationToken"/> for the operation</param>
-		/// <returns>A <see cref="Task{TResult}"/> resulting in the text of the downloaded <paramref name="url"/></returns>
-		Task<string> DownloadFile(string url, CancellationToken cancellationToken);
-
-		/// <summary>
 		/// Combines an array of strings into a path
 		/// </summary>
 		/// <param name="paths">The paths to combine</param>

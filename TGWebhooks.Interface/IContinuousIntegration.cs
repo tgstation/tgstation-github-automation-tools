@@ -1,27 +1,35 @@
-﻿using System.Threading;
+﻿using Octokit;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace TGWebhooks.Interface
 {
 	/// <summary>
-	/// Describes continuous integration status for a <see cref="Octokit.PullRequest"/>
+	/// Describes continuous integration status for a <see cref="PullRequest"/>
 	/// </summary>
-	interface IContinuousIntegration
+	public interface IContinuousIntegration
     {
 		/// <summary>
-		/// Checks the job status for a <see cref="Octokit.PullRequest"/>
+		/// The name of the <see cref="IContinuousIntegration"/> provider
 		/// </summary>
-		/// <param name="pullRequestNumber">The <see cref="Octokit.PullRequest.Number"/></param>
-		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
-		/// <returns>A <see cref="Task{TResult}"/> resulting in <see langword="true"/> if the job has passed, <see langword="false"/> if it failed, <see langword="null"/> if it's in progress</returns>
-		Task<bool?> GetJobStatus(int pullRequestNumber, CancellationToken cancellationToken);
+		string Name { get; }
 
 		/// <summary>
-		/// Triggers a new build job for a <see cref="Octokit.PullRequest"/>
+		/// Checks the job status for a <paramref name="pullRequest"/>
 		/// </summary>
-		/// <param name="pullRequestNumber">The <see cref="Octokit.PullRequest.Number"/></param>
+		/// <param name="repository">The <see cref="Repository"/> the <paramref name="pullRequest"/> is from</param>
+		/// <param name="pullRequest">The <see cref="PullRequest"/></param>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task{TResult}"/> resulting in the <see cref="ContinuousIntegrationStatus"/> of the job</returns>
+		Task<ContinuousIntegrationStatus> GetJobStatus(Repository repository, PullRequest pullRequest, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Triggers a new build job for a <paramref name="pullRequest"/>
+		/// </summary>
+		/// <param name="repository">The <see cref="Repository"/> the <paramref name="pullRequest"/> is from</param>
+		/// <param name="pullRequest">The <see cref="PullRequest"/></param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
-		Task TriggerJobRestart(int pullRequestNumber, CancellationToken cancellationToken);
+		Task TriggerJobRestart(Repository repository, PullRequest pullRequest, CancellationToken cancellationToken);
     }
 }

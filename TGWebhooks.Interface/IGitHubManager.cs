@@ -29,10 +29,18 @@ namespace TGWebhooks.Interface
 		/// <summary>
 		/// Get a <see cref="PullRequest"/>
 		/// </summary>
-		/// <param name="repository">The <see cref="Repository"/> the pull request is from</param>
+		/// <param name="repository">The <see cref="Repository"/> the <see cref="PullRequest"/> is from</param>
 		/// <param name="number">The number of the <see cref="PullRequest"/></param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in the <see cref="PullRequest"/></returns>
 		Task<PullRequest> GetPullRequest(Repository repository, int number);
+
+		/// <summary>
+		/// Get the <see cref="CommitStatus"/>es for the latest <see cref="Commit"/> of a <paramref name="pullRequest"/>
+		/// </summary>
+		/// <param name="repository">The <see cref="Repository"/> the <paramref name="pullRequest"/> is from</param>
+		/// <param name="pullRequest">The <see cref="PullRequest"/></param>
+		/// <returns>A <see cref="Task{TResult}"/> resulting in the <see cref="CombinedCommitStatus"/> for the latest <see cref="Commit"/> of a <paramref name="pullRequest"/></returns>
+		Task<CombinedCommitStatus> GetLatestCommitStatus(Repository repository, PullRequest pullRequest);
 
 		/// <summary>
 		/// Get the files changed by a <see cref="PullRequest"/>

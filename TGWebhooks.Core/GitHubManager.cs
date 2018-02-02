@@ -39,7 +39,7 @@ namespace TGWebhooks.Core
 			if(gitHubConfigurationOptions == null)
 				throw new ArgumentNullException(nameof(gitHubConfigurationOptions));
 			gitHubConfiguration = gitHubConfigurationOptions.Value;
-			gitHubClient = new GitHubClient(new ProductHeaderValue("tgstation-github-automation-tools"))
+			gitHubClient = new GitHubClient(new ProductHeaderValue(Application.UserAgent))
 			{
 				Credentials = new Credentials(gitHubConfiguration.PersonalAccessToken)
 			};
@@ -71,6 +71,17 @@ namespace TGWebhooks.Core
 		{
 			IssueArgumentCheck(repository, number);
 			return gitHubClient.PullRequest.Files(repository.Id, number);
+		}
+
+		/// <inheritdoc />
+		public Task<CombinedCommitStatus> GetLatestCommitStatus(Octokit.Repository repository, PullRequest pullRequest)
+		{
+			if (repository == null)
+				throw new ArgumentNullException(nameof(repository));
+			if (pullRequest == null)
+				throw new ArgumentNullException(nameof(pullRequest));
+
+			return gitHubClient.Repository.Status.GetCombined(repository.Id, pullRequest.Head.Sha);
 		}
 	}
 }

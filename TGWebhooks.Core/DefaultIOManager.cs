@@ -113,31 +113,6 @@ namespace TGWebhooks.Core
 		}
 
 		/// <inheritdoc />
-		public async Task<string> DownloadFile(string url, CancellationToken cancellationToken)
-		{
-			if (url == null)
-				throw new ArgumentNullException(nameof(url));
-
-			var request = WebRequest.Create(url);
-			var tcs = new TaskCompletionSource<string>();
-
-			using (cancellationToken.Register(() => request.Abort()))
-			{
-				request.BeginGetResponse(new AsyncCallback(async (r) =>
-				{
-					if (cancellationToken.IsCancellationRequested)
-						tcs.SetCanceled();
-					else
-						using (var response = request.EndGetResponse(r))
-						using (var reader = new StreamReader(response.GetResponseStream()))
-							tcs.SetResult(await reader.ReadToEndAsync());
-				}), null);
-
-				return await tcs.Task;
-			}
-		}
-
-		/// <inheritdoc />
 		public Task<bool> FileExists(string path, CancellationToken cancellationToken)
 		{
 			return Task.Factory.StartNew(() => File.Exists(ResolvePath(path)), cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Current);

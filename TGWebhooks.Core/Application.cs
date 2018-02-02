@@ -16,6 +16,11 @@ namespace TGWebhooks.Core
     sealed class Application
 	{
 		/// <summary>
+		/// The user agent string to provide to various APIs
+		/// </summary>
+		public const string UserAgent = "tgstation-github-automation-tools";
+
+		/// <summary>
 		/// The path to the directory the <see cref="Application"/> should use for data files
 		/// </summary>
 		public static string DataDirectory { get; private set; }
@@ -54,6 +59,8 @@ namespace TGWebhooks.Core
 			services.AddSingleton<IRepository, Repository>();
 			services.AddSingleton<ILogger, Logger>();
 			services.AddSingleton<IIOManager, DefaultIOManager>();
+			services.AddSingleton<IRequestManager, RequestManager>();
+			services.AddSingleton<IContinuousIntegration, TravisContinuousIntegration>();
         }
 
 		/// <summary>
