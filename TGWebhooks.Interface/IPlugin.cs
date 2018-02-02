@@ -26,6 +26,11 @@ namespace TGWebhooks.Interface
 		string Description { get; }
 
 		/// <summary>
+		/// The <see cref="IMergeRequirement"/>s the <see cref="IPlugin"/> contains. Will not be accessed until <see cref="Configure(ILogger, IRepository, IGitHubManager)"/> is called
+		/// </summary>
+		IEnumerable<IMergeRequirement> MergeRequirements { get; }
+
+		/// <summary>
 		/// The <see cref="IPayloadHandler{TPayload}"/>s the plugin contains. Will not be accessed until <see cref="Configure(ILogger, IRepository, IGitHubManager)"/> is called
 		/// </summary>
 		IEnumerable<IPayloadHandler<TPayload>> GetPayloadHandlers<TPayload>() where TPayload : ActivityPayload;

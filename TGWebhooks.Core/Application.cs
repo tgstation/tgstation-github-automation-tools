@@ -1,5 +1,5 @@
 ﻿using Hangfire;
-using Hangfire.MemoryStorage;
+using Hangfire.SQLite;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -44,10 +44,11 @@ namespace TGWebhooks.Core
 		/// <param name="services">The <see cref="IServiceCollection"/> to configure</param>
         public void ConfigureServices(IServiceCollection services)
         {
-			services.AddHangfire(_ => _.UseMemoryStorage());
+			services.AddHangfire(_ => _.UseSQLiteStorage(Path.Combine(DataDirectory, "HangfireDatabase.sqlite3")));
             services.AddMvc();
 			services.AddOptions();
 			services.Configure<GitHubConfiguration>(configuration.GetSection(GitHubConfiguration.Section));
+			services.Configure<TravisConfiguration>(configuration.GetSection(TravisConfiguration.Section));
 			services.AddSingleton<IPluginManager, PluginManager>();
 			services.AddSingleton<IGitHubManager, GitHubManager>();
 			services.AddSingleton<IRepository, Repository>();

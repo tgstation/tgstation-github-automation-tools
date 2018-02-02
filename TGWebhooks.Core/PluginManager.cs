@@ -114,5 +114,12 @@ namespace TGWebhooks.Core
 			await LoadAllPlugins(cancellationToken);
 			return plugins.Where(x => x.Enabled).SelectMany(x => x.GetPayloadHandlers<TPayload>()).ToList();
 		}
+		
+		/// <inheritdoc />
+		public async Task<List<IMergeRequirement>> GetActiveMergeRequirements(CancellationToken cancellationToken)
+		{
+			await LoadAllPlugins(cancellationToken);
+			return plugins.Where(x => x.Enabled).SelectMany(x => x.MergeRequirements).ToList();
+		}
 	}
 }

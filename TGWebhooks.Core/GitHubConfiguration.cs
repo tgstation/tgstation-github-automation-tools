@@ -6,7 +6,7 @@
     public sealed class GitHubConfiguration
     {
 		/// <summary>
-		/// The configuration section this resides in
+		/// The configuration section the <see cref="GitHubConfiguration"/> resides in
 		/// </summary>
 		public const string Section = "GitHub";
 

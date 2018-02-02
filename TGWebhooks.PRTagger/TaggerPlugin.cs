@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Interface;
@@ -21,7 +22,10 @@ namespace TGWebhooks.PRTagger
 
 		/// <inheritdoc />
 		public string Description => "Automatically labels pull requests based on certain criteria";
-		
+
+		/// <inheritdoc />
+		public IEnumerable<IMergeRequirement> MergeRequirements => Enumerable.Empty<IMergeRequirement>();
+
 		/// <summary>
 		/// The <see cref="IGitHubManager"/> for the <see cref="TaggerPlugin"/>
 		/// </summary>
