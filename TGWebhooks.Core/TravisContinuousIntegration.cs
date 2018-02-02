@@ -56,9 +56,33 @@ namespace TGWebhooks.Core
 			requestManager = _requestManager ?? throw new ArgumentNullException(nameof(_requestManager));
 		}
 
+		/// <summary>
+		/// Get the headers required to use the Travis API
+		/// </summary>
+		/// <returns>A <see cref="List{T}"/> of <see cref="string"/> headers required to use the Travis API</returns>
 		List<string> GetRequestHeaders()
 		{
 			return new List<string> { String.Format(CultureInfo.InvariantCulture, "User-Agent: {0}", Application.UserAgent), String.Format(CultureInfo.InvariantCulture, "Authorization: token {0}", travisConfiguration.APIToken) };
+		}
+
+		/// <summary>
+		/// Cancels and restarts a build
+		/// </summary>
+		/// <param name="buildNumber">The build number</param>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		async Task RestartBuild(string buildNumber, CancellationToken cancellationToken)
+		{
+			const string baseBuildURL = "https://api.travis-ci.org/build";
+			var baseUrl = String.Join('/', baseBuildURL, buildNumber);
+			Task DoBuildPost(string method)
+			{
+				return requestManager.RunRequest(String.Join('/', baseUrl, method), String.Empty, GetRequestHeaders(), RequestMethod.POST, cancellationToken);
+			}
+			//first ensure it's over
+			await DoBuildPost("cancel");
+			//then restart it
+			await DoBuildPost("restart");
 		}
 
 		/// <inheritdoc />
@@ -92,8 +116,7 @@ namespace TGWebhooks.Core
 					continue;
 				var buildNumber = buildNumberRegex.Match(I.TargetUrl).Groups[1].Value;
 
-				var url = String.Format(CultureInfo.InvariantCulture, "https://api.travis-ci.org/build/{0}/restart", buildNumber);
-				tasks.Add(requestManager.RunRequest(url, String.Empty, GetRequestHeaders(), RequestMethod.POST, cancellationToken));
+				tasks.Add(RestartBuild(buildNumber, cancellationToken));
 			}
 			await Task.WhenAll(tasks);
 		}
