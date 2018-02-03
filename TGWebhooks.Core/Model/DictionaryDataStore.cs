@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Interface;
 
-namespace TGWebhooks.Core.Models
+namespace TGWebhooks.Core.Model
 {
 	/// <summary>
 	/// A <see cref="IBranchingDataStore"/> based on <see cref="Dictionary{TKey, TValue}"/>s

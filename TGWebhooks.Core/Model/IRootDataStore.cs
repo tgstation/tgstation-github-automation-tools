@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Interface;
 
-namespace TGWebhooks.Core.Models
+namespace TGWebhooks.Core.Model
 {
     interface IRootDataStore : IBranchingDataStore, IInitializable
     {
