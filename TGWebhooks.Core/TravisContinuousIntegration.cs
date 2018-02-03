@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using TGWebhooks.Core.Configuration;
 using TGWebhooks.Interface;
 
 namespace TGWebhooks.Core

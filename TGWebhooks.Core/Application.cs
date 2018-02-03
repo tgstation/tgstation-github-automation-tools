@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
+using TGWebhooks.Core.Configuration;
 using TGWebhooks.Interface;
 
 namespace TGWebhooks.Core

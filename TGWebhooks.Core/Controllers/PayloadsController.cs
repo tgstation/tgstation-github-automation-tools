@@ -11,6 +11,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using TGWebhooks.Core.Configuration;
 using TGWebhooks.Interface;
 
 namespace TGWebhooks.Core.Controllers

@@ -1,4 +1,4 @@
-﻿namespace TGWebhooks.Core
+﻿namespace TGWebhooks.Core.Configuration
 {
 	/// <summary>
 	/// GitHub configuration entry
