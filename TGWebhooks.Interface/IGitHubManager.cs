@@ -44,5 +44,11 @@ namespace TGWebhooks.Interface
 		/// <param name="number">The number of the <see cref="PullRequest"/></param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in a <see cref="IReadOnlyList{T}"/> of <see cref="PullRequestFile"/>s</returns>
 		Task<IReadOnlyList<PullRequestFile>> GetPullRequestChangedFiles(int number);
+
+		/// <summary>
+		/// Squashes and merges the given <see cref="PullRequest"/> with it's current <see cref="PullRequest.Title"/>, <see cref="PullRequest.Number"/>, and <see cref="PullRequest.Body"/> as the log message
+		/// </summary>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		Task MergePullRequest(PullRequest pullRequest);
 	}
 }

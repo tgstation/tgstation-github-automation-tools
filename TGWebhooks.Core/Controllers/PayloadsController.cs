@@ -104,9 +104,10 @@ namespace TGWebhooks.Core.Controllers
 				{
 					try
 					{
-						await handler.ProcessPayload(payload);
+						await handler.ProcessPayload(payload, cancellationToken);
 					}
 					//To be expected
+					catch (OperationCanceledException) { }
 					catch (NotSupportedException) { }
 					catch (Exception e)
 					{

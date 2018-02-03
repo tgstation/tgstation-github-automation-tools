@@ -82,5 +82,20 @@ namespace TGWebhooks.Core
 
 			return gitHubClient.Repository.Status.GetCombined(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, pullRequest.Head.Sha);
 		}
+
+		/// <inheritdoc />
+		public Task MergePullRequest(PullRequest pullRequest)
+		{
+			if (pullRequest == null)
+				throw new ArgumentNullException(nameof(pullRequest));
+			
+			return gitHubClient.PullRequest.Merge(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, pullRequest.Number, new MergePullRequest
+			{
+				CommitTitle = String.Format(CultureInfo.InvariantCulture, "{0} (#{1})", pullRequest.Title, pullRequest.Body),
+				CommitMessage = pullRequest.Body,
+				MergeMethod = PullRequestMergeMethod.Squash,
+				Sha = pullRequest.Head.Sha
+			});
+		}
 	}
 }

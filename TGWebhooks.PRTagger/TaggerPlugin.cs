@@ -142,7 +142,7 @@ namespace TGWebhooks.PRTagger
 		}
 
 		/// <inheritdoc />
-		public async Task ProcessPayload(PullRequestEventPayload payload)
+		public async Task ProcessPayload(PullRequestEventPayload payload, CancellationToken cancellationToken)
 		{
 			switch (payload.Action)
 			{
