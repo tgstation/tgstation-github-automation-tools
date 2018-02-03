@@ -31,7 +31,7 @@ namespace TGWebhooks.Interface
 		/// <param name="repository">The <see cref="IRepository"/> for the <see cref="IPlugin"/></param>
 		/// <param name="gitHubManager">The <see cref="IGitHubManager"/> for the <see cref="IPlugin"/></param>
 		/// <param name="ioManager">The <see cref="IIOManager"/> for the <see cref="IPlugin"/></param>
-		/// <param name="requestManager">The <see cref="IWebRequestManager"/> for the <see cref="IPlugin"/></param>
-		void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager requestManager);
+		/// <param name="webRequestManager">The <see cref="IWebRequestManager"/> for the <see cref="IPlugin"/></param>
+		void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager);
 	}
 }

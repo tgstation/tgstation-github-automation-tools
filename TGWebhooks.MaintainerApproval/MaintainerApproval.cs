@@ -32,7 +32,7 @@ namespace TGWebhooks.MaintainerApproval
 		IGitHubManager gitHubManager;
 
 		/// <inheritdoc />
-		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager requestManager)
+		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager)
 		{
 			this.gitHubManager = gitHubManager;
 		}

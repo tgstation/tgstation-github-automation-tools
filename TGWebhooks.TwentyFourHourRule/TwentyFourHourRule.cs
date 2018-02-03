@@ -31,7 +31,7 @@ namespace TGWebhooks.TwentyFourHourRule
 		public IEnumerable<IMergeRequirement> MergeRequirements => new List<IMergeRequirement> { this };
 
 		/// <inheritdoc />
-		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager requestManager)
+		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager)
 		{
 			//intentionally left blank
 		}
@@ -41,15 +41,15 @@ namespace TGWebhooks.TwentyFourHourRule
 		{
 			if (pullRequest == null)
 				throw new ArgumentNullException(nameof(pullRequest));
-			var timeSinceOpened = DateTime.Now - pullRequest.CreatedAt;
+			var hoursSinceOpened = (int)Math.Floor((new DateTimeOffset(DateTime.UtcNow) - pullRequest.CreatedAt).TotalHours);
 
-			var good = timeSinceOpened.Hours > HoursRequired;
+			var good = hoursSinceOpened > HoursRequired;
 
 			return Task.FromResult(new AutoMergeStatus
 			{
-				Progress = timeSinceOpened.Hours,
+				Progress = hoursSinceOpened,
 				RequiredProgress = HoursRequired,
-				ReevaluateIn = good ? 0 : (HoursRequired - timeSinceOpened.Hours) * 60 * 60,
+				ReevaluateIn = good ? 0 : (HoursRequired - hoursSinceOpened) * 60 * 60,
 			});
 		}
 
