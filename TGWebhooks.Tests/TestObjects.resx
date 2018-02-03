@@ -1,0 +1,310 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PR1Changes1Approved" xml:space="preserve">
+    <value>[
+  {
+    "id": 93808093,
+    "user": {
+      "login": "WJohn",
+      "id": 5988156,
+      "avatar_url": "https://avatars1.githubusercontent.com/u/5988156?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/WJohn",
+      "html_url": "https://github.com/WJohn",
+      "followers_url": "https://api.github.com/users/WJohn/followers",
+      "following_url": "https://api.github.com/users/WJohn/following{/other_user}",
+      "gists_url": "https://api.github.com/users/WJohn/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/WJohn/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/WJohn/subscriptions",
+      "organizations_url": "https://api.github.com/users/WJohn/orgs",
+      "repos_url": "https://api.github.com/users/WJohn/repos",
+      "events_url": "https://api.github.com/users/WJohn/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/WJohn/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "body": "",
+    "state": "APPROVED",
+    "html_url": "https://github.com/tgstation/tgstation/pull/35252#pullrequestreview-93808093",
+    "pull_request_url": "https://api.github.com/repos/tgstation/tgstation/pulls/35252",
+    "author_association": "MEMBER",
+    "_links": {
+      "html": {
+        "href": "https://github.com/tgstation/tgstation/pull/35252#pullrequestreview-93808093"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/tgstation/tgstation/pulls/35252"
+      }
+    },
+    "submitted_at": "2018-02-03T05:40:29Z",
+    "commit_id": "8fb6a7cc53be05af5542b19f33a68c3a5b20874d"
+  },
+  {
+    "id": 93830451,
+    "user": {
+      "login": "Cyberboss",
+      "id": 8171642,
+      "avatar_url": "https://avatars3.githubusercontent.com/u/8171642?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Cyberboss",
+      "html_url": "https://github.com/Cyberboss",
+      "followers_url": "https://api.github.com/users/Cyberboss/followers",
+      "following_url": "https://api.github.com/users/Cyberboss/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Cyberboss/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Cyberboss/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Cyberboss/subscriptions",
+      "organizations_url": "https://api.github.com/users/Cyberboss/orgs",
+      "repos_url": "https://api.github.com/users/Cyberboss/repos",
+      "events_url": "https://api.github.com/users/Cyberboss/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Cyberboss/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "body": "Ignore this review",
+    "state": "DISMISSED",
+    "html_url": "https://github.com/tgstation/tgstation/pull/35252#pullrequestreview-93830451",
+    "pull_request_url": "https://api.github.com/repos/tgstation/tgstation/pulls/35252",
+    "author_association": "MEMBER",
+    "_links": {
+      "html": {
+        "href": "https://github.com/tgstation/tgstation/pull/35252#pullrequestreview-93830451"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/tgstation/tgstation/pulls/35252"
+      }
+    },
+    "submitted_at": "2018-02-03T23:35:22Z",
+    "commit_id": "8fb6a7cc53be05af5542b19f33a68c3a5b20874d"
+  },
+  {
+    "id": 93830738,
+    "user": {
+      "login": "Cyberboss",
+      "id": 8171642,
+      "avatar_url": "https://avatars3.githubusercontent.com/u/8171642?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/Cyberboss",
+      "html_url": "https://github.com/Cyberboss",
+      "followers_url": "https://api.github.com/users/Cyberboss/followers",
+      "following_url": "https://api.github.com/users/Cyberboss/following{/other_user}",
+      "gists_url": "https://api.github.com/users/Cyberboss/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/Cyberboss/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/Cyberboss/subscriptions",
+      "organizations_url": "https://api.github.com/users/Cyberboss/orgs",
+      "repos_url": "https://api.github.com/users/Cyberboss/repos",
+      "events_url": "https://api.github.com/users/Cyberboss/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/Cyberboss/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "body": "Not done yet",
+    "state": "CHANGES_REQUESTED",
+    "html_url": "https://github.com/tgstation/tgstation/pull/35252#pullrequestreview-93830738",
+    "pull_request_url": "https://api.github.com/repos/tgstation/tgstation/pulls/35252",
+    "author_association": "MEMBER",
+    "_links": {
+      "html": {
+        "href": "https://github.com/tgstation/tgstation/pull/35252#pullrequestreview-93830738"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/tgstation/tgstation/pulls/35252"
+      }
+    },
+    "submitted_at": "2018-02-03T23:51:03Z",
+    "commit_id": "8fb6a7cc53be05af5542b19f33a68c3a5b20874d"
+  },
+  {
+    "id": 93830740,
+    "user": {
+      "login": "kevinz000",
+      "id": 2003111,
+      "avatar_url": "https://avatars0.githubusercontent.com/u/2003111?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/kevinz000",
+      "html_url": "https://github.com/kevinz000",
+      "followers_url": "https://api.github.com/users/kevinz000/followers",
+      "following_url": "https://api.github.com/users/kevinz000/following{/other_user}",
+      "gists_url": "https://api.github.com/users/kevinz000/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/kevinz000/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/kevinz000/subscriptions",
+      "organizations_url": "https://api.github.com/users/kevinz000/orgs",
+      "repos_url": "https://api.github.com/users/kevinz000/repos",
+      "events_url": "https://api.github.com/users/kevinz000/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/kevinz000/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "body": "Meme",
+    "state": "CHANGES_REQUESTED",
+    "html_url": "https://github.com/tgstation/tgstation/pull/35252#pullrequestreview-93830740",
+    "pull_request_url": "https://api.github.com/repos/tgstation/tgstation/pulls/35252",
+    "author_association": "CONTRIBUTOR",
+    "_links": {
+      "html": {
+        "href": "https://github.com/tgstation/tgstation/pull/35252#pullrequestreview-93830740"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/tgstation/tgstation/pulls/35252"
+      }
+    },
+    "submitted_at": "2018-02-03T23:51:14Z",
+    "commit_id": "8fb6a7cc53be05af5542b19f33a68c3a5b20874d"
+  },
+  {
+    "id": 93830741,
+    "user": {
+      "login": "kevinz000",
+      "id": 2003111,
+      "avatar_url": "https://avatars0.githubusercontent.com/u/2003111?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/kevinz000",
+      "html_url": "https://github.com/kevinz000",
+      "followers_url": "https://api.github.com/users/kevinz000/followers",
+      "following_url": "https://api.github.com/users/kevinz000/following{/other_user}",
+      "gists_url": "https://api.github.com/users/kevinz000/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/kevinz000/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/kevinz000/subscriptions",
+      "organizations_url": "https://api.github.com/users/kevinz000/orgs",
+      "repos_url": "https://api.github.com/users/kevinz000/repos",
+      "events_url": "https://api.github.com/users/kevinz000/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/kevinz000/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "body": "Meme",
+    "state": "APPROVED",
+    "html_url": "https://github.com/tgstation/tgstation/pull/35252#pullrequestreview-93830741",
+    "pull_request_url": "https://api.github.com/repos/tgstation/tgstation/pulls/35252",
+    "author_association": "CONTRIBUTOR",
+    "_links": {
+      "html": {
+        "href": "https://github.com/tgstation/tgstation/pull/35252#pullrequestreview-93830741"
+      },
+      "pull_request": {
+        "href": "https://api.github.com/repos/tgstation/tgstation/pulls/35252"
+      }
+    },
+    "submitted_at": "2018-02-03T23:51:24Z",
+    "commit_id": "8fb6a7cc53be05af5542b19f33a68c3a5b20874d"
+  }
+]</value>
+    <comment>Pull request with 1 approved review and 1 changes requested review</comment>
+  </data>
+</root>

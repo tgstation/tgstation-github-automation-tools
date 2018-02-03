@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TGWebhooks.TwentyFourHourRu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TGWebhooks.MaintainerApproval", "TGWebhooks.MaintainerApproval\TGWebhooks.MaintainerApproval.csproj", "{7D400AEA-C23E-4023-9548-0B71690A8969}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TGWebhooks.Tests", "..\TGWebhooks.Tests\TGWebhooks.Tests.csproj", "{929DDD24-695F-478A-BAAD-617839DAEA51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TGWebhooks.Tests", "TGWebhooks.Tests\TGWebhooks.Tests.csproj", "{8DF46DEB-5CBE-4049-9D03-47C8E6F856CE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,10 +47,10 @@ Global
 		{7D400AEA-C23E-4023-9548-0B71690A8969}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D400AEA-C23E-4023-9548-0B71690A8969}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D400AEA-C23E-4023-9548-0B71690A8969}.Release|Any CPU.Build.0 = Release|Any CPU
-		{929DDD24-695F-478A-BAAD-617839DAEA51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{929DDD24-695F-478A-BAAD-617839DAEA51}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{929DDD24-695F-478A-BAAD-617839DAEA51}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{929DDD24-695F-478A-BAAD-617839DAEA51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DF46DEB-5CBE-4049-9D03-47C8E6F856CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DF46DEB-5CBE-4049-9D03-47C8E6F856CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DF46DEB-5CBE-4049-9D03-47C8E6F856CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DF46DEB-5CBE-4049-9D03-47C8E6F856CE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
