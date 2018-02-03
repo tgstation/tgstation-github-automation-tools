@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Octokit;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Octokit;
 using TGWebhooks.Interface;
 
 namespace TGWebhooks.TwentyFourHourRule
@@ -31,7 +31,7 @@ namespace TGWebhooks.TwentyFourHourRule
 		public IEnumerable<IMergeRequirement> MergeRequirements => new List<IMergeRequirement> { this };
 
 		/// <inheritdoc />
-		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHub, IIOManager ioManager, IWebRequestManager requestManager)
+		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager requestManager)
 		{
 			//intentionally left blank
 		}
@@ -39,6 +39,8 @@ namespace TGWebhooks.TwentyFourHourRule
 		/// <inheritdoc />
 		public Task<AutoMergeStatus> EvaluateFor(PullRequest pullRequest, CancellationToken cancellationToken)
 		{
+			if (pullRequest == null)
+				throw new ArgumentNullException(nameof(pullRequest));
 			var timeSinceOpened = DateTime.Now - pullRequest.CreatedAt;
 
 			var good = timeSinceOpened.Hours > HoursRequired;

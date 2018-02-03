@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TGWebhooks.Interface", "TGW
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TGWebhooks.TwentyFourHourRule", "TGWebhooks.TwentyFourHourRule\TGWebhooks.TwentyFourHourRule.csproj", "{7D1385AD-3C60-4B2A-A2E1-FCCF719DAECD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TGWebhooks.MaintainerApproval", "TGWebhooks.MaintainerApproval\TGWebhooks.MaintainerApproval.csproj", "{7D400AEA-C23E-4023-9548-0B71690A8969}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{7D1385AD-3C60-4B2A-A2E1-FCCF719DAECD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D1385AD-3C60-4B2A-A2E1-FCCF719DAECD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D1385AD-3C60-4B2A-A2E1-FCCF719DAECD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D400AEA-C23E-4023-9548-0B71690A8969}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D400AEA-C23E-4023-9548-0B71690A8969}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D400AEA-C23E-4023-9548-0B71690A8969}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D400AEA-C23E-4023-9548-0B71690A8969}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

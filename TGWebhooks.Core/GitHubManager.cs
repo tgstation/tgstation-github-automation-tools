@@ -97,5 +97,25 @@ namespace TGWebhooks.Core
 				Sha = pullRequest.Head.Sha
 			});
 		}
+
+		/// <inheritdoc />
+		public Task<IReadOnlyList<PullRequestReview>> GetPullRequestReviews(PullRequest pullRequest)
+		{
+			if (pullRequest == null)
+				throw new ArgumentNullException(nameof(pullRequest));
+			
+			return gitHubClient.PullRequest.Review.GetAll(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, pullRequest.Number);
+		}
+
+		/// <inheritdoc />
+		public async Task<bool> UserHasWriteAccess(User user)
+		{
+			if (user == null)
+				throw new ArgumentNullException(nameof(user));
+
+			var permissionLevel = await gitHubClient.Repository.Collaborator.ReviewPermission(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, user.Login);
+			var permission = permissionLevel.Permission.Value;
+			return permission == PermissionLevel.Write || permission == PermissionLevel.Admin;
+		}
 	}
 }

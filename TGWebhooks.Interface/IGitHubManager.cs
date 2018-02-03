@@ -50,5 +50,19 @@ namespace TGWebhooks.Interface
 		/// </summary>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
 		Task MergePullRequest(PullRequest pullRequest);
+
+		/// <summary>
+		/// Get all <see cref="PullRequestReview"/>s for a given <paramref name="pullRequest"/>
+		/// </summary>
+		/// <param name="pullRequest">The <see cref="PullRequest"/> to get reviews for</param>
+		/// <returns>A <see cref="IReadOnlyList{T}"/> of <see cref="PullRequestReview"/>s for <paramref name="pullRequest"/></returns>
+		Task<IReadOnlyList<PullRequestReview>> GetPullRequestReviews(PullRequest pullRequest);
+
+		/// <summary>
+		/// Check if a <paramref name="user"/> has write access to the configured repository
+		/// </summary>
+		/// <param name="user">The <see cref="User"/> to check access for</param>
+		/// <returns>A <see cref="Task{TResult}"/> resulting in <see langword="true"/> if the <paramref name="user"/> has write access, <see langword="false"/> otherwise</returns>
+		Task<bool> UserHasWriteAccess(User user);
 	}
 }
