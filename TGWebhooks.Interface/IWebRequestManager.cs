@@ -7,7 +7,7 @@ namespace TGWebhooks.Interface
 	/// <summary>
 	/// <see langword="interface"/> for making web requests
 	/// </summary>
-    public interface IRequestManager
+    public interface IWebRequestManager
     {
 		/// <summary>
 		/// Make a web request

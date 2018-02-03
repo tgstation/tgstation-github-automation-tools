@@ -61,7 +61,7 @@ namespace TGWebhooks.Core
 			services.AddSingleton<IRepository, Repository>();
 			services.AddSingleton<ILogger, Logger>();
 			services.AddSingleton<IIOManager, DefaultIOManager>();
-			services.AddSingleton<IRequestManager, RequestManager>();
+			services.AddSingleton<IWebRequestManager, WebRequestManager>();
 			services.AddSingleton<IContinuousIntegration, TravisContinuousIntegration>();
         }
 

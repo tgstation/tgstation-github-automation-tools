@@ -37,9 +37,9 @@ namespace TGWebhooks.Core
 		/// </summary>
 		readonly IIOManager ioManager;
 		/// <summary>
-		/// The <see cref="IRequestManager"/> for the <see cref="PluginManager"/>
+		/// The <see cref="IWebRequestManager"/> for the <see cref="PluginManager"/>
 		/// </summary>
-		readonly IRequestManager requestManager;
+		readonly IWebRequestManager requestManager;
 
 		/// <summary>
 		/// List of loaded <see cref="IPlugin"/>s
@@ -54,7 +54,7 @@ namespace TGWebhooks.Core
 		/// <param name="_gitHubManager">The value of <see cref="gitHubManager"/></param>
 		/// <param name="_ioManager">The value of <see cref="ioManager"/></param>
 		/// <param name="_requestManager">The value of <see cref="requestManager"/></param>
-		public PluginManager(ILogger _logger, IRepository _repository, IGitHubManager _gitHubManager, IIOManager _ioManager, IRequestManager _requestManager)
+		public PluginManager(ILogger _logger, IRepository _repository, IGitHubManager _gitHubManager, IIOManager _ioManager, IWebRequestManager _requestManager)
 		{
 			logger = _logger ?? throw new ArgumentNullException(nameof(_logger));
 			repository = _repository ?? throw new ArgumentNullException(nameof(_repository));

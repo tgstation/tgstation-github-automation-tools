@@ -24,9 +24,9 @@ namespace TGWebhooks.Core
 		/// </summary>
 		readonly IGitHubManager gitHubManager;
 		/// <summary>
-		/// The <see cref="IRequestManager"/> for the <see cref="TravisContinuousIntegration"/>
+		/// The <see cref="IWebRequestManager"/> for the <see cref="TravisContinuousIntegration"/>
 		/// </summary>
-		readonly IRequestManager requestManager;
+		readonly IWebRequestManager requestManager;
 		/// <summary>
 		/// The <see cref="TravisConfiguration"/> for the <see cref="TravisContinuousIntegration"/>
 		/// </summary>
@@ -48,7 +48,7 @@ namespace TGWebhooks.Core
 		/// <param name="_gitHubManager">The value of <see cref="gitHubManager"/></param>
 		/// <param name="_requestManager">The value of <see cref="requestManager"/></param>
 		/// <param name="travisConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the value of <see cref="travisConfiguration"/></param>
-		public TravisContinuousIntegration(IGitHubManager _gitHubManager, IRequestManager _requestManager, IOptions<TravisConfiguration> travisConfigurationOptions)
+		public TravisContinuousIntegration(IGitHubManager _gitHubManager, IWebRequestManager _requestManager, IOptions<TravisConfiguration> travisConfigurationOptions)
 		{
 			if (travisConfigurationOptions == null)
 				throw new ArgumentNullException(nameof(travisConfigurationOptions));

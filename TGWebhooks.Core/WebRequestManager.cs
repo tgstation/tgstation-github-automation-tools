@@ -11,7 +11,7 @@ using StreamReader = System.IO.StreamReader;
 namespace TGWebhooks.Core
 {
 	/// <inheritdoc />
-	sealed class RequestManager : IRequestManager
+	sealed class WebRequestManager : IWebRequestManager
 	{
 		/// <inheritdoc />
 		public async Task<string> RunRequest(string url, string body, IEnumerable<string> headers, RequestMethod requestMethod, CancellationToken cancellationToken)
