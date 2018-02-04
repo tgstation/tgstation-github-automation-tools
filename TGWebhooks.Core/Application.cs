@@ -53,7 +53,9 @@ namespace TGWebhooks.Core
 		/// <param name="services">The <see cref="IServiceCollection"/> to configure</param>
         public void ConfigureServices(IServiceCollection services)
         {
-			services.AddHangfire(_ => _.UseSQLiteStorage(new SqliteConnectionStringBuilder { DataSource = Path.Combine(DataDirectory, "HangfireDatabase.sqlite3") }.ConnectionString));
+			var builder = new SqliteConnectionStringBuilder { DataSource = Path.Combine(DataDirectory, "HangfireDatabase.sqlite3") };
+			var cstest = builder.ConnectionString.ToLower().Contains("data source");
+			services.AddHangfire(_ => _.UseSQLiteStorage(builder.ConnectionString));
             services.AddMvc();
 			services.AddOptions();
 			services.Configure<GitHubConfiguration>(configuration.GetSection(GitHubConfiguration.Section));
