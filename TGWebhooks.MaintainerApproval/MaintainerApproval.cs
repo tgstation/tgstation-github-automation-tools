@@ -18,6 +18,9 @@ namespace TGWebhooks.MaintainerApproval
 		public bool Enabled { get; set; }
 
 		/// <inheritdoc />
+		public Guid Guid => new Guid("8d8122d0-ad0d-4a91-977f-204d617efd04");
+
+		/// <inheritdoc />
 		public string Name => "Maintainer Approval";
 
 		/// <inheritdoc />
@@ -32,7 +35,7 @@ namespace TGWebhooks.MaintainerApproval
 		IGitHubManager gitHubManager;
 
 		/// <inheritdoc />
-		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager)
+		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager, IDataStore dataStore)
 		{
 			this.gitHubManager = gitHubManager;
 		}

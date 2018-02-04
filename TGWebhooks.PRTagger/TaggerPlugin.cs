@@ -18,6 +18,9 @@ namespace TGWebhooks.PRTagger
 		public bool Enabled { get; set; }
 
 		/// <inheritdoc />
+		public Guid Guid => new Guid("3a6dd37c-3dee-4a7a-a016-885a4a775968");
+
+		/// <inheritdoc />
 		public string Name => "Pull Request Tagger";
 
 		/// <inheritdoc />
@@ -158,7 +161,7 @@ namespace TGWebhooks.PRTagger
 		}
 
 		/// <inheritdoc />
-		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager)
+		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager, IDataStore dataStore)
 		{
 			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
 		}

@@ -68,9 +68,12 @@ namespace TGWebhooks.Core
 		/// Configure the <see cref="Application"/>
 		/// </summary>
 		/// <param name="app">The <see cref="IApplicationBuilder"/> to configure</param>
-		/// <param name="env">The <see cref="IHostingEnvironment"/> to configure</param>
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+		/// <param name="env">The <see cref="IHostingEnvironment"/> of the <see cref="Application"/></param>
+		/// <param name="applicationLifetime">The <see cref="IApplicationLifetime"/> of the <see cref="Application"/></param>
+		public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime)
 		{
+			app.UsePluginManager(applicationLifetime);
+
 			if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
 

@@ -22,6 +22,9 @@ namespace TGWebhooks.TwentyFourHourRule
 		public bool Enabled { get; set; }
 
 		/// <inheritdoc />
+		public Guid Guid => new Guid("78544889-5447-47f2-b300-3fb7b703c3cc");
+
+		/// <inheritdoc />
 		public string Name => "24-Hour Rule";
 
 		/// <inheritdoc />
@@ -31,7 +34,7 @@ namespace TGWebhooks.TwentyFourHourRule
 		public IEnumerable<IMergeRequirement> MergeRequirements => new List<IMergeRequirement> { this };
 
 		/// <inheritdoc />
-		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager)
+		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager, IDataStore dataStore)
 		{
 			//intentionally left blank
 		}
