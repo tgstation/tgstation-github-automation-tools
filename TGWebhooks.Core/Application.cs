@@ -55,8 +55,7 @@ namespace TGWebhooks.Core
 			services.AddOptions();
 			services.Configure<GitHubConfiguration>(configuration.GetSection(GitHubConfiguration.Section));
 			services.Configure<TravisConfiguration>(configuration.GetSection(TravisConfiguration.Section));
-			services.AddSingleton<IComponentProvider, ComponentManager>();
-			services.AddSingleton<IPluginManager, PluginManager>();
+			services.AddSingleton<IComponentProvider, PluginManager>();
 			services.AddSingleton<IGitHubManager, GitHubManager>();
 			services.AddSingleton<IRepository, Repository>();
 			services.AddSingleton<ILogger, Logger>();

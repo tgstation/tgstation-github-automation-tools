@@ -53,8 +53,6 @@ namespace TGWebhooks.Core
 
 		async Task CheckMergePullRequest(PullRequest pullRequest, CancellationToken cancellationToken)
 		{
-			await componentProvider.Initialize(cancellationToken);
-
 			var results = await GetStatusesForPullRequest(pullRequest, cancellationToken);
 
 			bool merge = true;

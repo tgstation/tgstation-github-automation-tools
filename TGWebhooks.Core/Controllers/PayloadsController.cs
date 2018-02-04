@@ -96,8 +96,6 @@ namespace TGWebhooks.Core.Controllers
 		{
 			var cancellationToken = jobCancellationToken.ShutdownToken;
 
-			await componentProvider.Initialize(cancellationToken);
-
 			var tasks = new List<Task>();
 			foreach (var handler in componentProvider.GetPayloadHandlers<TPayload>()) {
 				async Task RunHandler()

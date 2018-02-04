@@ -16,6 +16,7 @@ namespace TGWebhooks.Tests
 		protected Mock<IGitHubManager> mockGitHubManager;
 		protected Mock<IIOManager> mockIOManager;
 		protected Mock<IWebRequestManager> mockWebRequestManager;
+		protected Mock<IDataStore> mockDataStore;
 
 		[TestMethod]
 		public void TestInstantiation()
@@ -27,6 +28,9 @@ namespace TGWebhooks.Tests
 			Assert.IsFalse(plugin.Enabled);
 			plugin.Enabled = true;
 			Assert.IsTrue(plugin.Enabled);
+
+			Assert.IsNotNull(plugin.Guid);
+			Assert.AreEqual(plugin.Guid, plugin.Guid);
 		}
 
 		[TestMethod]
@@ -43,7 +47,8 @@ namespace TGWebhooks.Tests
 			mockGitHubManager = new Mock<IGitHubManager>();
 			mockIOManager = new Mock<IIOManager>();
 			mockWebRequestManager = new Mock<IWebRequestManager>();
-			plugin.Configure(mockLogger.Object, mockRepository.Object, mockGitHubManager.Object, mockIOManager.Object, mockWebRequestManager.Object);
+			mockDataStore = new Mock<IDataStore>();
+			plugin.Configure(mockLogger.Object, mockRepository.Object, mockGitHubManager.Object, mockIOManager.Object, mockWebRequestManager.Object, mockDataStore.Object);
 
 			await plugin.Initialize(CancellationToken.None);
 

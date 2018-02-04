@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace TGWebhooks.Interface
 {
@@ -13,6 +11,11 @@ namespace TGWebhooks.Interface
 		/// If the <see cref="IPlugin"/> is enabled or not
 		/// </summary>
 		bool Enabled { get; set; }
+
+		/// <summary>
+		/// A unique <see cref="Guid"/> for the <see cref="IPlugin"/>
+		/// </summary>
+		Guid Guid { get; }
 
 		/// <summary>
 		/// The name of the <see cref="IPlugin"/>
@@ -32,6 +35,7 @@ namespace TGWebhooks.Interface
 		/// <param name="gitHubManager">The <see cref="IGitHubManager"/> for the <see cref="IPlugin"/></param>
 		/// <param name="ioManager">The <see cref="IIOManager"/> for the <see cref="IPlugin"/></param>
 		/// <param name="webRequestManager">The <see cref="IWebRequestManager"/> for the <see cref="IPlugin"/></param>
-		void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager);
+		/// <param name="dataStore">The <see cref="IDataStore"/> for the <see cref="IPlugin"/></param>
+		void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager, IDataStore dataStore);
 	}
 }

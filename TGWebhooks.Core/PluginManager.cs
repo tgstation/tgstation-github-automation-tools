@@ -5,12 +5,14 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using TGWebhooks.Core.Configuration;
+using TGWebhooks.Core.Model;
 using TGWebhooks.Interface;
 
 namespace TGWebhooks.Core
 {
 	/// <inheritdoc />
-	sealed class PluginManager : IPluginManager
+	sealed class PluginManager : IComponentProvider
 	{
 		/// <summary>
 		/// Directory relative to the current <see cref="Assembly"/> that contains <see cref="IPlugin"/> <see cref="Assembly"/>s
@@ -40,6 +42,10 @@ namespace TGWebhooks.Core
 		/// The <see cref="IWebRequestManager"/> for the <see cref="PluginManager"/>
 		/// </summary>
 		readonly IWebRequestManager requestManager;
+		/// <summary>
+		/// The <see cref="IRootDataStore"/> for the <see cref="PluginManager"/>
+		/// </summary>
+		readonly IRootDataStore rootDataStore;
 
 		/// <summary>
 		/// List of loaded <see cref="IPlugin"/>s
@@ -54,23 +60,27 @@ namespace TGWebhooks.Core
 		/// <param name="_gitHubManager">The value of <see cref="gitHubManager"/></param>
 		/// <param name="_ioManager">The value of <see cref="ioManager"/></param>
 		/// <param name="_requestManager">The value of <see cref="requestManager"/></param>
-		public PluginManager(ILogger _logger, IRepository _repository, IGitHubManager _gitHubManager, IIOManager _ioManager, IWebRequestManager _requestManager)
+		/// <param name="_rootDataStore">The value of <see cref="rootDataStore"/></param>
+		public PluginManager(ILogger _logger, IRepository _repository, IGitHubManager _gitHubManager, IIOManager _ioManager, IWebRequestManager _requestManager, IRootDataStore _rootDataStore)
 		{
 			logger = _logger ?? throw new ArgumentNullException(nameof(_logger));
 			repository = _repository ?? throw new ArgumentNullException(nameof(_repository));
 			gitHubManager = _gitHubManager ?? throw new ArgumentNullException(nameof(_gitHubManager));
 			ioManager = _ioManager ?? throw new ArgumentNullException(nameof(_ioManager));
 			requestManager = _requestManager ?? throw new ArgumentNullException(nameof(_requestManager));
+			rootDataStore = _rootDataStore ?? throw new ArgumentNullException(nameof(_rootDataStore));
 		}
-
-		/// <summary>
-		/// Load <see cref="IPlugin"/>s from <see cref="Assembly"/>s in the <see cref="PluginDllsDirectory"/>
-		/// </summary>
-		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
-		/// <returns>A <see cref="Task"/> representing the running operation</returns>
-		async Task LoadAllPlugins(CancellationToken cancellationToken) {
-			if (plugins != null)
-				return;
+		
+		/// <inheritdoc />
+		public async Task Initialize(CancellationToken cancellationToken)
+		{
+			async Task<PluginConfiguration> DBInit()
+			{
+				await rootDataStore.Initialize(cancellationToken);
+				return await rootDataStore.ReadData<PluginConfiguration>("PluginMetaData", cancellationToken);
+			}
+			//start initializing the db
+			var dbInit = DBInit();
 
 			var assemblyPath = Assembly.GetExecutingAssembly().Location;
 			var pluginDirectory = ioManager.ConcatPath(ioManager.GetDirectoryName(assemblyPath), PluginDllsDirectory);
@@ -81,7 +91,7 @@ namespace TGWebhooks.Core
 
 			var pluginsBuilder = new List<IPlugin>();
 			plugins = pluginsBuilder;
-			
+
 			if (!await ioManager.DirectoryExists(pluginDirectory, cancellationToken))
 				return;
 
@@ -91,7 +101,7 @@ namespace TGWebhooks.Core
 				try
 				{
 					var assembly = Assembly.ReflectionOnlyLoadFrom(I);
-				
+
 					var possiblePlugins = assembly.GetTypes().Where(CompatibilityPredicate);
 
 					if (!possiblePlugins.Any())
@@ -99,33 +109,43 @@ namespace TGWebhooks.Core
 
 					Assembly.LoadFrom(I);
 				}
-				catch(Exception e)
-				{
-					await logger.LogUnhandledException(e, cancellationToken);
-				}
-
-			var dataIOManager = new ResolvingIOManager(ioManager, Application.DataDirectory);
-
-			//load once from the AppDomain to ensure that we don't instance multiple copies of the same type
-			foreach (var type in AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes().Where(CompatibilityPredicate)))
-				try
-				{
-					var plugin = (IPlugin)Activator.CreateInstance(type);
-					plugin.Configure(logger, repository, gitHubManager, dataIOManager, requestManager);
-					plugin.Enabled = true;
-					await plugin.Initialize(cancellationToken);
-					pluginsBuilder.Add(plugin);
-				}
 				catch (Exception e)
 				{
 					await logger.LogUnhandledException(e, cancellationToken);
 				}
-		}
-		
-		/// <inheritdoc />
-		public Task Initialize(CancellationToken cancellationToken)
-		{
-			return LoadAllPlugins(cancellationToken);
+
+			var pluginConfigs = await dbInit;
+
+			var dataIOManager = new ResolvingIOManager(ioManager, Application.DataDirectory);
+
+			var tasks = new List<Task<IPlugin>>();
+
+			async Task<IPlugin> InitPlugin(Type type)
+			{
+				try
+				{
+					var plugin = (IPlugin)Activator.CreateInstance(type);
+					var pluginData = await rootDataStore.BranchOnKey(plugin.Guid.ToString(), cancellationToken);
+					plugin.Configure(logger, repository, gitHubManager, dataIOManager, requestManager, pluginData);
+					if (!pluginConfigs.EnabledPlugins.TryGetValue(plugin.Guid, out bool enabled))
+					{
+						enabled = true;
+						pluginConfigs.EnabledPlugins.Add(plugin.Guid, enabled);
+					}
+					plugin.Enabled = enabled;
+					await plugin.Initialize(cancellationToken);
+					return plugin;
+				}
+				catch (Exception e)
+				{
+					await logger.LogUnhandledException(e, cancellationToken);
+					return null;
+				}
+			};
+
+			//load once from the AppDomain to ensure that we don't instance multiple copies of the same type
+			var loadedPlugins = await Task.WhenAll(AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes().Where(CompatibilityPredicate)).Select(x => InitPlugin(x)));
+			pluginsBuilder.AddRange(loadedPlugins.Where(x => x != null));
 		}
 
 		/// <inheritdoc />

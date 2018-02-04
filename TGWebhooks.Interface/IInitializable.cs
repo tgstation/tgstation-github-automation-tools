@@ -9,7 +9,7 @@ namespace TGWebhooks.Interface
     public interface IInitializable
 	{
 		/// <summary>
-		/// Load components in the <see cref="IComponentProvider"/>. Will be called before any other function. May be called multiple times
+		/// Load components in the <see cref="IComponentProvider"/>. Will be called before any other function
 		/// </summary>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
