@@ -32,6 +32,12 @@ namespace TGWebhooks.Interface
 		Task<PullRequest> GetPullRequest(int number);
 
 		/// <summary>
+		/// Gets all open <see cref="PullRequest"/>s
+		/// </summary>
+		/// <returns>A <see cref="Task{TResult}"/> resulting in a <see cref="IReadOnlyList{T}"/> of open <see cref="PullRequest"/>s</returns>
+		Task<IReadOnlyList<PullRequest>> GetOpenPullRequests();
+
+		/// <summary>
 		/// Get the <see cref="CommitStatus"/>es for the latest <see cref="Commit"/> of a <paramref name="pullRequest"/>
 		/// </summary>
 		/// <param name="pullRequest">The <see cref="PullRequest"/></param>
@@ -64,5 +70,13 @@ namespace TGWebhooks.Interface
 		/// <param name="user">The <see cref="User"/> to check access for</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in <see langword="true"/> if the <paramref name="user"/> has write access, <see langword="false"/> otherwise</returns>
 		Task<bool> UserHasWriteAccess(User user);
+
+		/// <summary>
+		/// Adds a <paramref name="label"/> to a given <see cref="Issue"/>
+		/// </summary>
+		/// <param name="number">The <see cref="Issue.Number"/> of the <see cref="Issue"/> to label</param>
+		/// <param name="label">The label to add</param>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		Task AddLabel(int number, string label);
 	}
 }

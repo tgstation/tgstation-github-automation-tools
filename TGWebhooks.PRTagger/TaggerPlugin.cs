@@ -120,6 +120,43 @@ namespace TGWebhooks.PRTagger
 			await gitHubManager.SetIssueLabels(payload.PullRequest.Number, newLabels);
 		}
 
+		/// <summary>
+		/// Checks all open PRs for if they should have the 'Merge Conflict' tag
+		/// </summary>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		async Task CheckMergeConflicts()
+		{
+			Task AddMergeConflictTag(PullRequest pullRequest)
+			{
+				return gitHubManager.AddLabel(pullRequest.Number, "Merge Conflict");
+			};
+
+			async Task RefreshPR(PullRequest pullRequest)
+			{
+				//wait 10s for refresh then give up
+				await Task.Delay(10000);
+				pullRequest = await gitHubManager.GetPullRequest(pullRequest.Number);
+				if(pullRequest.Mergeable.HasValue && !pullRequest.Mergeable.Value)
+					await AddMergeConflictTag(pullRequest);
+			};
+
+			var tasks = new List<Task>();
+
+			var prs = await gitHubManager.GetOpenPullRequests();
+			foreach (var I in prs)
+				if (I.Mergeable.HasValue)
+				{
+					if (I.Mergeable.Value)
+						continue;
+					else
+						tasks.Add(AddMergeConflictTag(I));
+				}
+				else
+					tasks.Add(RefreshPR(I));
+
+			await Task.WhenAll(tasks);
+		}
+
 		/// <inheritdoc />
 		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager)
 		{
@@ -151,6 +188,10 @@ namespace TGWebhooks.PRTagger
 					break;
 				case "synchronize":
 					await TagPR(payload, false);
+					break;
+				case "closed":
+					if (payload.PullRequest.Merged)
+						await CheckMergeConflicts();
 					break;
 				default:
 					throw new NotSupportedException();

@@ -117,5 +117,23 @@ namespace TGWebhooks.Core
 			var permission = permissionLevel.Permission.Value;
 			return permission == PermissionLevel.Write || permission == PermissionLevel.Admin;
 		}
+
+		/// <inheritdoc />
+		public Task<IReadOnlyList<PullRequest>> GetOpenPullRequests()
+		{
+			return gitHubClient.PullRequest.GetAllForRepository(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, new PullRequestRequest
+			{
+				State = ItemStateFilter.Open
+			});
+		}
+
+		/// <inheritdoc />
+		public Task AddLabel(int number, string label)
+		{
+			IssueArgumentCheck(number);
+			if (label == null)
+				throw new ArgumentNullException(nameof(label));
+			return gitHubClient.Issue.Labels.AddToIssue(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, number, new string[] { label });
+		}
 	}
 }
