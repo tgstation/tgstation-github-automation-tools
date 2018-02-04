@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Octokit;
+﻿using Octokit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +12,7 @@ using TGWebhooks.Interface;
 namespace TGWebhooks.Core
 {
 	/// <inheritdoc />
-	sealed class PluginManager : IComponentProvider
+	sealed class PluginManager : IPluginManager
 	{
 		/// <summary>
 		/// Directory relative to the current <see cref="Assembly"/> that contains <see cref="IPlugin"/> <see cref="Assembly"/>s

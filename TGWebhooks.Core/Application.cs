@@ -1,13 +1,16 @@
-﻿using Hangfire;
+﻿using Cyberboss.AspNetCore.AsyncInitializer;
+using Hangfire;
 using Hangfire.SQLite;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Data.Sqlite;
 using System;
 using System.IO;
 using TGWebhooks.Core.Configuration;
 using TGWebhooks.Interface;
+using TGWebhooks.Core.Model;
 
 namespace TGWebhooks.Core
 {
@@ -50,18 +53,20 @@ namespace TGWebhooks.Core
 		/// <param name="services">The <see cref="IServiceCollection"/> to configure</param>
         public void ConfigureServices(IServiceCollection services)
         {
-			services.AddHangfire(_ => _.UseSQLiteStorage(Path.Combine(DataDirectory, "HangfireDatabase.sqlite3")));
+			services.AddHangfire(_ => _.UseSQLiteStorage(new SqliteConnectionStringBuilder { DataSource = Path.Combine(DataDirectory, "HangfireDatabase.sqlite3") }.ConnectionString));
             services.AddMvc();
 			services.AddOptions();
 			services.Configure<GitHubConfiguration>(configuration.GetSection(GitHubConfiguration.Section));
 			services.Configure<TravisConfiguration>(configuration.GetSection(TravisConfiguration.Section));
-			services.AddSingleton<IComponentProvider, PluginManager>();
+			services.AddSingleton<IPluginManager, PluginManager>();
+			services.AddSingleton<IComponentProvider>(x => x.GetRequiredService<IPluginManager>());
 			services.AddSingleton<IGitHubManager, GitHubManager>();
 			services.AddSingleton<IRepository, Repository>();
 			services.AddSingleton<ILogger, Logger>();
 			services.AddSingleton<IIOManager, DefaultIOManager>();
 			services.AddSingleton<IWebRequestManager, WebRequestManager>();
 			services.AddSingleton<IContinuousIntegration, TravisContinuousIntegration>();
+			services.AddSingleton<IRootDataStore, SQLiteDataStore>();
         }
 
 		/// <summary>
@@ -70,9 +75,10 @@ namespace TGWebhooks.Core
 		/// <param name="app">The <see cref="IApplicationBuilder"/> to configure</param>
 		/// <param name="env">The <see cref="IHostingEnvironment"/> of the <see cref="Application"/></param>
 		/// <param name="applicationLifetime">The <see cref="IApplicationLifetime"/> of the <see cref="Application"/></param>
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime)
+		/// <param name="serviceProvider">The <see cref="IServiceProvider"/> for the <see cref="Application"/></param>
+		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 		{
-			app.UsePluginManager(applicationLifetime);
+			app.UseAsyncInitialization<IPluginManager>((pluginManager, cancellationToken) => pluginManager.Initialize(cancellationToken));
 
 			if (env.IsDevelopment())
                 app.UseDeveloperExceptionPage();
