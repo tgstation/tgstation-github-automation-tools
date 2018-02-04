@@ -11,6 +11,7 @@ using System.IO;
 using TGWebhooks.Core.Configuration;
 using TGWebhooks.Interface;
 using TGWebhooks.Core.Model;
+using System.Threading;
 
 namespace TGWebhooks.Core
 {
@@ -53,9 +54,10 @@ namespace TGWebhooks.Core
 		/// <param name="services">The <see cref="IServiceCollection"/> to configure</param>
         public void ConfigureServices(IServiceCollection services)
         {
-			var builder = new SqliteConnectionStringBuilder { DataSource = Path.Combine(DataDirectory, "HangfireDatabase.sqlite3") };
-			var cstest = builder.ConnectionString.ToLower().Contains("data source");
-			services.AddHangfire(_ => _.UseSQLiteStorage(builder.ConnectionString));
+			services.AddHangfire(_ => _.UseSQLiteStorage(new SqliteConnectionStringBuilder {
+				DataSource = Path.Combine(DataDirectory, "HangfireDatabase.sqlite3"),
+				Mode = SqliteOpenMode.ReadWriteCreate
+			}.ConnectionString));
             services.AddMvc();
 			services.AddOptions();
 			services.Configure<GitHubConfiguration>(configuration.GetSection(GitHubConfiguration.Section));
@@ -80,6 +82,8 @@ namespace TGWebhooks.Core
 		/// <param name="serviceProvider">The <see cref="IServiceProvider"/> for the <see cref="Application"/></param>
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 		{
+			app.ApplicationServices.GetRequiredService<IIOManager>().CreateDirectory(DataDirectory, CancellationToken.None).GetAwaiter().GetResult();
+
 			app.UseAsyncInitialization<IPluginManager>((pluginManager, cancellationToken) => pluginManager.Initialize(cancellationToken));
 
 			if (env.IsDevelopment())

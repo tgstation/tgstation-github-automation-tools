@@ -93,7 +93,10 @@ namespace TGWebhooks.Core
 			plugins = pluginsBuilder;
 
 			if (!await ioManager.DirectoryExists(pluginDirectory, cancellationToken))
+			{
+				await dbInit;
 				return;
+			}
 
 			bool CompatibilityPredicate(Type x) => x.IsPublic && x.IsClass && !x.IsAbstract && typeof(IPlugin).IsAssignableFrom(x) && x.GetConstructors().Any(y => y.IsPublic && y.GetParameters().Count() == 0);
 
