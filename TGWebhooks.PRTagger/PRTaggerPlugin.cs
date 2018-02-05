@@ -12,7 +12,7 @@ namespace TGWebhooks.PRTagger
 	/// <summary>
 	/// <see cref="IPlugin"/> for auto labelling a <see cref="PullRequest"/>
 	/// </summary>
-	public class PRTaggerPlugin : IPlugin, IPayloadHandler<PullRequestEventPayload>
+	sealed public class PRTaggerPlugin : IPlugin, IPayloadHandler<PullRequestEventPayload>
 	{
 		/// <inheritdoc />
 		public bool Enabled { get; set; }
@@ -179,7 +179,7 @@ namespace TGWebhooks.PRTagger
 			if (gitHubManager == null)
 				throw new InvalidOperationException("Configure() wasn't called!");
 			if (typeof(TPayload) == typeof(PullRequestEventPayload))
-				yield return (IPayloadHandler<TPayload>)this;
+				yield return (IPayloadHandler<TPayload>)(object)this;
 		}
 
 		/// <inheritdoc />
