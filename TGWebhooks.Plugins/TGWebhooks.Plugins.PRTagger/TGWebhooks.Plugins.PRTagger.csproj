@@ -18,7 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TGWebhooks.Api\TGWebhooks.Api.csproj" />
+    <ProjectReference Include="..\..\TGWebhooks.Api\TGWebhooks.Api.csproj" />
   </ItemGroup>
 
 </Project>

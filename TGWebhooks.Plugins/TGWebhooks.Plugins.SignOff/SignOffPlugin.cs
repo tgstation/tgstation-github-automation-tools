@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Octokit;
 using TGWebhooks.Api;
 
-namespace TGWebhooks.SignOff
+namespace TGWebhooks.Plugins.SignOff
 {
 	/// <summary>
 	/// <see cref="IPlugin"/> containing the Maintainer Sign Off <see cref="IMergeRequirement"/>

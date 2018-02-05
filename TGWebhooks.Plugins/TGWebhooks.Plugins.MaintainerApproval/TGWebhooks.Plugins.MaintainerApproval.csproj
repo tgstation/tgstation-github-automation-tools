@@ -5,9 +5,9 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.0\TGWebhooks.SignOff.xml</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsAsErrors />
+    <DocumentationFile>bin\Release\netstandard2.0\TGWebhooks.MaintainerApproval.xml</DocumentationFile>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TGWebhooks.Api\TGWebhooks.Api.csproj" />
+    <ProjectReference Include="..\..\TGWebhooks.Api\TGWebhooks.Api.csproj" />
   </ItemGroup>
 
 </Project>

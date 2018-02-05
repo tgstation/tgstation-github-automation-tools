@@ -264,16 +264,16 @@ namespace TGWebhooks.Core
 		}
 
 		/// <inheritdoc />
-		public Task ApprovePullRequest(PullRequest pullRequest, string body)
+		public Task ApprovePullRequest(PullRequest pullRequest, string approveMessage)
 		{
 			if (pullRequest == null)
 				throw new ArgumentNullException(nameof(pullRequest));
-			if (body == null)
-				throw new ArgumentNullException(nameof(body));
+			if (approveMessage == null)
+				throw new ArgumentNullException(nameof(approveMessage));
 
 			return gitHubClient.PullRequest.Review.Create(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, pullRequest.Number, new PullRequestReviewCreate
 			{
-				Body = body,
+				Body = approveMessage,
 				Event = PullRequestReviewEvent.Approve
 			});
 		}

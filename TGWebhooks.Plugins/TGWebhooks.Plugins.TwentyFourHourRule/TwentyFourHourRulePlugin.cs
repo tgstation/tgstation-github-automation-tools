@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Api;
 
-namespace TGWebhooks.TwentyFourHourRule
+namespace TGWebhooks.Plugins.TwentyFourHourRule
 {
 	/// <summary>
 	/// <see cref="IPlugin"/> for the 24-Hour Rule <see cref="IMergeRequirement"/>

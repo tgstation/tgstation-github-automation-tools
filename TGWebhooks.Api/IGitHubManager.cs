@@ -99,17 +99,18 @@ namespace TGWebhooks.Api
 		Task CompleteAuthorization(string code, IResponseCookies cookies, CancellationToken cancellationToken);
 
 		/// <summary>
-		/// Creates a comment on the specified issue, or updates the first one if it has already done so
+		/// Creates a comment on the specified <see cref="Issue"/>, or updates the first one if it has already done so
 		/// </summary>
-		/// <param name="issueNumber">The number of the issue</param>
+		/// <param name="number">The number of the <see cref="Issue"/></param>
 		/// <param name="body">The body of the comment</param>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
 		Task CreateSingletonComment(int number, string body, CancellationToken cancellationToken);
 
 		/// <summary>
-		/// Creates a comment on the specified issue
+		/// Creates a comment on the specified <see cref="Issue"/>
 		/// </summary>
-		/// <param name="issueNumber">The number of the issue</param>
+		/// <param name="number">The number of the <see cref="Issue"/></param>
 		/// <param name="body">The body of the comment</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
 		Task CreateComment(int number, string body);
@@ -118,8 +119,9 @@ namespace TGWebhooks.Api
 		/// Creates an "Approved" review on <paramref name="pullRequest"/>
 		/// </summary>
 		/// <param name="pullRequest">The <see cref="PullRequest"/> to approve</param>
+		/// <param name="approveMessage">The message to approve with</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
-		Task ApprovePullRequest(PullRequest pullRequest, string body);
+		Task ApprovePullRequest(PullRequest pullRequest, string approveMessage);
 
 		/// <summary>
 		/// Dismiss a <paramref name="pullRequestReview"/>

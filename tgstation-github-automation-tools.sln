@@ -6,14 +6,11 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TGWebhooks.Core", "TGWebhooks.Core\TGWebhooks.Core.csproj", "{E7BD6BF9-B924-45DD-9D74-7CD1D9C72E76}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{44D4DAF0-2B21-4833-B70D-0E2693BCB1B1}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TGWebhooks.PRTagger", "TGWebhooks.PRTagger\TGWebhooks.PRTagger.csproj", "{CFE2A469-122B-487D-B463-745B7F7B5D7A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8DF46DEB-5CBE-4049-9D03-47C8E6F856CE} = {8DF46DEB-5CBE-4049-9D03-47C8E6F856CE}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TGWebhooks.Api", "TGWebhooks.Api\TGWebhooks.Api.csproj", "{408BC9DE-CD53-4E57-A6A5-2498DB54AD06}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TGWebhooks.TwentyFourHourRule", "TGWebhooks.TwentyFourHourRule\TGWebhooks.TwentyFourHourRule.csproj", "{7D1385AD-3C60-4B2A-A2E1-FCCF719DAECD}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TGWebhooks.MaintainerApproval", "TGWebhooks.MaintainerApproval\TGWebhooks.MaintainerApproval.csproj", "{7D400AEA-C23E-4023-9548-0B71690A8969}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TGWebhooks.Tests", "TGWebhooks.Tests\TGWebhooks.Tests.csproj", "{8DF46DEB-5CBE-4049-9D03-47C8E6F856CE}"
 EndProject
@@ -32,7 +29,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{33DBC235
 		Tools\UploadCoverage.ps1 = Tools\UploadCoverage.ps1
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TGWebhooks.SignOff", "TGWebhooks.SignOff\TGWebhooks.SignOff.csproj", "{8B46A52F-B7B3-4C2A-BA8C-35BB101A664E}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{436FAEBC-BDD2-446F-B92E-E940410FA6EC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TGWebhooks.Plugins.MaintainerApproval", "TGWebhooks.Plugins\TGWebhooks.Plugins.MaintainerApproval\TGWebhooks.Plugins.MaintainerApproval.csproj", "{2D908811-C844-42F2-9BF8-D033BED236E6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TGWebhooks.Plugins.PRTagger", "TGWebhooks.Plugins\TGWebhooks.Plugins.PRTagger\TGWebhooks.Plugins.PRTagger.csproj", "{59DF13E7-2615-43E5-BF06-C81346E30A56}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TGWebhooks.Plugins.SignOff", "TGWebhooks.Plugins\TGWebhooks.Plugins.SignOff\TGWebhooks.Plugins.SignOff.csproj", "{C91B4C56-1E0A-4223-894C-F7D53CBA1CD0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TGWebhooks.Plugins.TwentyFourHourRule", "TGWebhooks.Plugins\TGWebhooks.Plugins.TwentyFourHourRule\TGWebhooks.Plugins.TwentyFourHourRule.csproj", "{1EA51714-7011-48A6-84DB-AB852481EDD0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -48,33 +53,39 @@ Global
 		{44D4DAF0-2B21-4833-B70D-0E2693BCB1B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44D4DAF0-2B21-4833-B70D-0E2693BCB1B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44D4DAF0-2B21-4833-B70D-0E2693BCB1B1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CFE2A469-122B-487D-B463-745B7F7B5D7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CFE2A469-122B-487D-B463-745B7F7B5D7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CFE2A469-122B-487D-B463-745B7F7B5D7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CFE2A469-122B-487D-B463-745B7F7B5D7A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{408BC9DE-CD53-4E57-A6A5-2498DB54AD06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{408BC9DE-CD53-4E57-A6A5-2498DB54AD06}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{408BC9DE-CD53-4E57-A6A5-2498DB54AD06}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{408BC9DE-CD53-4E57-A6A5-2498DB54AD06}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7D1385AD-3C60-4B2A-A2E1-FCCF719DAECD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7D1385AD-3C60-4B2A-A2E1-FCCF719DAECD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7D1385AD-3C60-4B2A-A2E1-FCCF719DAECD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7D1385AD-3C60-4B2A-A2E1-FCCF719DAECD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7D400AEA-C23E-4023-9548-0B71690A8969}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7D400AEA-C23E-4023-9548-0B71690A8969}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7D400AEA-C23E-4023-9548-0B71690A8969}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7D400AEA-C23E-4023-9548-0B71690A8969}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8DF46DEB-5CBE-4049-9D03-47C8E6F856CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8DF46DEB-5CBE-4049-9D03-47C8E6F856CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DF46DEB-5CBE-4049-9D03-47C8E6F856CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DF46DEB-5CBE-4049-9D03-47C8E6F856CE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8B46A52F-B7B3-4C2A-BA8C-35BB101A664E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8B46A52F-B7B3-4C2A-BA8C-35BB101A664E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8B46A52F-B7B3-4C2A-BA8C-35BB101A664E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8B46A52F-B7B3-4C2A-BA8C-35BB101A664E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D908811-C844-42F2-9BF8-D033BED236E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D908811-C844-42F2-9BF8-D033BED236E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D908811-C844-42F2-9BF8-D033BED236E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D908811-C844-42F2-9BF8-D033BED236E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59DF13E7-2615-43E5-BF06-C81346E30A56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59DF13E7-2615-43E5-BF06-C81346E30A56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59DF13E7-2615-43E5-BF06-C81346E30A56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59DF13E7-2615-43E5-BF06-C81346E30A56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C91B4C56-1E0A-4223-894C-F7D53CBA1CD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C91B4C56-1E0A-4223-894C-F7D53CBA1CD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C91B4C56-1E0A-4223-894C-F7D53CBA1CD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C91B4C56-1E0A-4223-894C-F7D53CBA1CD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EA51714-7011-48A6-84DB-AB852481EDD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EA51714-7011-48A6-84DB-AB852481EDD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EA51714-7011-48A6-84DB-AB852481EDD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EA51714-7011-48A6-84DB-AB852481EDD0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2D908811-C844-42F2-9BF8-D033BED236E6} = {436FAEBC-BDD2-446F-B92E-E940410FA6EC}
+		{59DF13E7-2615-43E5-BF06-C81346E30A56} = {436FAEBC-BDD2-446F-B92E-E940410FA6EC}
+		{C91B4C56-1E0A-4223-894C-F7D53CBA1CD0} = {436FAEBC-BDD2-446F-B92E-E940410FA6EC}
+		{1EA51714-7011-48A6-84DB-AB852481EDD0} = {436FAEBC-BDD2-446F-B92E-E940410FA6EC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {09436127-EA02-426A-AACA-A1F043D960AD}

@@ -11,9 +11,10 @@ COPY TGWebhooks.Api/TGWebhooks.Api.csproj TGWebhooks.Api/
 #ignore the nuget warnings about missing .Tests and the .dcproj
 
 #TODO copy all plugins for nuget restore
-COPY TGWebhooks.MaintainerApproval/TGWebhooks.MaintainerApproval.csproj TGWebhooks.MaintainerApproval/
-COPY TGWebhooks.PRTagger/TGWebhooks.PRTagger.csproj TGWebhooks.PRTagger/
-COPY TGWebhooks.TwentyFourHourRule/TGWebhooks.TwentyFourHourRule.csproj TGWebhooks.TwentyFourHourRule/
+COPY TGWebhooks.Plugins/TGWebhooks.Plugins.MaintainerApproval/TGWebhooks.Plugins.MaintainerApproval.csproj TGWebhooks.Plugins/TGWebhooks.Plugins.MaintainerApproval/
+COPY TGWebhooks.Plugins/TGWebhooks.Plugins.PRTagger/TGWebhooks.Plugins.PRTagger.csproj TGWebhooks.Plugins/TGWebhooks.Plugins.PRTagger/
+COPY TGWebhooks.Plugins/TGWebhooks.Plugins.SignOff/TGWebhooks.Plugins.SignOff.csproj TGWebhooks.Plugins/TGWebhooks.Plugins.SignOff/
+COPY TGWebhooks.Plugins/TGWebhooks.Plugins.TwentyFourHourRule/TGWebhooks.Plugins.TwentyFourHourRule.csproj TGWebhooks.Plugins/TGWebhooks.Plugins.TwentyFourHourRule/
 #END
 
 RUN dotnet restore
@@ -22,11 +23,13 @@ WORKDIR /src/TGWebhooks.Core
 RUN dotnet build -c Release -o /app
 
 #TODO switch to each plugin and build it to /app/Plugins
-WORKDIR /src/TGWebhooks.MaintainerApproval
+WORKDIR /src/TGWebhooks.Plugins/TGWebhooks.Plugins.MaintainerApproval
 RUN dotnet build -c Release -o /app/Plugins
-WORKDIR /src/TGWebhooks.PRTagger
+WORKDIR /src/TGWebhooks.Plugins/TGWebhooks.Plugins.PRTagger
 RUN dotnet build -c Release -o /app/Plugins
-WORKDIR /src/TGWebhooks.TwentyFourHourRule
+WORKDIR /src/TGWebhooks.Plugins/TGWebhooks.Plugins.SignOff
+RUN dotnet build -c Release -o /app/Plugins
+WORKDIR /src/TGWebhooks.Plugins/TGWebhooks.Plugins.TwentyFourHourRule
 RUN dotnet build -c Release -o /app/Plugins
 #END
 
@@ -35,11 +38,13 @@ WORKDIR /src/TGWebhooks.Core
 RUN dotnet publish -c Release -o /app
 
 #TODO switch to each plugin and publish it to /app/Plugins
-WORKDIR /src/TGWebhooks.MaintainerApproval
+WORKDIR /src/TGWebhooks.Plugins/TGWebhooks.Plugins.MaintainerApproval
 RUN dotnet publish -c Release -o /app/Plugins
-WORKDIR /src/TGWebhooks.PRTagger
+WORKDIR /src/TGWebhooks.Plugins/TGWebhooks.Plugins.PRTagger
 RUN dotnet publish -c Release -o /app/Plugins
-WORKDIR /src/TGWebhooks.TwentyFourHourRule
+WORKDIR /src/TGWebhooks.Plugins/TGWebhooks.Plugins.SignOff
+RUN dotnet publish -c Release -o /app/Plugins
+WORKDIR /src/TGWebhooks.Plugins/TGWebhooks.Plugins.TwentyFourHourRule
 RUN dotnet publish -c Release -o /app/Plugins
 #END
 

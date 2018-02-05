@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Tests;
 
-namespace TGWebhooks.TwentyFourHourRule.Tests
+namespace TGWebhooks.Plugins.TwentyFourHourRule.Tests
 {
 	[TestClass]
 	public sealed class TestTwentyFourHourRule : TestPlugin<TwentyFourHourRulePlugin>

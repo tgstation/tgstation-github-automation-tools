@@ -26,10 +26,10 @@
   <ItemGroup>
     <ProjectReference Include="..\TGWebhooks.Core\TGWebhooks.Core.csproj" />
     <ProjectReference Include="..\TGWebhooks.Api\TGWebhooks.Api.csproj" />
-    <ProjectReference Include="..\TGWebhooks.MaintainerApproval\TGWebhooks.MaintainerApproval.csproj" />
-    <ProjectReference Include="..\TGWebhooks.PRTagger\TGWebhooks.PRTagger.csproj" />
-    <ProjectReference Include="..\TGWebhooks.SignOff\TGWebhooks.SignOff.csproj" />
-    <ProjectReference Include="..\TGWebhooks.TwentyFourHourRule\TGWebhooks.TwentyFourHourRule.csproj" />
+    <ProjectReference Include="..\TGWebhooks.Plugins\TGWebhooks.Plugins.MaintainerApproval\TGWebhooks.Plugins.MaintainerApproval.csproj" />
+    <ProjectReference Include="..\TGWebhooks.Plugins\TGWebhooks.Plugins.PRTagger\TGWebhooks.Plugins.PRTagger.csproj" />
+    <ProjectReference Include="..\TGWebhooks.Plugins\TGWebhooks.Plugins.SignOff\TGWebhooks.Plugins.SignOff.csproj" />
+    <ProjectReference Include="..\TGWebhooks.Plugins\TGWebhooks.Plugins.TwentyFourHourRule\TGWebhooks.Plugins.TwentyFourHourRule.csproj" />
   </ItemGroup>
 
   <ItemGroup>

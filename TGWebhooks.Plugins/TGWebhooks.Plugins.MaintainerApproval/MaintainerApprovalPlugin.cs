@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Api;
 
-namespace TGWebhooks.MaintainerApproval
+namespace TGWebhooks.Plugins.MaintainerApproval
 {
 	/// <summary>
 	/// <see cref="IPlugin"/> for a <see cref="IMergeRequirement"/> that requires at least one maintainer approval and no outstanding changes requested

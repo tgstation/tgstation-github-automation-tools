@@ -8,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Tests;
 
-namespace TGWebhooks.MaintainerApproval.Tests
+namespace TGWebhooks.Plugins.MaintainerApproval.Tests
 {
 	[TestClass]
 	public sealed class TestMaintainerApproval : TestPlugin<MaintainerApprovalPlugin>

@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Api;
 
-namespace TGWebhooks.PRTagger
+namespace TGWebhooks.Plugins.PRTagger
 {
 	/// <summary>
 	/// <see cref="IPlugin"/> for auto labelling a <see cref="PullRequest"/>
