@@ -15,7 +15,7 @@ namespace TGWebhooks.Core
 {
 	/// <inheritdoc />
 #pragma warning disable CA1812
-	sealed class GitHubManager : IGitHubManager
+	sealed class GitHubManager : IGitHubManager, IDisposable
 #pragma warning restore CA1812
 	{
 		/// <summary>
@@ -39,6 +39,15 @@ namespace TGWebhooks.Core
 		/// The <see cref="IDataStore"/> for the <see cref="GitHubManager"/>
 		/// </summary>
 		readonly IDataStore dataStore;
+
+		/// <summary>
+		/// Used for controlled access of <see cref="knownUser"/>
+		/// </summary>
+		SemaphoreSlim semaphore;
+		/// <summary>
+		/// The <see cref="User"/> we are using the API with
+		/// </summary>
+		User knownUser;
 
 		/// <summary>
 		/// Validate an <see cref="Issue"/> <paramref name="number"/>
@@ -67,6 +76,28 @@ namespace TGWebhooks.Core
 				Credentials = new Credentials(gitHubConfiguration.PersonalAccessToken)
 			};
 			dataStore = branchingDataStore.BranchOnKey("GitHub");
+			semaphore = new SemaphoreSlim(1);
+		}
+
+		public void Dispose()
+		{
+			semaphore.Dispose();
+		}
+		
+		/// <summary>
+		/// Sets <see cref="knownUser"/> if it is <see langword="null"/>
+		/// </summary>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		async Task CheckUser(bool doLock, CancellationToken cancellationToken)
+		{
+			if (!doLock)
+			{
+				if (knownUser == null)
+					knownUser = await gitHubClient.User.Current().ConfigureAwait(false);
+				return;
+			}
+			using (SemaphoreSlimContext.Lock(semaphore, cancellationToken))
+				await CheckUser(false, cancellationToken).ConfigureAwait(false);
 		}
 
 		async Task<List<AccessTokenEntry>> GetTrimmedTokenEntries(CancellationToken cancellationToken)
@@ -200,6 +231,77 @@ namespace TGWebhooks.Core
 			cookies.Append(newEntry.Cookie.ToString(), newEntry.AccessToken);
 			var tokenEntries = await GetTrimmedTokenEntries(cancellationToken).ConfigureAwait(false);
 			tokenEntries.Add(newEntry);
+		}
+
+		/// <inheritdoc />
+		public async Task CreateSingletonComment(int number, string body, CancellationToken cancellationToken)
+		{
+			IssueArgumentCheck(number);
+			if (body == null)
+				throw new ArgumentNullException(nameof(body));
+
+			var openComments = gitHubClient.Issue.Comment.GetAllForIssue(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, number);
+
+			await CheckUser(true, cancellationToken).ConfigureAwait(false);
+
+			foreach (var I in await openComments.ConfigureAwait(false))
+				if (I.User.Id == knownUser.Id)
+				{
+					await gitHubClient.Issue.Comment.Update(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, I.Id, body).ConfigureAwait(false);
+					return;
+				}
+
+			await CreateComment(number, body).ConfigureAwait(false);
+		}
+
+		/// <inheritdoc />
+		public Task CreateComment(int number, string body)
+		{
+			IssueArgumentCheck(number);
+			if (body == null)
+				throw new ArgumentNullException(nameof(body));
+			return gitHubClient.Issue.Comment.Create(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, number, body);
+		}
+
+		/// <inheritdoc />
+		public Task ApprovePullRequest(PullRequest pullRequest, string body)
+		{
+			if (pullRequest == null)
+				throw new ArgumentNullException(nameof(pullRequest));
+			if (body == null)
+				throw new ArgumentNullException(nameof(body));
+
+			return gitHubClient.PullRequest.Review.Create(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, pullRequest.Number, new PullRequestReviewCreate
+			{
+				Body = body,
+				Event = PullRequestReviewEvent.Approve
+			});
+		}
+
+		/// <inheritdoc />
+		public Task DismissReview(PullRequest pullRequest, PullRequestReview pullRequestReview, string dismissMessage)
+		{
+			if (pullRequest == null)
+				throw new ArgumentNullException(nameof(pullRequest));
+			if (pullRequestReview == null)
+				throw new ArgumentNullException(nameof(pullRequestReview));
+			if (dismissMessage == null)
+				throw new ArgumentNullException(nameof(dismissMessage));
+
+			return gitHubClient.PullRequest.Review.Dismiss(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, pullRequest.Number, pullRequestReview.Id, new PullRequestReviewDismiss
+			{
+				Message = dismissMessage
+			});
+		}
+
+		/// <inheritdoc />
+		public async Task<User> GetBotLogin(CancellationToken cancellationToken)
+		{
+			using (await SemaphoreSlimContext.Lock(semaphore, cancellationToken).ConfigureAwait(false))
+			{
+				await CheckUser(false, cancellationToken).ConfigureAwait(false);
+				return knownUser;
+			}
 		}
 	}
 }

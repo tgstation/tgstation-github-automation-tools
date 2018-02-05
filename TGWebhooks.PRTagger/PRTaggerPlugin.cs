@@ -183,23 +183,22 @@ namespace TGWebhooks.PRTagger
 		}
 
 		/// <inheritdoc />
-		public async Task ProcessPayload(PullRequestEventPayload payload, CancellationToken cancellationToken)
+		public Task ProcessPayload(PullRequestEventPayload payload, CancellationToken cancellationToken)
 		{
+			if (payload == null)
+				throw new ArgumentNullException(nameof(payload));
 			switch (payload.Action)
 			{
 				case "opened":
-					await TagPR(payload, true).ConfigureAwait(false);
-					break;
+					return TagPR(payload, true);
 				case "synchronize":
-					await TagPR(payload, false).ConfigureAwait(false);
-					break;
+					return TagPR(payload, false);
 				case "closed":
 					if (payload.PullRequest.Merged)
-						await CheckMergeConflicts().ConfigureAwait(false);
+						return CheckMergeConflicts();
 					break;
-				default:
-					throw new NotSupportedException();
 			}
+			throw new NotSupportedException();
 		}
 	}
 }

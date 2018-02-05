@@ -97,5 +97,43 @@ namespace TGWebhooks.Api
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
 		Task CompleteAuthorization(string code, IResponseCookies cookies, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Creates a comment on the specified issue, or updates the first one if it has already done so
+		/// </summary>
+		/// <param name="issueNumber">The number of the issue</param>
+		/// <param name="body">The body of the comment</param>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		Task CreateSingletonComment(int number, string body, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Creates a comment on the specified issue
+		/// </summary>
+		/// <param name="issueNumber">The number of the issue</param>
+		/// <param name="body">The body of the comment</param>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		Task CreateComment(int number, string body);
+
+		/// <summary>
+		/// Creates an "Approved" review on <paramref name="pullRequest"/>
+		/// </summary>
+		/// <param name="pullRequest">The <see cref="PullRequest"/> to approve</param>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		Task ApprovePullRequest(PullRequest pullRequest, string body);
+
+		/// <summary>
+		/// Dismiss a <paramref name="pullRequestReview"/>
+		/// </summary>
+		/// <param name="pullRequest">The <see cref="PullRequest"/> to dismiss the review of</param>
+		/// <param name="pullRequestReview">The <see cref="PullRequestReview"/> to dismiss</param>
+		/// <param name="dismissMessage">The message to dismiss with</param>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		Task DismissReview(PullRequest pullRequest, PullRequestReview pullRequestReview, string dismissMessage);
+
+		/// <summary>
+		/// Get the GitHub <see cref="User"/> of the configured access token
+		/// </summary>
+		/// <returns>A <see cref="Task{TResult}"/> the configured <see cref="User"/></returns>
+		Task<User> GetBotLogin(CancellationToken cancellationToken);
 	}
 }
