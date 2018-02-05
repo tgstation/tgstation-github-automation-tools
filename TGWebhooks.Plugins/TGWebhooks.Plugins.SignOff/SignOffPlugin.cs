@@ -108,7 +108,7 @@ namespace TGWebhooks.Plugins.SignOff
 			foreach(var I in reviews)
 				if (I.User.Id == botLogin.Id)
 				{
-					await gitHubManager.DismissReview(payload.PullRequest, I, "Sign offs nullified to edit of original post").ConfigureAwait(false);
+					await gitHubManager.DismissReview(payload.PullRequest, I, "Sign offs nullified due to edit of original post").ConfigureAwait(false);
 					break;
 				}
 		}
