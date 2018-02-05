@@ -41,6 +41,9 @@ namespace TGWebhooks.Plugins.SignOff
 		/// </summary>
 		IDataStore dataStore;
 
+		/// <summary>
+		/// Throws an <see cref="InvalidOperationException"/> if <see cref="dataStore"/> is <see langword="null"/>
+		/// </summary>
 		void CheckConfigured()
 		{
 			if (dataStore == null)

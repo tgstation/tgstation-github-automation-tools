@@ -26,6 +26,10 @@ namespace TGWebhooks.Core
 		/// The key on <see cref="dataStore"/> in which the <see cref="List{T}"/> of <see cref="AccessTokenEntry"/>s are stored
 		/// </summary>
 		const string AccessTokensKey = "AccessTokens";
+		/// <summary>
+		/// Days until a cookie for an <see cref="AccessTokenEntry"/> expires
+		/// </summary>
+		const int AccessTokenCookieExpriationDays = 7;
 
 		/// <summary>
 		/// The <see cref="GitHubConfiguration"/> for the <see cref="GitHubManager"/>
@@ -79,6 +83,9 @@ namespace TGWebhooks.Core
 			semaphore = new SemaphoreSlim(1);
 		}
 
+		/// <summary>
+		/// Calls <see cref="IDisposable.Dispose"/> on <see cref="semaphore"/>
+		/// </summary>
 		public void Dispose()
 		{
 			semaphore.Dispose();
@@ -100,6 +107,11 @@ namespace TGWebhooks.Core
 				await CheckUser(false, cancellationToken).ConfigureAwait(false);
 		}
 
+		/// <summary>
+		/// Get the <see cref="AccessTokenEntry"/>s which have not expired
+		/// </summary>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task{TResult}"/> resulting in the <see cref="List{T}"/> of active <see cref="AccessTokenEntry"/>s</returns>
 		async Task<List<AccessTokenEntry>> GetTrimmedTokenEntries(CancellationToken cancellationToken)
 		{
 			var allEntries = await dataStore.ReadData<List<AccessTokenEntry>>(AccessTokensKey, cancellationToken).ConfigureAwait(false);
@@ -219,7 +231,7 @@ namespace TGWebhooks.Core
 				//user is fucking with us, don't even bother
 				return;
 
-			var expiry = DateTime.Now.AddDays(7);
+			var expiry = DateTime.Now.AddDays(AccessTokenCookieExpriationDays);
 
 			var newEntry = new AccessTokenEntry()
 			{
