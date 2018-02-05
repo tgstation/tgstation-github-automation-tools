@@ -1,4 +1,4 @@
-﻿using TGWebhooks.Interface;
+﻿using TGWebhooks.Api;
 
 namespace TGWebhooks.Core.Model
 {

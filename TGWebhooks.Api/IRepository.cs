@@ -1,4 +1,4 @@
-﻿namespace TGWebhooks.Interface
+﻿namespace TGWebhooks.Api
 {
 	/// <summary>
 	/// Represents the git repository being manager by the <see cref="TGWebhooks"/>

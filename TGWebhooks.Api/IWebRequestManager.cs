@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System;
 
-namespace TGWebhooks.Interface
+namespace TGWebhooks.Api
 {
 	/// <summary>
 	/// <see langword="interface"/> for making web requests

@@ -9,7 +9,7 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TGWebhooks.PRTagger", "TGWebhooks.PRTagger\TGWebhooks.PRTagger.csproj", "{CFE2A469-122B-487D-B463-745B7F7B5D7A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TGWebhooks.Interface", "TGWebhooks.Interface\TGWebhooks.Interface.csproj", "{408BC9DE-CD53-4E57-A6A5-2498DB54AD06}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TGWebhooks.Api", "TGWebhooks.Api\TGWebhooks.Api.csproj", "{408BC9DE-CD53-4E57-A6A5-2498DB54AD06}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TGWebhooks.TwentyFourHourRule", "TGWebhooks.TwentyFourHourRule\TGWebhooks.TwentyFourHourRule.csproj", "{7D1385AD-3C60-4B2A-A2E1-FCCF719DAECD}"
 EndProject

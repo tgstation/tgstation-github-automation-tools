@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TGWebhooks.Interface
+namespace TGWebhooks.Api
 {
 	/// <summary>
 	/// Async lock context helper

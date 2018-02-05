@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TGWebhooks.Interface
+namespace TGWebhooks.Api
 {
 	/// <summary>
 	/// Describes continuous integration status for a <see cref="PullRequest"/>

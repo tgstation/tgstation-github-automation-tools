@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using TGWebhooks.Interface;
+using TGWebhooks.Api;
 
 namespace TGWebhooks.Core.Model
 {

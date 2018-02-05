@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TGWebhooks.Interface
+namespace TGWebhooks.Api
 {
 	/// <summary>
 	/// Handles a certain type of <see cref="ActivityPayload"/>. Constructed via reflection, and accept parameters of <see cref="IGitHubManager"/>, <see cref="IRepository"/>, and <see cref="ILogger"/> in any order

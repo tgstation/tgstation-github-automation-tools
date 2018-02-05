@@ -1,7 +1,7 @@
 ﻿using Octokit;
 using System.Collections.Generic;
 
-namespace TGWebhooks.Interface
+namespace TGWebhooks.Api
 {
 	/// <summary>
 	/// <see langword="interface"/> for providing access to webhook components

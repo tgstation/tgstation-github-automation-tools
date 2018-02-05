@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using TGWebhooks.Interface;
+using TGWebhooks.Api;
 using System.Threading;
 
 using StreamReader = System.IO.StreamReader;

@@ -1,4 +1,4 @@
-﻿namespace TGWebhooks.Interface
+﻿namespace TGWebhooks.Api
 {
 	/// <summary>
 	/// HTTP request methods

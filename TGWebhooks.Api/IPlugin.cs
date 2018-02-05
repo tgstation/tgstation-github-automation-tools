@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TGWebhooks.Interface
+namespace TGWebhooks.Api
 {
 	/// <summary>
 	/// Representation of a plugin for <see cref="TGWebhooks"/>

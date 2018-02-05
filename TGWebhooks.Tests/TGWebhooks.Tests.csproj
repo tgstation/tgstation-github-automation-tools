@@ -25,7 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TGWebhooks.Core\TGWebhooks.Core.csproj" />
-    <ProjectReference Include="..\TGWebhooks.Interface\TGWebhooks.Interface.csproj" />
+    <ProjectReference Include="..\TGWebhooks.Api\TGWebhooks.Api.csproj" />
     <ProjectReference Include="..\TGWebhooks.MaintainerApproval\TGWebhooks.MaintainerApproval.csproj" />
     <ProjectReference Include="..\TGWebhooks.PRTagger\TGWebhooks.PRTagger.csproj" />
     <ProjectReference Include="..\TGWebhooks.TwentyFourHourRule\TGWebhooks.TwentyFourHourRule.csproj" />

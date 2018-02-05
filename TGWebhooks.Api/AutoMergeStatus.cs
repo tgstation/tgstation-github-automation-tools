@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TGWebhooks.Interface
+namespace TGWebhooks.Api
 {
 	/// <summary>
 	/// Represents the requirements for auto merging a <see cref="Octokit.PullRequest"/>

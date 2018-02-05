@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.0\TGWebhooks.Interface.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netstandard2.0\TGWebhooks.Api.xml</DocumentationFile>
     <OutputPath>bin\Release\</OutputPath>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsAsErrors />

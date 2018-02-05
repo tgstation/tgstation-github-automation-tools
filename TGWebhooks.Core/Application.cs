@@ -9,7 +9,7 @@ using Microsoft.Data.Sqlite;
 using System;
 using System.IO;
 using TGWebhooks.Core.Configuration;
-using TGWebhooks.Interface;
+using TGWebhooks.Api;
 using TGWebhooks.Core.Model;
 using System.Threading;
 

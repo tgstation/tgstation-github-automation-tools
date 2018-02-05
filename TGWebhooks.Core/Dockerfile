@@ -6,7 +6,7 @@ FROM microsoft/aspnetcore-build:2.0-nanoserver-1709 AS build
 WORKDIR /src
 COPY *.sln ./
 COPY TGWebhooks.Core/TGWebhooks.Core.csproj TGWebhooks.Core/
-COPY TGWebhooks.Interface/TGWebhooks.Interface.csproj TGWebhooks.Interface/
+COPY TGWebhooks.Api/TGWebhooks.Api.csproj TGWebhooks.Api/
 
 #ignore the nuget warnings about missing .Tests and the .dcproj
 
@@ -44,7 +44,7 @@ RUN dotnet publish -c Release -o /app/Plugins
 #END
 
 WORKDIR /app/Plugins
-RUN del "TGWebhooks.Interface.*"
+RUN del "TGWebhooks.Api.*"
 
 FROM base AS final
 WORKDIR /app

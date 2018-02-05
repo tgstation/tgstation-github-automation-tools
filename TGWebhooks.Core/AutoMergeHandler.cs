@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Octokit;
-using TGWebhooks.Interface;
+using TGWebhooks.Api;
 
 namespace TGWebhooks.Core
 {

@@ -1,4 +1,4 @@
-﻿namespace TGWebhooks.Interface
+﻿namespace TGWebhooks.Api
 {
 #pragma warning disable CA1717 // Only FlagsAttribute enums should have plural names
 	/// <summary>
