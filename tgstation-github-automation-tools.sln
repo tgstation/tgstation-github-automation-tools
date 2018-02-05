@@ -19,8 +19,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TGWebhooks.Tests", "TGWebho
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EDEC032-F64F-4F71-B4A9-CB5C4905DA9F}"
 	ProjectSection(SolutionItems) = preProject
+		.codecov.yml = .codecov.yml
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
+		appveyor.yml = appveyor.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{33DBC235-DF62-4F9C-8464-04B7C373AB1F}"
+	ProjectSection(SolutionItems) = preProject
+		Tools\BuildDox.ps1 = Tools\BuildDox.ps1
+		Tools\Doxyfile = Tools\Doxyfile
+		Tools\UploadCoverage.ps1 = Tools\UploadCoverage.ps1
 	EndProjectSection
 EndProject
 Global

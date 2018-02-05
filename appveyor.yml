@@ -1,0 +1,32 @@
+pull_requests:
+  do_not_increment_build_number: true
+environment:
+  repo_token:
+    secure: vPkw6Z7fI6tSGKI/HzuqFj3S0O2qqRxq1GW9FFKrBS6x38OxnY2V8SnO8PjM/N2l
+skip_branch_with_pr: true
+image: Visual Studio 2017
+configuration:
+  - Debug
+  - Release
+shallow_clone: true
+cache:
+  - packages -> **\*.csproj
+  - C:\ProgramData\chocolatey\bin -> appveyor.yml
+  - C:\ProgramData\chocolatey\lib -> appveyor.yml
+install:
+  - choco install doxygen.portable codecov
+build:
+  project: tgstation-github-automation-tools.sln
+before_build:
+  - dotnet restore
+after_build:
+  - ps: if($env:CONFIGURATION -match "Release") { if($env:APPVEYOR_REPO_BRANCH -match "master"){ $env:NugetDeploy = "Do it." } }
+test_script:
+  - set path=%ProgramFiles(x86)%\Microsoft Visual Studio\2017\TestAgent\Common7\IDE\CommonExtensions\Microsoft\TestWindow;%path%
+  - copy "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\Community\Common7\IDE\CommonExtensions\Microsoft\TestWindow\Extensions\appveyor.*" "%ProgramFiles(x86)%\Microsoft Visual Studio\2017\TestAgent\Common7\IDE\CommonExtensions\Microsoft\TestWindow\Extensions" /y
+  - vstest.console /EnableCodeCoverage "TGWebhooks.Tests\bin\%CONFIGURATION%\netcoreapp2.0\TGWebhooks.Tests.dll" /logger:trx;LogFileName=results.trx
+  - ps: $wc = New-Object 'System.Net.WebClient'
+  - ps: $wc.UploadFile("https://ci.appveyor.com/api/testresults/mstest/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\TestResults\results.trx))
+after_test:
+  - ps: Tools/UploadCoverage.ps1
+  - ps: Tools/BuildDox.ps1
