@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using TGWebhooks.Interface;
@@ -12,7 +9,8 @@ using Newtonsoft.Json.Linq;
 
 namespace TGWebhooks.Core.Controllers
 {
-    [Route("Authorize")]
+	[Produces("application/json")]
+	[Route("Authorize")]
     public sealed class AuthorizationController : Controller
     {
 		IGitHubManager gitHubManager;
@@ -26,9 +24,9 @@ namespace TGWebhooks.Core.Controllers
 		/// </summary>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in the <see cref="IActionResult"/> of the GET</returns>
 		[HttpGet]
-		public IActionResult Begin(CancellationToken cancellationToken)
+		public IActionResult Begin()
 		{
-			var redirectURI = new Uri(Url.AbsoluteAction("Complete", "Authorize"));
+			var redirectURI = new Uri(Url.AbsoluteAction(nameof(Complete), nameof(AuthorizationController)));
 			return Redirect(gitHubManager.GetAuthorizationURL(redirectURI).ToString());
 		}
 

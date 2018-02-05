@@ -128,7 +128,7 @@ namespace TGWebhooks.Core
 				try
 				{
 					var plugin = (IPlugin)Activator.CreateInstance(type);
-					var pluginData = await rootDataStore.BranchOnKey(plugin.Guid.ToString(), cancellationToken);
+					var pluginData = rootDataStore.BranchOnKey(plugin.Guid.ToString());
 					plugin.Configure(logger, repository, gitHubManager, dataIOManager, requestManager, pluginData);
 					if (!pluginConfigs.EnabledPlugins.TryGetValue(plugin.Guid, out bool enabled))
 					{

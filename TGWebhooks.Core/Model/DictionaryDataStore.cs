@@ -32,9 +32,9 @@ namespace TGWebhooks.Core.Model
 		}
 
 		/// <inheritdoc />
-		public Task<IBranchingDataStore> BranchOnKey(string key, CancellationToken cancellationToken)
+		public IBranchingDataStore BranchOnKey(string key)
 		{
-			return Task.FromResult<IBranchingDataStore>(new DictionaryDataStore(parent, key));
+			return new DictionaryDataStore(parent, key);
 		}
 
 		/// <inheritdoc />

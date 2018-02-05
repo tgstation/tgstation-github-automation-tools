@@ -71,7 +71,8 @@ namespace TGWebhooks.Core
 			services.AddSingleton<IWebRequestManager, WebRequestManager>();
 			services.AddSingleton<IContinuousIntegration, TravisContinuousIntegration>();
 			services.AddSingleton<IRootDataStore, SQLiteDataStore>();
-        }
+			services.AddSingleton<IBranchingDataStore>(x => x.GetRequiredService<IRootDataStore>());
+		}
 
 		/// <summary>
 		/// Configure the <see cref="Application"/>

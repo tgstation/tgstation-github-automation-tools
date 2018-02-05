@@ -110,14 +110,14 @@ namespace TGWebhooks.Core.Model
 		{
 			await connection.OpenAsync(cancellationToken);
 			var setupCommand = connection.CreateCommand();
-			setupCommand.CommandText = String.Format(CultureInfo.InvariantCulture, "CREATE TABLE IF NOT EXISTS {0} (TEXT {1}, TEXT {2})", TableName, KeyColumn, JsonColumn);
+			setupCommand.CommandText = String.Format(CultureInfo.InvariantCulture, "CREATE TABLE IF NOT EXISTS {0} ({1} TEXT, {2} TEXT)", TableName, KeyColumn, JsonColumn);
 			await setupCommand.ExecuteNonQueryAsync(cancellationToken);
 		}
 
 		/// <inheritdoc />
-		public Task<IBranchingDataStore> BranchOnKey(string key, CancellationToken cancellationToken)
+		public IBranchingDataStore BranchOnKey(string key)
 		{
-			return Task.FromResult<IBranchingDataStore>(new DictionaryDataStore(this, key));
+			return new DictionaryDataStore(this, key);
 		}
 
 		/// <inheritdoc />

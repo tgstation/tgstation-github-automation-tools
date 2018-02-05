@@ -32,6 +32,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="appsettings.Development.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Cyberboss.AspNetCore.AsyncInitializer" Version="1.0.1" />
     <PackageReference Include="HangFire" Version="1.6.17" />
     <PackageReference Include="Hangfire.SQLite" Version="1.4.2" />
@@ -44,6 +48,10 @@
 
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="appsettings.Development.json" />
   </ItemGroup>
 
   <ItemGroup>
