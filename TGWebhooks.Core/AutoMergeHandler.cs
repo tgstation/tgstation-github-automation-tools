@@ -12,7 +12,9 @@ namespace TGWebhooks.Core
 	/// <summary>
 	/// Manages the automatic merge process for <see cref="PullRequest"/>s
 	/// </summary>
+#pragma warning disable CA1812
 	sealed class AutoMergeHandler : IPayloadHandler<PullRequestEventPayload>
+#pragma warning restore CA1812
 	{
 		/// <summary>
 		/// The <see cref="IComponentProvider"/> for the <see cref="AutoMergeHandler"/>
@@ -38,22 +40,22 @@ namespace TGWebhooks.Core
 		{
 			for (var I = 0; I < 4 && pullRequest.Mergeable == null; ++I)
 			{
-				await Task.Delay(I * 1000);
-				pullRequest = await gitHubManager.GetPullRequest(pullRequest.Number);
+				await Task.Delay(I * 1000).ConfigureAwait(false);
+				pullRequest = await gitHubManager.GetPullRequest(pullRequest.Number).ConfigureAwait(false);
 			}
 
 			var tasks = new List<Task<AutoMergeStatus>>();
 			foreach (var I in componentProvider.MergeRequirements)
 				tasks.Add(I.EvaluateFor(pullRequest, cancellationToken));
 
-			await Task.WhenAll(tasks);
+			await Task.WhenAll(tasks).ConfigureAwait(false);
 
 			return tasks.Select(x => x.Result).ToList();
 		}
 
 		async Task CheckMergePullRequest(PullRequest pullRequest, CancellationToken cancellationToken)
 		{
-			var results = await GetStatusesForPullRequest(pullRequest, cancellationToken);
+			var results = await GetStatusesForPullRequest(pullRequest, cancellationToken).ConfigureAwait(false);
 
 			bool merge = true;
 			int rescheduleIn = 0;
@@ -71,7 +73,7 @@ namespace TGWebhooks.Core
 			}
 
 			if (merge)
-				await gitHubManager.MergePullRequest(pullRequest);
+				await gitHubManager.MergePullRequest(pullRequest).ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -80,7 +82,7 @@ namespace TGWebhooks.Core
 			if (payload == null)
 				throw new ArgumentNullException(nameof(payload));
 			
-			await CheckMergePullRequest(payload.PullRequest, cancellationToken);
+			await CheckMergePullRequest(payload.PullRequest, cancellationToken).ConfigureAwait(false);
 		}
 	}
 }

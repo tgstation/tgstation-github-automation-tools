@@ -14,9 +14,17 @@ namespace TGWebhooks.Core.Model
 		/// Create a new branch in the <see cref="IBranchingDataStore"/>
 		/// </summary>
 		/// <param name="key">The key to branch on</param>
-		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in the branched <see cref="IDataStore"/></returns>
 		IBranchingDataStore BranchOnKey(string key);
-		Task WriteData<TData>(IEnumerable<string> keys, TData data, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Write some nested data to the <see cref="IBranchingDataStore"/>
+		/// </summary>
+		/// <typeparam name="TData">The POCO to write</typeparam>
+		/// <param name="keys"><see cref="IEnumerable{T}"/> of <see cref="string"/>s representing nested keys</param>
+		/// <param name="data">The <typeparamref name="TData"/> to write</param>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		Task WriteParentData<TData>(IEnumerable<string> keys, TData data, CancellationToken cancellationToken);
 	}
 }

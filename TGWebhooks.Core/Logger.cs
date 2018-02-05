@@ -7,7 +7,9 @@ using TGWebhooks.Interface;
 namespace TGWebhooks.Core
 {
 	/// <inheritdoc />
+#pragma warning disable CA1812
 	sealed class Logger : ILogger
+#pragma warning restore CA1812
 	{
 		/// <summary>
 		/// The directory to store log files in
@@ -38,8 +40,8 @@ namespace TGWebhooks.Core
 		public async Task LogUnhandledException(Exception exception, CancellationToken cancellationToken)
 		{
 			var errorLogMessage = String.Format(CultureInfo.CurrentCulture, "{0}: {1}{2}", DateTime.Now.ToLongTimeString(), exception, Environment.NewLine);
-			await ioManager.CreateDirectory(".", cancellationToken);
-			await ioManager.AppendAllText(logFile, errorLogMessage, cancellationToken);
+			await ioManager.CreateDirectory(".", cancellationToken).ConfigureAwait(false);
+			await ioManager.AppendAllText(logFile, errorLogMessage, cancellationToken).ConfigureAwait(false);
 		}
 	}
 }

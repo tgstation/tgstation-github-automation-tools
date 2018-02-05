@@ -1,6 +1,8 @@
-﻿using Octokit;
+﻿using Microsoft.AspNetCore.Http;
+using Octokit;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace TGWebhooks.Interface
@@ -80,7 +82,20 @@ namespace TGWebhooks.Interface
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
 		Task AddLabel(int number, string label);
 
+		/// <summary>
+		/// Get the GitHub URL to direct a user to at the start of the Oauth flow
+		/// </summary>
+		/// <param name="callbackURL">The <see cref="Uri"/> to direct users to to complete the Oauth flow</param>
+		/// <returns>The <see cref="Uri"/> to send the user to</returns>
 		Uri GetAuthorizationURL(Uri callbackURL);
-		Task CompleteAuthorization(string code);
+
+		/// <summary>
+		/// Complete the Oauth flow and load 
+		/// </summary>
+		/// <param name="code">The code entry in the recieved JSON from an Oauth redirect</param>
+		/// <param name="cookies">The <see cref="IResponseCookies"/> to write session information to</param>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		Task CompleteAuthorization(string code, IResponseCookies cookies, CancellationToken cancellationToken);
 	}
 }

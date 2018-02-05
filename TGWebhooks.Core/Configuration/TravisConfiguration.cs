@@ -3,7 +3,9 @@
 	/// <summary>
 	/// Configuration for Travis CI
 	/// </summary>
-    sealed class TravisConfiguration
+#pragma warning disable CA1812
+	sealed class TravisConfiguration
+#pragma warning restore CA1812
 	{
 		/// <summary>
 		/// The configuration section the <see cref="TravisConfiguration"/> resides in

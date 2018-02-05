@@ -18,7 +18,9 @@ namespace TGWebhooks.Core
 	/// <summary>
 	/// Startup point for the web application
 	/// </summary>
-    sealed class Application
+#pragma warning disable CA1812
+	sealed class Application
+#pragma warning restore CA1812
 	{
 		/// <summary>
 		/// The user agent string to provide to various APIs
@@ -74,14 +76,14 @@ namespace TGWebhooks.Core
 			services.AddSingleton<IBranchingDataStore>(x => x.GetRequiredService<IRootDataStore>());
 		}
 
+#pragma warning disable CA1822 // Mark members as static
 		/// <summary>
 		/// Configure the <see cref="Application"/>
 		/// </summary>
 		/// <param name="app">The <see cref="IApplicationBuilder"/> to configure</param>
 		/// <param name="env">The <see cref="IHostingEnvironment"/> of the <see cref="Application"/></param>
-		/// <param name="applicationLifetime">The <see cref="IApplicationLifetime"/> of the <see cref="Application"/></param>
-		/// <param name="serviceProvider">The <see cref="IServiceProvider"/> for the <see cref="Application"/></param>
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+#pragma warning restore CA1822 // Mark members as static
 		{
 			app.ApplicationServices.GetRequiredService<IIOManager>().CreateDirectory(DataDirectory, CancellationToken.None).GetAwaiter().GetResult();
 

@@ -9,14 +9,25 @@ using Newtonsoft.Json.Linq;
 
 namespace TGWebhooks.Core.Controllers
 {
+	/// <summary>
+	/// Handler for the <see cref="IGitHubManager"/> Oauth flow
+	/// </summary>
 	[Produces("application/json")]
 	[Route("Authorize")]
     public sealed class AuthorizationController : Controller
     {
+		/// <summary>
+		/// The <see cref="IGitHubManager"/> for the <see cref="AuthorizationController"/>
+		/// </summary>
 		IGitHubManager gitHubManager;
-		public AuthorizationController(IGitHubManager _gitHubManager)
+
+		/// <summary>
+		/// Construst an <see cref="AuthorizationController"/>
+		/// </summary>
+		/// <param name="gitHubManager">The value of <see cref="gitHubManager"/></param>
+		public AuthorizationController(IGitHubManager gitHubManager)
 		{
-			gitHubManager = _gitHubManager ?? throw new ArgumentNullException(nameof(_gitHubManager));
+			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
 		}
 
 		/// <summary>
@@ -33,6 +44,7 @@ namespace TGWebhooks.Core.Controllers
 		/// <summary>
 		/// Handle a GET to the <see cref="AuthorizationController"/>
 		/// </summary>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in the <see cref="IActionResult"/> of the GET</returns>
 		[HttpGet]
 		[Route("Complete")]
@@ -40,12 +52,12 @@ namespace TGWebhooks.Core.Controllers
 		{
 			string jsonString;
 			using (var reader = new StreamReader(Request.Body))
-				jsonString = await reader.ReadToEndAsync();
+				jsonString = await reader.ReadToEndAsync().ConfigureAwait(false);
 			try
 			{
 				var json = new JObject(jsonString);
 				var code = (string)json["code"];
-				await gitHubManager.CompleteAuthorization(code);
+				await gitHubManager.CompleteAuthorization(code, Response.Cookies, cancellationToken).ConfigureAwait(false);
 				return Ok();
 			}
 			catch (Exception e)

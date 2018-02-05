@@ -10,8 +10,10 @@ using TGWebhooks.Interface;
 namespace TGWebhooks.Core
 {
 	/// <inheritdoc />
-    sealed class Repository : Interface.IRepository, IInitializable, IDisposable
-    {
+#pragma warning disable CA1812
+	sealed class Repository : Interface.IRepository, IInitializable, IDisposable
+#pragma warning restore CA1812
+	{
 		/// <summary>
 		/// Path to the data directory all repositories are stored in
 		/// </summary>
@@ -76,7 +78,7 @@ namespace TGWebhooks.Core
 		/// <inheritdoc />
 		public async Task Initialize(CancellationToken cancellationToken)
 		{
-			using (await SemaphoreSlimContext.Lock(semaphore, cancellationToken))
+			using (await SemaphoreSlimContext.Lock(semaphore, cancellationToken).ConfigureAwait(false))
 				if (startupTask == null)
 					startupTask = Task.Factory.StartNew(async () =>
 					{
@@ -94,7 +96,7 @@ namespace TGWebhooks.Core
 						{
 							try
 							{
-								await logger.LogUnhandledException(e, cancellationToken);
+								await logger.LogUnhandledException(e, cancellationToken).ConfigureAwait(false);
 
 								LibGit2Sharp.Repository.Clone(String.Format(CultureInfo.InvariantCulture, "https://github.com/{0}/{1}", gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName), repoPath, new CloneOptions
 								{
@@ -112,12 +114,12 @@ namespace TGWebhooks.Core
 							catch (Exception e2)
 							{
 								startupTask = null;
-								await logger.LogUnhandledException(e2, cancellationToken);
+								await logger.LogUnhandledException(e2, cancellationToken).ConfigureAwait(false);
 								throw;
 							}
 						}
 					}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Current);
-			await startupTask;
+			await startupTask.ConfigureAwait(false);
 		}
 	}
 }

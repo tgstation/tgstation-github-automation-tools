@@ -36,7 +36,7 @@ namespace TGWebhooks.Tests
 		[TestMethod]
 		public async Task TestConfigurationAndInitialization()
 		{
-			await GetBasicConfigured();
+			await GetBasicConfigured().ConfigureAwait(false);
 		}
 
 		protected async Task<TPlugin> GetBasicConfigured()
@@ -50,7 +50,7 @@ namespace TGWebhooks.Tests
 			mockDataStore = new Mock<IDataStore>();
 			plugin.Configure(mockLogger.Object, mockRepository.Object, mockGitHubManager.Object, mockIOManager.Object, mockWebRequestManager.Object, mockDataStore.Object);
 
-			await plugin.Initialize(CancellationToken.None);
+			await plugin.Initialize(CancellationToken.None).ConfigureAwait(false);
 
 			Assert.IsNotNull(plugin.MergeRequirements);
 			Assert.IsNotNull(plugin.GetPayloadHandlers<ActivityPayload>());

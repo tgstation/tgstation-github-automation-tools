@@ -12,7 +12,9 @@ using TGWebhooks.Interface;
 namespace TGWebhooks.Core
 {
 	/// <inheritdoc />
+#pragma warning disable CA1812
 	sealed class PluginManager : IPluginManager
+#pragma warning restore CA1812
 	{
 		/// <summary>
 		/// Directory relative to the current <see cref="Assembly"/> that contains <see cref="IPlugin"/> <see cref="Assembly"/>s
@@ -76,11 +78,11 @@ namespace TGWebhooks.Core
 		{
 			async Task<PluginConfiguration> DBInit()
 			{
-				await rootDataStore.Initialize(cancellationToken);
-				return await rootDataStore.ReadData<PluginConfiguration>("PluginMetaData", cancellationToken);
+				await rootDataStore.Initialize(cancellationToken).ConfigureAwait(false);
+				return await rootDataStore.ReadData<PluginConfiguration>("PluginMetaData", cancellationToken).ConfigureAwait(false);
 			}
 			//start initializing the db
-			var dbInit = DBInit();
+			var dbInit = DBInit().ConfigureAwait(false);
 
 			var assemblyPath = Assembly.GetExecutingAssembly().Location;
 			var pluginDirectory = ioManager.ConcatPath(ioManager.GetDirectoryName(assemblyPath), PluginDllsDirectory);
@@ -92,7 +94,7 @@ namespace TGWebhooks.Core
 			var pluginsBuilder = new List<IPlugin>();
 			plugins = pluginsBuilder;
 
-			if (!await ioManager.DirectoryExists(pluginDirectory, cancellationToken))
+			if (!await ioManager.DirectoryExists(pluginDirectory, cancellationToken).ConfigureAwait(false))
 			{
 				await dbInit;
 				return;
@@ -100,7 +102,7 @@ namespace TGWebhooks.Core
 
 			bool CompatibilityPredicate(Type x) => x.IsPublic && x.IsClass && !x.IsAbstract && typeof(IPlugin).IsAssignableFrom(x) && x.GetConstructors().Any(y => y.IsPublic && y.GetParameters().Count() == 0);
 
-			foreach (var I in await ioManager.GetFilesInDirectory(PluginDllsDirectory, ".dll", cancellationToken))
+			foreach (var I in await ioManager.GetFilesInDirectory(PluginDllsDirectory, ".dll", cancellationToken).ConfigureAwait(false))
 				try
 				{
 					var assembly = Assembly.ReflectionOnlyLoadFrom(I);
@@ -114,7 +116,7 @@ namespace TGWebhooks.Core
 				}
 				catch (Exception e)
 				{
-					await logger.LogUnhandledException(e, cancellationToken);
+					await logger.LogUnhandledException(e, cancellationToken).ConfigureAwait(false);
 				}
 
 			var pluginConfigs = await dbInit;
@@ -136,18 +138,18 @@ namespace TGWebhooks.Core
 						pluginConfigs.EnabledPlugins.Add(plugin.Guid, enabled);
 					}
 					plugin.Enabled = enabled;
-					await plugin.Initialize(cancellationToken);
+					await plugin.Initialize(cancellationToken).ConfigureAwait(false);
 					return plugin;
 				}
 				catch (Exception e)
 				{
-					await logger.LogUnhandledException(e, cancellationToken);
+					await logger.LogUnhandledException(e, cancellationToken).ConfigureAwait(false);
 					return null;
 				}
 			};
 
 			//load once from the AppDomain to ensure that we don't instance multiple copies of the same type
-			var loadedPlugins = await Task.WhenAll(AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes().Where(CompatibilityPredicate)).Select(x => InitPlugin(x)));
+			var loadedPlugins = await Task.WhenAll(AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes().Where(CompatibilityPredicate)).Select(x => InitPlugin(x))).ConfigureAwait(false);
 			pluginsBuilder.AddRange(loadedPlugins.Where(x => x != null));
 		}
 

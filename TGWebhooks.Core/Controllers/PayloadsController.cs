@@ -6,6 +6,7 @@ using Octokit;
 using Octokit.Internal;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -45,7 +46,7 @@ namespace TGWebhooks.Core.Controllers
 		{
 			var builder = new StringBuilder(bytes.Length * 2);
 			foreach (byte b in bytes)
-				builder.AppendFormat("{0:x2}", b);
+				builder.AppendFormat(CultureInfo.InvariantCulture, "{0:x2}", b);
 			return builder.ToString();
 		}
 
@@ -53,15 +54,15 @@ namespace TGWebhooks.Core.Controllers
 		/// Construct a <see cref="PayloadsController"/>
 		/// </summary>
 		/// <param name="gitHubConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing value of <see cref="gitHubConfiguration"/></param>
-		/// <param name="_logger">The value of <see cref="logger"/></param>
-		/// <param name="_componentProvider">The value of <see cref="componentProvider"/></param>
-		public PayloadsController(IOptions<GitHubConfiguration> gitHubConfigurationOptions, ILogger _logger, IComponentProvider _componentProvider)
+		/// <param name="logger">The value of <see cref="logger"/></param>
+		/// <param name="componentProvider">The value of <see cref="componentProvider"/></param>
+		public PayloadsController(IOptions<GitHubConfiguration> gitHubConfigurationOptions, ILogger logger, IComponentProvider componentProvider)
 		{
 			if(gitHubConfigurationOptions == null)
 				throw new ArgumentNullException(nameof(gitHubConfigurationOptions));
 			gitHubConfiguration = gitHubConfigurationOptions.Value;
-			logger = _logger ?? throw new ArgumentNullException(nameof(_logger));
-			componentProvider = _componentProvider ?? throw new ArgumentNullException(nameof(_componentProvider));
+			this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+			this.componentProvider = componentProvider ?? throw new ArgumentNullException(nameof(componentProvider));
 		}
 
 		/// <summary>
@@ -80,17 +81,20 @@ namespace TGWebhooks.Core.Controllers
 			var payloadBytes = Encoding.UTF8.GetBytes(payload);
 
 			byte[] hash;
+#pragma warning disable CA5350 // Do not use insecure cryptographic algorithm SHA1.
 			using (var hmSha1 = new HMACSHA1(secret))
+#pragma warning restore CA5350 // Do not use insecure cryptographic algorithm SHA1.
 				hash = hmSha1.ComputeHash(payloadBytes);
 
 			return ToHexString(hash) == signature;
 		}
-		
+
 		/// <summary>
 		/// Invoke the active <see cref="IPayloadHandler{TPayload}"/> for a given <typeparamref name="TPayload"/>
 		/// </summary>
 		/// <typeparam name="TPayload">The payload type to invoke</typeparam>
-		/// <param name="json">The json <see cref="string"/> of the <typeparamref name="TPayload"/></param>
+		/// <param name="payload">The <typeparamref name="TPayload"/> to process</param>
+		/// <param name="jobCancellationToken">The <see cref="IJobCancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running handlers</returns>
 		async Task InvokeHandlers<TPayload>(TPayload payload, IJobCancellationToken jobCancellationToken) where TPayload : ActivityPayload
 		{
@@ -102,20 +106,20 @@ namespace TGWebhooks.Core.Controllers
 				{
 					try
 					{
-						await handler.ProcessPayload(payload, cancellationToken);
+						await handler.ProcessPayload(payload, cancellationToken).ConfigureAwait(false);
 					}
 					//To be expected
 					catch (OperationCanceledException) { }
 					catch (NotSupportedException) { }
 					catch (Exception e)
 					{
-						await logger.LogUnhandledException(e, cancellationToken);
+						await logger.LogUnhandledException(e, cancellationToken).ConfigureAwait(false);
 					}
 				};
 				tasks.Add(RunHandler());
 			}
 
-			await Task.WhenAll(tasks);
+			await Task.WhenAll(tasks).ConfigureAwait(false);
 		}
 
 		/// <summary>
@@ -123,7 +127,7 @@ namespace TGWebhooks.Core.Controllers
 		/// </summary>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in the <see cref="IActionResult"/> of the POST</returns>
 		[HttpPost]
-		public async Task<IActionResult> Receive(CancellationToken cancellationToken)
+		public async Task<IActionResult> Receive()
 		{
 			if (!Request.Headers.TryGetValue("X-GitHub-Event", out StringValues eventName)
 				|| !Request.Headers.TryGetValue("X-Hub-Signature", out StringValues signature)
@@ -132,7 +136,7 @@ namespace TGWebhooks.Core.Controllers
 
 			string json;
 			using (var reader = new StreamReader(Request.Body))
-				json = await reader.ReadToEndAsync();
+				json = await reader.ReadToEndAsync().ConfigureAwait(false);
 
 			if(!CheckPayloadSignature(json, signature))
 				return Unauthorized();

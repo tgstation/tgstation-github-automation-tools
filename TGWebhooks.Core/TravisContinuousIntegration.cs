@@ -14,7 +14,9 @@ namespace TGWebhooks.Core
 	/// <summary>
 	/// <see cref="IContinuousIntegration"/> for Travis-CI
 	/// </summary>
+#pragma warning disable CA1812
 	sealed class TravisContinuousIntegration : IContinuousIntegration
+#pragma warning restore CA1812
 	{
 		/// <inheritdoc />
 		public string Name => "Travis-CI";
@@ -39,7 +41,7 @@ namespace TGWebhooks.Core
 		/// <returns><see langword="true"/> if the <paramref name="commitStatus"/> is for Travis-CI, <see langword="false"/> otherwise</returns>
 		static bool IsTravisStatus(CommitStatus commitStatus)
 		{
-			return commitStatus.TargetUrl.StartsWith("https://travis-ci.org/");
+			return commitStatus.TargetUrl.StartsWith("https://travis-ci.org/", StringComparison.InvariantCultureIgnoreCase);
 		}
 
 		/// <summary>
@@ -81,15 +83,15 @@ namespace TGWebhooks.Core
 				return requestManager.RunRequest(String.Join('/', baseUrl, method), String.Empty, GetRequestHeaders(), RequestMethod.POST, cancellationToken);
 			}
 			//first ensure it's over
-			await DoBuildPost("cancel");
+			await DoBuildPost("cancel").ConfigureAwait(false);
 			//then restart it
-			await DoBuildPost("restart");
+			await DoBuildPost("restart").ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
 		public async Task<ContinuousIntegrationStatus> GetJobStatus(Octokit.Repository repository, PullRequest pullRequest, CancellationToken cancellationToken)
 		{
-			var statuses = await gitHubManager.GetLatestCommitStatus(pullRequest);
+			var statuses = await gitHubManager.GetLatestCommitStatus(pullRequest).ConfigureAwait(false);
 			var result = ContinuousIntegrationStatus.NotPresent;
 			foreach(var I in statuses.Statuses)
 			{
@@ -108,7 +110,7 @@ namespace TGWebhooks.Core
 		/// <inheritdoc />
 		public async Task TriggerJobRestart(Octokit.Repository repository, PullRequest pullRequest, CancellationToken cancellationToken)
 		{
-			var statuses = await gitHubManager.GetLatestCommitStatus(pullRequest);
+			var statuses = await gitHubManager.GetLatestCommitStatus(pullRequest).ConfigureAwait(false);
 			var buildNumberRegex = new Regex(@"/builds/([1-9][0-9]*)\?");
 			var tasks = new List<Task>();
 			foreach (var I in statuses.Statuses)
@@ -119,7 +121,7 @@ namespace TGWebhooks.Core
 
 				tasks.Add(RestartBuild(buildNumber, cancellationToken));
 			}
-			await Task.WhenAll(tasks);
+			await Task.WhenAll(tasks).ConfigureAwait(false);
 		}
 	}
 }

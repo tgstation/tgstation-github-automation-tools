@@ -18,7 +18,7 @@ namespace TGWebhooks.MaintainerApproval.Tests
 		public async Task TestInvalid()
 		{
 			var plugin = new MaintainerApproval();
-			await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => plugin.EvaluateFor(null, CancellationToken.None));
+			await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => plugin.EvaluateFor(null, CancellationToken.None)).ConfigureAwait(false);
 		}
 
 		[TestMethod]
@@ -27,13 +27,13 @@ namespace TGWebhooks.MaintainerApproval.Tests
 			var PR = new PullRequest();
 			var reviews = new SimpleJsonSerializer().Deserialize<IReadOnlyList<PullRequestReview>>(TestObjects.PR1Changes1Approved);
 
-			var plugin = await GetBasicConfigured();
+			var plugin = await GetBasicConfigured().ConfigureAwait(false);
 
 			mockGitHubManager.Setup(x => x.GetPullRequestReviews(PR)).Returns(Task.FromResult(reviews));
 			mockGitHubManager.Setup(x => x.UserHasWriteAccess(It.IsAny<User>())).Returns(Task.FromResult(true));
 			mockGitHubManager.Setup(x => x.UserHasWriteAccess(reviews[3].User)).Returns(Task.FromResult(false));
 
-			var result = await plugin.EvaluateFor(PR, CancellationToken.None);
+			var result = await plugin.EvaluateFor(PR, CancellationToken.None).ConfigureAwait(false);
 			Assert.AreEqual(1, result.Progress);
 			Assert.AreEqual(2, result.RequiredProgress);
 		}

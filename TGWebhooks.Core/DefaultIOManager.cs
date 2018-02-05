@@ -42,7 +42,7 @@ namespace TGWebhooks.Core
 				file.Delete();
 			}
 			cancellationToken.ThrowIfCancellationRequested();
-			await Task.WhenAll(tasks);
+			await Task.WhenAll(tasks).ConfigureAwait(false);
 			cancellationToken.ThrowIfCancellationRequested();
 			dir.Delete(true);
 		}
@@ -55,7 +55,7 @@ namespace TGWebhooks.Core
 			using (var destStream = new FileStream(ResolvePath(path), FileMode.Append, FileAccess.Write, FileShare.ReadWrite | FileShare.Delete, DefaultBufferSize, true))
 			{
 				var buf = Encoding.UTF8.GetBytes(additional_contents);
-				await destStream.WriteAsync(buf, 0, buf.Length, cancellationToken);
+				await destStream.WriteAsync(buf, 0, buf.Length, cancellationToken).ConfigureAwait(false);
 			}
 		}
 
@@ -76,7 +76,7 @@ namespace TGWebhooks.Core
 				throw new ArgumentNullException(nameof(dest));
 			using (var srcStream = new FileStream(ResolvePath(src), FileMode.Open, FileAccess.Read, FileShare.Read | FileShare.Delete, DefaultBufferSize, true))
 			using (var destStream = new FileStream(ResolvePath(dest), FileMode.Create, FileAccess.Write, FileShare.ReadWrite | FileShare.Delete, DefaultBufferSize, true))
-				await srcStream.CopyToAsync(destStream, DefaultBufferSize, cancellationToken);
+				await srcStream.CopyToAsync(destStream, DefaultBufferSize, cancellationToken).ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -103,7 +103,7 @@ namespace TGWebhooks.Core
 			var di = new DirectoryInfo(path);
 			if (!di.Exists)
 				return;
-			await NormalizeAndDelete(di, cancellationToken);
+			await NormalizeAndDelete(di, cancellationToken).ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -165,13 +165,13 @@ namespace TGWebhooks.Core
 						cancellationToken.ThrowIfCancellationRequested();
 						var len = (int)(I == (readsRequired - 1) ? file.Length % Int32.MaxValue : Int32.MaxValue);
 						buf = new byte[len];
-						await file.ReadAsync(buf, 0, len, cancellationToken);
+						await file.ReadAsync(buf, 0, len, cancellationToken).ConfigureAwait(false);
 						collection.Add(buf);
 					}
 					return collection.SelectMany(x => x).ToArray();
 				}
 				buf = new byte[file.Length];
-				await file.ReadAsync(buf, 0, (int)file.Length, cancellationToken);
+				await file.ReadAsync(buf, 0, (int)file.Length, cancellationToken).ConfigureAwait(false);
 				return buf;
 			}
 		}
@@ -187,7 +187,7 @@ namespace TGWebhooks.Core
 		{
 			path = ResolvePath(path);
 			using (var file = File.Open(path, FileMode.Create, FileAccess.Write))
-				await file.WriteAsync(contents, 0, contents.Length, cancellationToken);
+				await file.WriteAsync(contents, 0, contents.Length, cancellationToken).ConfigureAwait(false);
 		}
 	}
 }

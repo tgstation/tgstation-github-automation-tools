@@ -1,9 +1,11 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Octokit;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Core.Configuration;
 using TGWebhooks.Core.Model;
@@ -12,12 +14,18 @@ using TGWebhooks.Interface;
 namespace TGWebhooks.Core
 {
 	/// <inheritdoc />
-    sealed class GitHubManager : IGitHubManager
-    {
+#pragma warning disable CA1812
+	sealed class GitHubManager : IGitHubManager
+#pragma warning restore CA1812
+	{
 		/// <summary>
-		/// The client ID of the oauth client
+		/// The scope required on Oauth tokens
 		/// </summary>
-		const string OauthClientID = "57a7187d56c2f51ce60d";
+		const string RequiredScope = "public_repo";
+		/// <summary>
+		/// The key on <see cref="dataStore"/> in which the <see cref="List{T}"/> of <see cref="AccessTokenEntry"/>s are stored
+		/// </summary>
+		const string AccessTokensKey = "AccessTokens";
 
 		/// <summary>
 		/// The <see cref="GitHubConfiguration"/> for the <see cref="GitHubManager"/>
@@ -46,6 +54,7 @@ namespace TGWebhooks.Core
 		/// Construct a <see cref="GitHubManager"/>
 		/// </summary>
 		/// <param name="gitHubConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the value of <see cref="gitHubConfiguration"/></param>
+		/// <param name="branchingDataStore">The <see cref="IBranchingDataStore"/> used to create <see cref="dataStore"/></param>
 		public GitHubManager(IOptions<GitHubConfiguration> gitHubConfigurationOptions, IBranchingDataStore branchingDataStore)
 		{
 			if(gitHubConfigurationOptions == null)
@@ -58,6 +67,13 @@ namespace TGWebhooks.Core
 				Credentials = new Credentials(gitHubConfiguration.PersonalAccessToken)
 			};
 			dataStore = branchingDataStore.BranchOnKey("GitHub");
+		}
+
+		async Task<List<AccessTokenEntry>> GetTrimmedTokenEntries(CancellationToken cancellationToken)
+		{
+			var allEntries = await dataStore.ReadData<List<AccessTokenEntry>>(AccessTokensKey, cancellationToken).ConfigureAwait(false);
+			var now = DateTimeOffset.Now;
+			return allEntries.Where(x => x.Expiry < now).ToList();
 		}
 
 		/// <inheritdoc />
@@ -126,7 +142,7 @@ namespace TGWebhooks.Core
 			if (user == null)
 				throw new ArgumentNullException(nameof(user));
 
-			var permissionLevel = await gitHubClient.Repository.Collaborator.ReviewPermission(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, user.Login);
+			var permissionLevel = await gitHubClient.Repository.Collaborator.ReviewPermission(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, user.Login).ConfigureAwait(false);
 			var permission = permissionLevel.Permission.Value;
 			return permission == PermissionLevel.Write || permission == PermissionLevel.Admin;
 		}
@@ -150,20 +166,40 @@ namespace TGWebhooks.Core
 			return gitHubClient.Issue.Labels.AddToIssue(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, number, new string[] { label });
 		}
 
+		/// <inheritdoc />
 		public Uri GetAuthorizationURL(Uri callbackURL)
 		{
 			var olr = new OauthLoginRequest(gitHubConfiguration.OauthClientID);
-			olr.Scopes.Add("public_repo");  //all we need
+			olr.Scopes.Add(RequiredScope);  //all we need
 			olr.RedirectUri = callbackURL;
 			return gitHubClient.Oauth.GetGitHubLoginUrl(olr);
 		}
 
-		public Task CompleteAuthorization(string code)
+		/// <inheritdoc />
+		public async Task CompleteAuthorization(string code, IResponseCookies cookies, CancellationToken cancellationToken)
 		{
 			if (code == null)
 				throw new ArgumentNullException(nameof(code));
+			if (cookies == null)
+				throw new ArgumentNullException(nameof(cookies));
 			var otr = new OauthTokenRequest(gitHubConfiguration.OauthClientID, gitHubConfiguration.OauthSecret, code);
-			return gitHubClient.Oauth.CreateAccessToken(otr);
+			var result = await gitHubClient.Oauth.CreateAccessToken(otr).ConfigureAwait(false);
+			if (!result.Scope.Contains(RequiredScope))
+				//user is fucking with us, don't even bother
+				return;
+
+			var expiry = DateTime.Now.AddDays(7);
+
+			var newEntry = new AccessTokenEntry()
+			{
+				Cookie = Guid.NewGuid(),
+				AccessToken = result.AccessToken,
+				Expiry = expiry
+			};
+
+			cookies.Append(newEntry.Cookie.ToString(), newEntry.AccessToken);
+			var tokenEntries = await GetTrimmedTokenEntries(cancellationToken).ConfigureAwait(false);
+			tokenEntries.Add(newEntry);
 		}
 	}
 }

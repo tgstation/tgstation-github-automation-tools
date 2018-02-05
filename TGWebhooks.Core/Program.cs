@@ -23,7 +23,7 @@ namespace TGWebhooks.Core
 		public static async Task Main(string[] args)
 		{
 			using (var webHost = GetWebHostBuilder(args).UseStartup<Application>().Build())
-				await webHost.RunAsync();
+				await webHost.RunAsync().ConfigureAwait(false);
 		}
 	}
 }

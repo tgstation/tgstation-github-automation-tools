@@ -40,7 +40,7 @@ namespace TGWebhooks.Core.Model
 		/// <inheritdoc />
 		public async Task<TData> ReadData<TData>(string key, CancellationToken cancellationToken) where TData : class
 		{
-			var parentResult = await parent.ReadData<IDictionary<string, object>>(parentKey, cancellationToken);
+			var parentResult = await parent.ReadData<IDictionary<string, object>>(parentKey, cancellationToken).ConfigureAwait(false);
 			if (parentResult.TryGetValue(key, out object data))
 				return data as TData;
 			return default;
@@ -49,10 +49,10 @@ namespace TGWebhooks.Core.Model
 		/// <inheritdoc />
 		public Task WriteData<TData>(string key, TData data, CancellationToken cancellationToken) where TData : class
 		{
-			return WriteData(new List<string> { key }, data, cancellationToken);
+			return WriteParentData(new List<string> { key }, data, cancellationToken);
 		}
 
-		public Task WriteData<TData>(IEnumerable<string> keys, TData data, CancellationToken cancellationToken)
+		public Task WriteParentData<TData>(IEnumerable<string> keys, TData data, CancellationToken cancellationToken)
 		{
 			IEnumerable<string> Enumerator()
 			{
@@ -60,7 +60,7 @@ namespace TGWebhooks.Core.Model
 				foreach (var I in keys)
 					yield return I;
 			}
-			return parent.WriteData(Enumerator(), data, cancellationToken);
+			return parent.WriteParentData(Enumerator(), data, cancellationToken);
 		}
 	}
 }

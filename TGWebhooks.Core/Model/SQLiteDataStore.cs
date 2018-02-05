@@ -10,7 +10,10 @@ using TGWebhooks.Interface;
 
 namespace TGWebhooks.Core.Model
 {
+	/// <inheritdoc />
+#pragma warning disable CA1812
 	sealed class SQLiteDataStore : IRootDataStore, IDisposable
+#pragma warning restore CA1812
 	{
 		/// <summary>
 		/// File name for the <see cref="SQLiteDataStore"/> in the <see cref="Application.DataDirectory"/>
@@ -82,7 +85,7 @@ namespace TGWebhooks.Core.Model
 			getCommand.CommandText = String.Format(CultureInfo.InvariantCulture, "SELECT {0} FROM {1} WHERE {2} = @{3}", JsonColumn, TableName, KeyColumn, KeyParameter);
 			getCommand.Parameters.Add(new SqliteParameter(KeyParameter, key));
 			getCommand.Prepare();
-			var json = (string)await getCommand.ExecuteScalarAsync(cancellationToken);
+			var json = (string)await getCommand.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
 			if (json == null)
 				return new JObject();
 			return JObject.Parse(json);
@@ -108,10 +111,10 @@ namespace TGWebhooks.Core.Model
 		/// <inheritdoc />
 		public async Task Initialize(CancellationToken cancellationToken)
 		{
-			await connection.OpenAsync(cancellationToken);
+			await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
 			var setupCommand = connection.CreateCommand();
 			setupCommand.CommandText = String.Format(CultureInfo.InvariantCulture, "CREATE TABLE IF NOT EXISTS {0} ({1} TEXT, {2} TEXT)", TableName, KeyColumn, JsonColumn);
-			await setupCommand.ExecuteNonQueryAsync(cancellationToken);
+			await setupCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -123,11 +126,11 @@ namespace TGWebhooks.Core.Model
 		/// <inheritdoc />
 		public async Task<TData> ReadData<TData>(string key, CancellationToken cancellationToken) where TData : class
 		{
-			return (await GetRootObject(key, cancellationToken)).ToObject<TData>();
+			return (await GetRootObject(key, cancellationToken).ConfigureAwait(false)).ToObject<TData>();
 		}
 
 		/// <inheritdoc />
-		public async Task WriteData<TData>(IEnumerable<string> keys, TData data, CancellationToken cancellationToken)
+		public async Task WriteParentData<TData>(IEnumerable<string> keys, TData data, CancellationToken cancellationToken)
 		{
 			if (keys == null)
 				throw new ArgumentNullException(nameof(keys));
@@ -139,7 +142,7 @@ namespace TGWebhooks.Core.Model
 			{
 				if (root == null)
 				{
-					root = await GetRootObject(I, cancellationToken);
+					root = await GetRootObject(I, cancellationToken).ConfigureAwait(false);
 					current = root;
 					firstKey = I;
 				}
@@ -169,13 +172,13 @@ namespace TGWebhooks.Core.Model
 				oldCurrent.Add(new JProperty(lastKey, data));
 			}
 
-			await WriteRootObject(firstKey, root, cancellationToken);
+			await WriteRootObject(firstKey, root, cancellationToken).ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
 		public Task WriteData<TData>(string key, TData data, CancellationToken cancellationToken) where TData : class
 		{
-			return WriteData(new List<string> { key }, data, cancellationToken);
+			return WriteParentData(new List<string> { key }, data, cancellationToken);
 		}
 	}
 }
