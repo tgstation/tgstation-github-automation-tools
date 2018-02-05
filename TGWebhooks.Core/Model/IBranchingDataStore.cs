@@ -16,7 +16,7 @@ namespace TGWebhooks.Core.Model
 		/// <param name="key">The key to branch on</param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in the branched <see cref="IDataStore"/></returns>
-		Task<IBranchingDataStore> BranchOnKey(string key, CancellationToken cancellationToken);
+		IBranchingDataStore BranchOnKey(string key);
 		Task WriteData<TData>(IEnumerable<string> keys, TData data, CancellationToken cancellationToken);
 	}
 }

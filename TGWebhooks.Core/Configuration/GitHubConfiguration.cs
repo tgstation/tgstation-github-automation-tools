@@ -29,5 +29,15 @@
 		/// The name of the repository to manage
 		/// </summary>
 		public string RepoName { get; set; }
-    }
+
+		/// <summary>
+		/// The client ID for the Oauth application
+		/// </summary>
+		public string OauthClientID { get; set; }
+
+		/// <summary>
+		/// The client secret for the Oauth application
+		/// </summary>
+		public string OauthSecret { get; set; }
+	}
 }

@@ -1,4 +1,5 @@
 ﻿using Octokit;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -78,5 +79,8 @@ namespace TGWebhooks.Interface
 		/// <param name="label">The label to add</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
 		Task AddLabel(int number, string label);
+
+		Uri GetAuthorizationURL(Uri callbackURL);
+		Task CompleteAuthorization(string code);
 	}
 }

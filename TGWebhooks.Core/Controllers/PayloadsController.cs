@@ -137,7 +137,7 @@ namespace TGWebhooks.Core.Controllers
 			if(!CheckPayloadSignature(json, signature))
 				return Unauthorized();
 
-			async Task<IActionResult> StartJob<TPayload>() where TPayload : ActivityPayload
+			IActionResult StartJob<TPayload>() where TPayload : ActivityPayload
 			{
 				TPayload payload;
 				try
@@ -146,8 +146,7 @@ namespace TGWebhooks.Core.Controllers
 				}
 				catch (Exception e)
 				{
-					await logger.LogUnhandledException(e, cancellationToken);
-					return BadRequest();
+					return BadRequest(e);
 				}
 
 				//ensure the payload is from the configured sender
@@ -161,7 +160,7 @@ namespace TGWebhooks.Core.Controllers
 			switch (eventName)
 			{
 				case "pull_request":
-					return await StartJob<PullRequestEventPayload>();
+					return StartJob<PullRequestEventPayload>();
 				default:
 					return Ok();
 			}			

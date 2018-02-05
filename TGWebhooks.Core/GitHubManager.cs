@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using TGWebhooks.Core.Configuration;
+using TGWebhooks.Core.Model;
 using TGWebhooks.Interface;
 
 namespace TGWebhooks.Core
@@ -14,6 +15,11 @@ namespace TGWebhooks.Core
     sealed class GitHubManager : IGitHubManager
     {
 		/// <summary>
+		/// The client ID of the oauth client
+		/// </summary>
+		const string OauthClientID = "57a7187d56c2f51ce60d";
+
+		/// <summary>
 		/// The <see cref="GitHubConfiguration"/> for the <see cref="GitHubManager"/>
 		/// </summary>
 		readonly GitHubConfiguration gitHubConfiguration;
@@ -21,6 +27,10 @@ namespace TGWebhooks.Core
 		/// The <see cref="GitHubClient"/> for the <see cref="GitHubManager"/>
 		/// </summary>
 		readonly GitHubClient gitHubClient;
+		/// <summary>
+		/// The <see cref="IDataStore"/> for the <see cref="GitHubManager"/>
+		/// </summary>
+		readonly IDataStore dataStore;
 
 		/// <summary>
 		/// Validate an <see cref="Issue"/> <paramref name="number"/>
@@ -36,15 +46,18 @@ namespace TGWebhooks.Core
 		/// Construct a <see cref="GitHubManager"/>
 		/// </summary>
 		/// <param name="gitHubConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the value of <see cref="gitHubConfiguration"/></param>
-		public GitHubManager(IOptions<GitHubConfiguration> gitHubConfigurationOptions)
+		public GitHubManager(IOptions<GitHubConfiguration> gitHubConfigurationOptions, IBranchingDataStore branchingDataStore)
 		{
 			if(gitHubConfigurationOptions == null)
 				throw new ArgumentNullException(nameof(gitHubConfigurationOptions));
+			if (branchingDataStore == null)
+				throw new ArgumentNullException(nameof(branchingDataStore));
 			gitHubConfiguration = gitHubConfigurationOptions.Value;
 			gitHubClient = new GitHubClient(new ProductHeaderValue(Application.UserAgent))
 			{
 				Credentials = new Credentials(gitHubConfiguration.PersonalAccessToken)
 			};
+			dataStore = branchingDataStore.BranchOnKey("GitHub");
 		}
 
 		/// <inheritdoc />
@@ -133,7 +146,24 @@ namespace TGWebhooks.Core
 			IssueArgumentCheck(number);
 			if (label == null)
 				throw new ArgumentNullException(nameof(label));
+			
 			return gitHubClient.Issue.Labels.AddToIssue(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, number, new string[] { label });
+		}
+
+		public Uri GetAuthorizationURL(Uri callbackURL)
+		{
+			var olr = new OauthLoginRequest(gitHubConfiguration.OauthClientID);
+			olr.Scopes.Add("public_repo");  //all we need
+			olr.RedirectUri = callbackURL;
+			return gitHubClient.Oauth.GetGitHubLoginUrl(olr);
+		}
+
+		public Task CompleteAuthorization(string code)
+		{
+			if (code == null)
+				throw new ArgumentNullException(nameof(code));
+			var otr = new OauthTokenRequest(gitHubConfiguration.OauthClientID, gitHubConfiguration.OauthSecret, code);
+			return gitHubClient.Oauth.CreateAccessToken(otr);
 		}
 	}
 }
