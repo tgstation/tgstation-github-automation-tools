@@ -80,7 +80,7 @@ namespace TGWebhooks.Core
 			var baseUrl = String.Join('/', baseBuildURL, buildNumber);
 			Task DoBuildPost(string method)
 			{
-				return requestManager.RunRequest(String.Join('/', baseUrl, method), String.Empty, GetRequestHeaders(), RequestMethod.POST, cancellationToken);
+				return requestManager.RunRequest(new Uri(String.Join('/', baseUrl, method)), String.Empty, GetRequestHeaders(), RequestMethod.POST, cancellationToken);
 			}
 			//first ensure it's over
 			await DoBuildPost("cancel").ConfigureAwait(false);

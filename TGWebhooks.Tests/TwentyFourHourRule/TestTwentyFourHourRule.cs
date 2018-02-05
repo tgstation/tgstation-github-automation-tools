@@ -9,12 +9,12 @@ using TGWebhooks.Tests;
 namespace TGWebhooks.TwentyFourHourRule.Tests
 {
 	[TestClass]
-	public sealed class TestTwentyFourHourRule : TestPlugin<TwentyFourHourRule>
+	public sealed class TestTwentyFourHourRule : TestPlugin<TwentyFourHourRulePlugin>
 	{
 		[TestMethod]
 		public async Task TestInvalid()
 		{
-			var plugin = new TwentyFourHourRule();
+			var plugin = new TwentyFourHourRulePlugin();
 			await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => plugin.EvaluateFor(null, CancellationToken.None)).ConfigureAwait(false);
 		}
 

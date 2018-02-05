@@ -4,7 +4,6 @@ using Octokit;
 using Octokit.Internal;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Tests;
@@ -12,12 +11,12 @@ using TGWebhooks.Tests;
 namespace TGWebhooks.MaintainerApproval.Tests
 {
 	[TestClass]
-	public sealed class TestMaintainerApproval : TestPlugin<MaintainerApproval>
+	public sealed class TestMaintainerApproval : TestPlugin<MaintainerApprovalPlugin>
 	{
 		[TestMethod]
 		public async Task TestInvalid()
 		{
-			var plugin = new MaintainerApproval();
+			var plugin = new MaintainerApprovalPlugin();
 			await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => plugin.EvaluateFor(null, CancellationToken.None)).ConfigureAwait(false);
 		}
 

@@ -11,7 +11,7 @@ namespace TGWebhooks.TwentyFourHourRule
 	/// <summary>
 	/// <see cref="IPlugin"/> for the 24-Hour Rule <see cref="IMergeRequirement"/>
 	/// </summary>
-	public class TwentyFourHourRule : IPlugin, IMergeRequirement
+	public class TwentyFourHourRulePlugin : IPlugin, IMergeRequirement
 	{
 		/// <summary>
 		/// Twenty. Four. Hour. Rule.

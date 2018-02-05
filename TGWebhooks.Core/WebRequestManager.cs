@@ -16,7 +16,7 @@ namespace TGWebhooks.Core
 #pragma warning restore CA1812
 	{
 		/// <inheritdoc />
-		public async Task<string> RunRequest(string url, string body, IEnumerable<string> headers, RequestMethod requestMethod, CancellationToken cancellationToken)
+		public async Task<string> RunRequest(Uri url, string body, IEnumerable<string> headers, RequestMethod requestMethod, CancellationToken cancellationToken)
 		{
 			if (url == null)
 				throw new ArgumentNullException(nameof(url));
@@ -25,7 +25,7 @@ namespace TGWebhooks.Core
 			if (headers == null)
 				throw new ArgumentNullException(nameof(headers));
 
-			var request = WebRequest.Create(new Uri(url));
+			var request = WebRequest.Create(url);
 			request.Method = requestMethod.ToString();
 			foreach (var I in headers)
 				request.Headers.Add(I);

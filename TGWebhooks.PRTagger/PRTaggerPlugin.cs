@@ -10,9 +10,9 @@ using TGWebhooks.Api;
 namespace TGWebhooks.PRTagger
 {
 	/// <summary>
-	/// Auto labelling PR plugin
+	/// <see cref="IPlugin"/> for auto labelling a <see cref="PullRequest"/>
 	/// </summary>
-	public class TaggerPlugin : IPlugin, IPayloadHandler<PullRequestEventPayload>
+	public class PRTaggerPlugin : IPlugin, IPayloadHandler<PullRequestEventPayload>
 	{
 		/// <inheritdoc />
 		public bool Enabled { get; set; }
@@ -30,7 +30,7 @@ namespace TGWebhooks.PRTagger
 		public IEnumerable<IMergeRequirement> MergeRequirements => Enumerable.Empty<IMergeRequirement>();
 
 		/// <summary>
-		/// The <see cref="IGitHubManager"/> for the <see cref="TaggerPlugin"/>
+		/// The <see cref="IGitHubManager"/> for the <see cref="PRTaggerPlugin"/>
 		/// </summary>
 		IGitHubManager gitHubManager;
 
@@ -39,7 +39,7 @@ namespace TGWebhooks.PRTagger
 		/// </summary>
 		/// <param name="payload">The <see cref="PullRequestEventPayload"/> for the pull request</param>
 		/// <param name="oneCheckTags"><see langword="true"/> if additional tags should be contionally applied, <see langword="false"/> otherwise</param>
-		/// <returns></returns>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
 		async Task TagPR(PullRequestEventPayload payload, bool oneCheckTags)
 		{
 			async Task<bool?> MergeableCheck()
@@ -48,15 +48,15 @@ namespace TGWebhooks.PRTagger
 				bool? mergeable = payload.PullRequest.Mergeable;
 				for (var I = 0; !mergeable.HasValue && I < 3; ++I)
 				{
-					await Task.Delay(I * 1000);
-					mergeable = (await gitHubManager.GetPullRequest(payload.PullRequest.Number)).Mergeable;
+					await Task.Delay(I * 1000).ConfigureAwait(false);
+					mergeable = (await gitHubManager.GetPullRequest(payload.PullRequest.Number).ConfigureAwait(false)).Mergeable;
 				}
 				return mergeable;
 			};
 
-			var mergeableTask = MergeableCheck();
-			var filesChanged = gitHubManager.GetPullRequestChangedFiles(payload.PullRequest.Number);
-			var currentLabelsTask = gitHubManager.GetIssueLabels(payload.PullRequest.Number);
+			var mergeableTask = MergeableCheck().ConfigureAwait(false);
+			var filesChanged = gitHubManager.GetPullRequestChangedFiles(payload.PullRequest.Number).ConfigureAwait(false);
+			var currentLabelsTask = gitHubManager.GetIssueLabels(payload.PullRequest.Number).ConfigureAwait(false);
 
 			var labelsToAdd = new List<string>();
 			var labelsToRemove = new List<string>();
@@ -99,13 +99,14 @@ namespace TGWebhooks.PRTagger
 			foreach (var I in await filesChanged)
 			{
 				foreach (var J in treeToLabelMappings)
-					if (I.FileName.StartsWith(J.Key))
+					if (I.FileName.StartsWith(J.Key, StringComparison.CurrentCulture))
 						labelsToAdd.Add(J.Value);
 					else
 						labelsToRemove.Add(J.Value);
-				foreach (var J in addOnlyTreeToLabelMappings)
-					if (I.FileName.StartsWith(J.Key))
-						labelsToAdd.Add(J.Value);
+				if (oneCheckTags)
+					foreach (var J in addOnlyTreeToLabelMappings)
+						if (I.FileName.StartsWith(J.Key, StringComparison.CurrentCulture))
+							labelsToAdd.Add(J.Value);
 			}
 
 			labelsToAdd.RemoveAll(x => labelsToRemove.Contains(x));
@@ -120,7 +121,7 @@ namespace TGWebhooks.PRTagger
 			foreach (var I in currentLabels)
 				newLabels.Add(I.Name);
 
-			await gitHubManager.SetIssueLabels(payload.PullRequest.Number, newLabels);
+			await gitHubManager.SetIssueLabels(payload.PullRequest.Number, newLabels).ConfigureAwait(false);
 		}
 
 		/// <summary>
@@ -137,15 +138,15 @@ namespace TGWebhooks.PRTagger
 			async Task RefreshPR(PullRequest pullRequest)
 			{
 				//wait 10s for refresh then give up
-				await Task.Delay(10000);
-				pullRequest = await gitHubManager.GetPullRequest(pullRequest.Number);
+				await Task.Delay(10000).ConfigureAwait(false);
+				pullRequest = await gitHubManager.GetPullRequest(pullRequest.Number).ConfigureAwait(false);
 				if(pullRequest.Mergeable.HasValue && !pullRequest.Mergeable.Value)
-					await AddMergeConflictTag(pullRequest);
+					await AddMergeConflictTag(pullRequest).ConfigureAwait(false);
 			};
 
 			var tasks = new List<Task>();
 
-			var prs = await gitHubManager.GetOpenPullRequests();
+			var prs = await gitHubManager.GetOpenPullRequests().ConfigureAwait(false);
 			foreach (var I in prs)
 				if (I.Mergeable.HasValue)
 				{
@@ -157,7 +158,7 @@ namespace TGWebhooks.PRTagger
 				else
 					tasks.Add(RefreshPR(I));
 
-			await Task.WhenAll(tasks);
+			await Task.WhenAll(tasks).ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -187,14 +188,14 @@ namespace TGWebhooks.PRTagger
 			switch (payload.Action)
 			{
 				case "opened":
-					await TagPR(payload, true);
+					await TagPR(payload, true).ConfigureAwait(false);
 					break;
 				case "synchronize":
-					await TagPR(payload, false);
+					await TagPR(payload, false).ConfigureAwait(false);
 					break;
 				case "closed":
 					if (payload.PullRequest.Merged)
-						await CheckMergeConflicts();
+						await CheckMergeConflicts().ConfigureAwait(false);
 					break;
 				default:
 					throw new NotSupportedException();

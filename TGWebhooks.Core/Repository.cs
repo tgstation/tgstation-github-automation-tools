@@ -11,7 +11,7 @@ namespace TGWebhooks.Core
 {
 	/// <inheritdoc />
 #pragma warning disable CA1812
-	sealed class Repository : Interface.IRepository, IInitializable, IDisposable
+	sealed class Repository : Api.IRepository, IInitializable, IDisposable
 #pragma warning restore CA1812
 	{
 		/// <summary>

@@ -12,7 +12,7 @@ namespace TGWebhooks.MaintainerApproval
 	/// <summary>
 	/// <see cref="IPlugin"/> for a <see cref="IMergeRequirement"/> that requires at least one maintainer approval and no outstanding changes requested
 	/// </summary>
-	public class MaintainerApproval : IPlugin, IMergeRequirement
+	public class MaintainerApprovalPlugin : IPlugin, IMergeRequirement
 	{
 		/// <inheritdoc />
 		public bool Enabled { get; set; }
@@ -58,7 +58,7 @@ namespace TGWebhooks.MaintainerApproval
 			if (gitHubManager == null)
 				throw new InvalidOperationException("Configure() wasn't called!");
 
-			var reviews = await gitHubManager.GetPullRequestReviews(pullRequest);
+			var reviews = await gitHubManager.GetPullRequestReviews(pullRequest).ConfigureAwait(false);
 
 			var approvers = new List<User>();
 			var critics = new List<User>();
@@ -86,7 +86,7 @@ namespace TGWebhooks.MaintainerApproval
 
 			var result = new AutoMergeStatus();
 
-			await Task.WhenAll(userCheckups.Select(x => x.Value));
+			await Task.WhenAll(userCheckups.Select(x => x.Value)).ConfigureAwait(false);
 
 			foreach(var I in approvers)
 			{
