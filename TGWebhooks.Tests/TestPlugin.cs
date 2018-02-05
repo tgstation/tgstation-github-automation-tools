@@ -29,8 +29,8 @@ namespace TGWebhooks.Tests
 			plugin.Enabled = true;
 			Assert.IsTrue(plugin.Enabled);
 
-			Assert.IsNotNull(plugin.Guid);
-			Assert.AreEqual(plugin.Guid, plugin.Guid);
+			Assert.IsNotNull(plugin.Uid);
+			Assert.AreEqual(plugin.Uid, plugin.Uid);
 		}
 
 		[TestMethod]

@@ -13,9 +13,9 @@ namespace TGWebhooks.Interface
 		bool Enabled { get; set; }
 
 		/// <summary>
-		/// A unique <see cref="Guid"/> for the <see cref="IPlugin"/>
+		/// A unique <see cref="Uid"/> for the <see cref="IPlugin"/>
 		/// </summary>
-		Guid Guid { get; }
+		Guid Uid { get; }
 
 		/// <summary>
 		/// The name of the <see cref="IPlugin"/>

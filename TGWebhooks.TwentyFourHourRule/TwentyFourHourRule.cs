@@ -22,7 +22,7 @@ namespace TGWebhooks.TwentyFourHourRule
 		public bool Enabled { get; set; }
 
 		/// <inheritdoc />
-		public Guid Guid => new Guid("78544889-5447-47f2-b300-3fb7b703c3cc");
+		public Guid Uid => new Guid("78544889-5447-47f2-b300-3fb7b703c3cc");
 
 		/// <inheritdoc />
 		public string Name => "24-Hour Rule";

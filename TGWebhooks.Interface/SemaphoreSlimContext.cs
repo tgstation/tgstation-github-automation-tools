@@ -19,7 +19,7 @@ namespace TGWebhooks.Interface
 		{
 			if (semaphore == null)
 				throw new ArgumentNullException(nameof(semaphore));
-			await semaphore.WaitAsync(cancellationToken);
+			await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
 			cancellationToken.ThrowIfCancellationRequested();
 			return new SemaphoreSlimContext(semaphore);
 		}

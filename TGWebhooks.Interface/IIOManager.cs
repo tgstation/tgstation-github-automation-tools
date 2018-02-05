@@ -63,13 +63,13 @@ namespace TGWebhooks.Interface
 		Task<bool> FileExists(string path, CancellationToken cancellationToken);
 
 		/// <summary>
-		/// Writes some <paramref name="additional_contents"/> to a file at <paramref name="path"/> after previous content
+		/// Writes some <paramref name="additionalContents"/> to a file at <paramref name="path"/> after previous content
 		/// </summary>
 		/// <param name="path">The path of the file to write</param>
-		/// <param name="additional_contents">The contents to add to the file</param>
+		/// <param name="additionalContents">The contents to add to the file</param>
 		/// <param name="cancellationToken">A <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
-		Task AppendAllText(string path, string additional_contents, CancellationToken cancellationToken);
+		Task AppendAllText(string path, string additionalContents, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Returns all the contents of a file at <paramref name="path"/> as a <see cref="byte"/> array

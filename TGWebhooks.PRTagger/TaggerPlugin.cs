@@ -18,7 +18,7 @@ namespace TGWebhooks.PRTagger
 		public bool Enabled { get; set; }
 
 		/// <inheritdoc />
-		public Guid Guid => new Guid("3a6dd37c-3dee-4a7a-a016-885a4a775968");
+		public Guid Uid => new Guid("3a6dd37c-3dee-4a7a-a016-885a4a775968");
 
 		/// <inheritdoc />
 		public string Name => "Pull Request Tagger";

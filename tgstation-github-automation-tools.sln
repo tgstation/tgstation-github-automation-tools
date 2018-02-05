@@ -32,6 +32,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{33DBC235
 		Tools\UploadCoverage.ps1 = Tools\UploadCoverage.ps1
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TGWebhooks.SignOff", "TGWebhooks.SignOff\TGWebhooks.SignOff.csproj", "{8B46A52F-B7B3-4C2A-BA8C-35BB101A664E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,6 +68,10 @@ Global
 		{8DF46DEB-5CBE-4049-9D03-47C8E6F856CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DF46DEB-5CBE-4049-9D03-47C8E6F856CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DF46DEB-5CBE-4049-9D03-47C8E6F856CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B46A52F-B7B3-4C2A-BA8C-35BB101A664E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B46A52F-B7B3-4C2A-BA8C-35BB101A664E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B46A52F-B7B3-4C2A-BA8C-35BB101A664E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B46A52F-B7B3-4C2A-BA8C-35BB101A664E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,9 +1,11 @@
 ﻿namespace TGWebhooks.Interface
 {
+#pragma warning disable CA1717 // Only FlagsAttribute enums should have plural names
 	/// <summary>
 	/// Describes the status for a <see cref="IContinuousIntegration"/> provider
 	/// </summary>
 	public enum ContinuousIntegrationStatus
+#pragma warning restore CA1717 // Only FlagsAttribute enums should have plural names
 	{
 		/// <summary>
 		/// The status for the <see cref="IContinuousIntegration"/> isn't present

@@ -130,12 +130,12 @@ namespace TGWebhooks.Core
 				try
 				{
 					var plugin = (IPlugin)Activator.CreateInstance(type);
-					var pluginData = rootDataStore.BranchOnKey(plugin.Guid.ToString());
+					var pluginData = rootDataStore.BranchOnKey(plugin.Uid.ToString());
 					plugin.Configure(logger, repository, gitHubManager, dataIOManager, requestManager, pluginData);
-					if (!pluginConfigs.EnabledPlugins.TryGetValue(plugin.Guid, out bool enabled))
+					if (!pluginConfigs.EnabledPlugins.TryGetValue(plugin.Uid, out bool enabled))
 					{
 						enabled = true;
-						pluginConfigs.EnabledPlugins.Add(plugin.Guid, enabled);
+						pluginConfigs.EnabledPlugins.Add(plugin.Uid, enabled);
 					}
 					plugin.Enabled = enabled;
 					await plugin.Initialize(cancellationToken).ConfigureAwait(false);
