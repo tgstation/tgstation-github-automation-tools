@@ -156,12 +156,19 @@ namespace TGWebhooks.Core
 		}
 
 		/// <inheritdoc />
-		public Task MergePullRequest(PullRequest pullRequest)
+		public Task MergePullRequest(PullRequest pullRequest, string accessToken)
 		{
 			if (pullRequest == null)
 				throw new ArgumentNullException(nameof(pullRequest));
-			
-			return gitHubClient.PullRequest.Merge(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, pullRequest.Number, new MergePullRequest
+			if (accessToken == null)
+				throw new ArgumentNullException(nameof(accessToken));
+
+			var mergerClient = new GitHubClient(new ProductHeaderValue(Application.UserAgent))
+			{
+				Credentials = new Credentials(accessToken)
+			};
+
+			return mergerClient.PullRequest.Merge(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, pullRequest.Number, new MergePullRequest
 			{
 				CommitTitle = String.Format(CultureInfo.InvariantCulture, "{0} (#{1})", pullRequest.Title, pullRequest.Body),
 				CommitMessage = pullRequest.Body,

@@ -9,11 +9,9 @@ using TGWebhooks.Api;
 
 namespace TGWebhooks.Core
 {
-	/// <summary>
-	/// Manages the automatic merge process for <see cref="PullRequest"/>s
-	/// </summary>
+	/// <inheritdoc />
 #pragma warning disable CA1812
-	sealed class AutoMergeHandler : IPayloadHandler<PullRequestEventPayload>
+	sealed class AutoMergeHandler : IAutoMergeHandler
 #pragma warning restore CA1812
 	{
 		/// <summary>
@@ -38,12 +36,6 @@ namespace TGWebhooks.Core
 
 		async Task<IReadOnlyList<AutoMergeStatus>> GetStatusesForPullRequest(PullRequest pullRequest, CancellationToken cancellationToken)
 		{
-			for (var I = 0; I < 4 && pullRequest.Mergeable == null; ++I)
-			{
-				await Task.Delay(I * 1000).ConfigureAwait(false);
-				pullRequest = await gitHubManager.GetPullRequest(pullRequest.Number).ConfigureAwait(false);
-			}
-
 			var tasks = new List<Task<AutoMergeStatus>>();
 			foreach (var I in componentProvider.MergeRequirements)
 				tasks.Add(I.EvaluateFor(pullRequest, cancellationToken));
@@ -55,9 +47,20 @@ namespace TGWebhooks.Core
 
 		async Task CheckMergePullRequest(PullRequest pullRequest, CancellationToken cancellationToken)
 		{
+			for (var I = 0; I < 4 && pullRequest.Mergeable == null; ++I)
+			{
+				await Task.Delay(I * 1000).ConfigureAwait(false);
+				pullRequest = await gitHubManager.GetPullRequest(pullRequest.Number).ConfigureAwait(false);
+			}
+
+			//nothing to do here
+			if (!pullRequest.Mergeable.HasValue || !pullRequest.Mergeable.Value)
+				return;
+
 			var results = await GetStatusesForPullRequest(pullRequest, cancellationToken).ConfigureAwait(false);
 
 			bool merge = true;
+			string mergerToken = null;
 			int rescheduleIn = 0;
 			foreach(var I in results)
 			{
@@ -70,10 +73,16 @@ namespace TGWebhooks.Core
 					else
 						rescheduleIn = Math.Min(rescheduleIn, I.ReevaluateIn);
 				}
+				if (I.MergerAccessToken != null)
+				{
+					if (mergerToken != null)
+						throw new InvalidOperationException("Multiple AutoMergeResults with MergerAccessTokens!");
+					mergerToken = I.MergerAccessToken;
+				}
 			}
 
-			if (merge)
-				await gitHubManager.MergePullRequest(pullRequest).ConfigureAwait(false);
+			if (merge && mergerToken != null)
+				await gitHubManager.MergePullRequest(pullRequest, mergerToken).ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />

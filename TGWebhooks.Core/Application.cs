@@ -74,6 +74,7 @@ namespace TGWebhooks.Core
 			services.AddSingleton<IContinuousIntegration, TravisContinuousIntegration>();
 			services.AddSingleton<IRootDataStore, SQLiteDataStore>();
 			services.AddSingleton<IBranchingDataStore>(x => x.GetRequiredService<IRootDataStore>());
+			services.AddSingleton<IAutoMergeHandler, AutoMergeHandler>();
 		}
 
 #pragma warning disable CA1822 // Mark members as static

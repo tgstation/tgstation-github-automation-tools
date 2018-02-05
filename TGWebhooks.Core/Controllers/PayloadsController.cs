@@ -10,7 +10,6 @@ using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Core.Configuration;
 using TGWebhooks.Api;
@@ -36,6 +35,10 @@ namespace TGWebhooks.Core.Controllers
 		/// The <see cref="ILogger"/> for the <see cref="PayloadsController"/>
 		/// </summary>
 		readonly ILogger logger;
+		/// <summary>
+		/// The <see cref="IAutoMergeHandler"/> for the <see cref="PayloadsController"/>
+		/// </summary>
+		readonly IAutoMergeHandler autoMergeHandler;
 
 		/// <summary>
 		/// Convert some <paramref name="bytes"/> to a hex string
@@ -56,13 +59,14 @@ namespace TGWebhooks.Core.Controllers
 		/// <param name="gitHubConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing value of <see cref="gitHubConfiguration"/></param>
 		/// <param name="logger">The value of <see cref="logger"/></param>
 		/// <param name="componentProvider">The value of <see cref="componentProvider"/></param>
-		public PayloadsController(IOptions<GitHubConfiguration> gitHubConfigurationOptions, ILogger logger, IComponentProvider componentProvider)
+		public PayloadsController(IOptions<GitHubConfiguration> gitHubConfigurationOptions, ILogger logger, IComponentProvider componentProvider, IAutoMergeHandler autoMergeHandler)
 		{
 			if(gitHubConfigurationOptions == null)
 				throw new ArgumentNullException(nameof(gitHubConfigurationOptions));
 			gitHubConfiguration = gitHubConfigurationOptions.Value;
 			this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 			this.componentProvider = componentProvider ?? throw new ArgumentNullException(nameof(componentProvider));
+			this.autoMergeHandler = autoMergeHandler ?? throw new ArgumentNullException(nameof(autoMergeHandler));
 		}
 
 		/// <summary>
@@ -101,25 +105,30 @@ namespace TGWebhooks.Core.Controllers
 			var cancellationToken = jobCancellationToken.ShutdownToken;
 
 			var tasks = new List<Task>();
-			foreach (var handler in componentProvider.GetPayloadHandlers<TPayload>()) {
-				async Task RunHandler()
+			async Task RunHandler(IPayloadHandler<TPayload> payloadHandler)
+			{
+				try
 				{
-					try
-					{
-						await handler.ProcessPayload(payload, cancellationToken).ConfigureAwait(false);
-					}
-					//To be expected
-					catch (OperationCanceledException) { }
-					catch (NotSupportedException) { }
-					catch (Exception e)
-					{
-						await logger.LogUnhandledException(e, cancellationToken).ConfigureAwait(false);
-					}
-				};
-				tasks.Add(RunHandler());
-			}
+					await payloadHandler.ProcessPayload(payload, cancellationToken).ConfigureAwait(false);
+				}
+				//To be expected
+				catch (OperationCanceledException) { }
+				catch (NotSupportedException) { }
+				catch (Exception e)
+				{
+					await logger.LogUnhandledException(e, cancellationToken).ConfigureAwait(false);
+				}
+			};
+			foreach (var handler in componentProvider.GetPayloadHandlers<TPayload>())
+				tasks.Add(RunHandler(handler));
 
 			await Task.WhenAll(tasks).ConfigureAwait(false);
+
+			if (typeof(IPayloadHandler<TPayload>).IsAssignableFrom(autoMergeHandler.GetType()))
+			{
+				var asHandler = (IPayloadHandler<TPayload>)autoMergeHandler;
+				await asHandler.ProcessPayload(payload, cancellationToken).ConfigureAwait(false);
+			}
 		}
 
 		/// <summary>

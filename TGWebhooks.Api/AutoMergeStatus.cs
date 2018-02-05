@@ -23,5 +23,9 @@ namespace TGWebhooks.Api
 		/// Lines to display under the progress indicator of the <see cref="AutoMergeStatus"/>. Should be 
 		/// </summary>
 		public List<string> Notes { get; } = new List<string>();
+		/// <summary>
+		/// The GitHub access token override to merge with
+		/// </summary>
+		public string MergerAccessToken { get; }
 	}
 }
