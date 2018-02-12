@@ -40,7 +40,7 @@
     <PackageReference Include="Cyberboss.AspNetCore.AsyncInitializer" Version="1.0.1" />
     <PackageReference Include="HangFire" Version="1.6.17" />
     <PackageReference Include="Hangfire.SQLite" Version="1.4.2" />
-    <PackageReference Include="LibGit2Sharp.NativeBinaries" Version="1.0.192" />
+    <PackageReference Include="LibGit2Sharp" Version="0.25.0-preview-0073" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="2.0.1" />
@@ -57,12 +57,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TGWebhooks.Api\TGWebhooks.Api.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="LibGit2Sharp">
-      <HintPath>LibGit2Sharp.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>
