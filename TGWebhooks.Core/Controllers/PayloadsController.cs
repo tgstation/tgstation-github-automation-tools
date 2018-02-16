@@ -59,6 +59,7 @@ namespace TGWebhooks.Core.Controllers
 		/// <param name="gitHubConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing value of <see cref="gitHubConfiguration"/></param>
 		/// <param name="logger">The value of <see cref="logger"/></param>
 		/// <param name="componentProvider">The value of <see cref="componentProvider"/></param>
+		/// <param name="autoMergeHandler">The value of <see cref="autoMergeHandler"/></param>
 		public PayloadsController(IOptions<GitHubConfiguration> gitHubConfigurationOptions, ILogger logger, IComponentProvider componentProvider, IAutoMergeHandler autoMergeHandler)
 		{
 			if(gitHubConfigurationOptions == null)

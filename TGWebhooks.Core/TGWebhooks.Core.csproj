@@ -57,6 +57,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TGWebhooks.Api\TGWebhooks.Api.csproj" />
+    <ProjectReference Include="..\TGWebhooks.Plugins\TGWebhooks.Plugins.MaintainerApproval\TGWebhooks.Plugins.MaintainerApproval.csproj" />
+    <ProjectReference Include="..\TGWebhooks.Plugins\TGWebhooks.Plugins.PRTagger\TGWebhooks.Plugins.PRTagger.csproj" />
+    <ProjectReference Include="..\TGWebhooks.Plugins\TGWebhooks.Plugins.SignOff\TGWebhooks.Plugins.SignOff.csproj" />
+    <ProjectReference Include="..\TGWebhooks.Plugins\TGWebhooks.Plugins.TwentyFourHourRule\TGWebhooks.Plugins.TwentyFourHourRule.csproj" />
   </ItemGroup>
 
 </Project>
