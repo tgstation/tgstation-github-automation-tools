@@ -12,6 +12,7 @@ using TGWebhooks.Core.Configuration;
 using TGWebhooks.Api;
 using TGWebhooks.Core.Model;
 using System.Threading;
+using Microsoft.Extensions.Logging;
 
 namespace TGWebhooks.Core
 {
@@ -68,7 +69,6 @@ namespace TGWebhooks.Core
 			services.AddSingleton<IComponentProvider>(x => x.GetRequiredService<IPluginManager>());
 			services.AddSingleton<IGitHubManager, GitHubManager>();
 			services.AddSingleton<IRepository, Repository>();
-			services.AddSingleton<ILogger, Logger>();
 			services.AddSingleton<IIOManager, DefaultIOManager>();
 			services.AddSingleton<IWebRequestManager, WebRequestManager>();
 			services.AddSingleton<IContinuousIntegration, TravisContinuousIntegration>();

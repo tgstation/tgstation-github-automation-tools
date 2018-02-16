@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using TGWebhooks.Core.Configuration;
 using TGWebhooks.Core.Model;
 using TGWebhooks.Api;
+using Microsoft.Extensions.Logging;
 
 namespace TGWebhooks.Core
 {
@@ -20,9 +21,13 @@ namespace TGWebhooks.Core
 		public IEnumerable<IMergeRequirement> MergeRequirements => plugins.Where(x => x.Enabled).SelectMany(x => x.MergeRequirements).ToList();
 
 		/// <summary>
-		/// The <see cref="ILogger"/> for the <see cref="PluginManager"/>
+		/// The <see cref="ILoggerFactory"/> for the <see cref="PluginManager"/>
 		/// </summary>
-		readonly ILogger logger;
+		readonly ILoggerFactory loggerFactory;
+		/// <summary>
+		/// The <see cref="ILogger{TCategoryName}"/> for the <see cref="PluginManager"/>
+		/// </summary>
+		readonly ILogger<PluginManager> logger;
 		/// <summary>
 		/// The <see cref="IRepository"/> for the <see cref="PluginManager"/>
 		/// </summary>
@@ -52,14 +57,16 @@ namespace TGWebhooks.Core
 		/// <summary>
 		/// Construct a <see cref="PluginManager"/>
 		/// </summary>
+		/// <param name="_loggerFactory">The value of <see cref="loggerFactory"/></param>
 		/// <param name="_logger">The value of <see cref="logger"/></param>
 		/// <param name="_repository">The value of <see cref="repository"/></param>
 		/// <param name="_gitHubManager">The value of <see cref="gitHubManager"/></param>
 		/// <param name="_ioManager">The value of <see cref="ioManager"/></param>
 		/// <param name="_requestManager">The value of <see cref="requestManager"/></param>
 		/// <param name="_rootDataStore">The value of <see cref="rootDataStore"/></param>
-		public PluginManager(ILogger _logger, IRepository _repository, IGitHubManager _gitHubManager, IIOManager _ioManager, IWebRequestManager _requestManager, IRootDataStore _rootDataStore)
+		public PluginManager(ILoggerFactory _loggerFactory, ILogger<PluginManager> _logger, IRepository _repository, IGitHubManager _gitHubManager, IIOManager _ioManager, IWebRequestManager _requestManager, IRootDataStore _rootDataStore)
 		{
+			loggerFactory = _loggerFactory ?? throw new ArgumentNullException(nameof(_loggerFactory));
 			logger = _logger ?? throw new ArgumentNullException(nameof(_logger));
 			repository = _repository ?? throw new ArgumentNullException(nameof(_repository));
 			gitHubManager = _gitHubManager ?? throw new ArgumentNullException(nameof(_gitHubManager));
@@ -71,6 +78,8 @@ namespace TGWebhooks.Core
 		/// <inheritdoc />
 		public async Task Initialize(CancellationToken cancellationToken)
 		{
+			var logger = loggerFactory.CreateLogger<PluginManager>();
+
 			async Task<PluginConfiguration> DBInit()
 			{
 				await rootDataStore.Initialize(cancellationToken).ConfigureAwait(false);
@@ -89,35 +98,68 @@ namespace TGWebhooks.Core
 
 			async Task<IPlugin> InitPlugin(Type type)
 			{
+				IPlugin plugin;
 				try
 				{
-					var plugin = (IPlugin)Activator.CreateInstance(type);
-					var pluginData = rootDataStore.BranchOnKey(plugin.Uid.ToString());
-					plugin.Configure(logger, repository, gitHubManager, dataIOManager, requestManager, pluginData);
-					if (!pluginConfigs.EnabledPlugins.TryGetValue(plugin.Uid, out bool enabled))
-					{
-						enabled = true;
-						pluginConfigs.EnabledPlugins.Add(plugin.Uid, enabled);
-					}
-					plugin.Enabled = enabled;
+					logger.LogDebug("Instantiating plugin {0}...", type);
+					plugin = (IPlugin)Activator.CreateInstance(type);
+				}
+				catch (Exception e)
+				{
+					logger.LogError(e, "Failed to instantiate plugin {0}!", type);
+					return null;
+				}
+
+				logger.LogTrace("Plugin {0}.Name: {1}", type, plugin.Name);
+				logger.LogTrace("Plugin {0}.Description: {1}", type, plugin.Description);
+				logger.LogTrace("Plugin {0}.Uid: {1}", type, plugin.Uid);
+
+				var pluginData = rootDataStore.BranchOnKey(plugin.Uid.ToString());
+				try
+				{
+					plugin.Configure(loggerFactory.CreateLogger(type.FullName), repository, gitHubManager, dataIOManager, requestManager, pluginData);
+				}
+				catch (Exception e)
+				{
+					logger.LogError(e, "Failed to configure plugin {0}!", type);
+					return null;
+				}
+
+				if (!pluginConfigs.EnabledPlugins.TryGetValue(plugin.Uid, out bool enabled))
+				{
+					enabled = true;
+					pluginConfigs.EnabledPlugins.Add(plugin.Uid, enabled);
+				}
+
+				plugin.Enabled = enabled;
+				logger.LogTrace("Plugin {0}.Enabled: {1}", type, enabled);
+				if (!enabled)
+					return plugin;
+
+				logger.LogDebug("Initializing plugin {0}...", type);
+				try
+				{
 					await plugin.Initialize(cancellationToken).ConfigureAwait(false);
+					logger.LogDebug("Plugin {0} initialized!", type);
 					return plugin;
 				}
 				catch (Exception e)
 				{
-					await logger.LogUnhandledException(e, cancellationToken).ConfigureAwait(false);
+					logger.LogError(e, "Failed to instantiate plugin {0}!", type);
 					return null;
 				}
 			};
-
-			//load once from the AppDomain to ensure that we don't instance multiple copies of the same type
-			var loadedPlugins = await Task.WhenAll(AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes().Where(y => y.IsPublic && y.IsClass && !y.IsAbstract && typeof(IPlugin).IsAssignableFrom(y) && y.GetConstructors().Any(z => z.IsPublic && z.GetParameters().Count() == 0)).Select(p => InitPlugin(p)))).ConfigureAwait(false);
-			pluginsBuilder.AddRange(loadedPlugins.Where(x => x != null));
+			using (logger.BeginScope("Loading plugins..."))
+			{
+				var loadedPlugins = await Task.WhenAll(AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes().Where(y => y.IsPublic && y.IsClass && !y.IsAbstract && typeof(IPlugin).IsAssignableFrom(y) && y.GetConstructors().Any(z => z.IsPublic && z.GetParameters().Count() == 0)).Select(p => InitPlugin(p)))).ConfigureAwait(false);
+				pluginsBuilder.AddRange(loadedPlugins.Where(x => x != null));
+			}
 		}
 
 		/// <inheritdoc />
 		public IEnumerable<IPayloadHandler<TPayload>> GetPayloadHandlers<TPayload>() where TPayload : ActivityPayload
 		{
+			logger.LogTrace("Enumerating payload handlers.");
 			return plugins.Where(x => x.Enabled).SelectMany(x => x.GetPayloadHandlers<TPayload>());
 		}
 	}
