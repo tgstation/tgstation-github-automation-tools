@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace TGWebhooks.Api
 {
 	/// <summary>
-	/// Handles a certain type of <see cref="ActivityPayload"/>. Constructed via reflection, and accept parameters of <see cref="IGitHubManager"/>, <see cref="IRepository"/>, and <see cref="ILogger"/> in any order
+	/// Handles a certain type of <see cref="ActivityPayload"/>
 	/// </summary>
 	/// <typeparam name="TPayload">The <see cref="ActivityPayload"/> being handled</typeparam>
     public interface IPayloadHandler<TPayload> where TPayload : ActivityPayload

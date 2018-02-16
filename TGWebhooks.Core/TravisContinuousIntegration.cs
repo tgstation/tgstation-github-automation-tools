@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Core.Configuration;
 using TGWebhooks.Api;
+using Microsoft.Extensions.Logging;
 
 namespace TGWebhooks.Core
 {
@@ -21,6 +22,10 @@ namespace TGWebhooks.Core
 		/// <inheritdoc />
 		public string Name => "Travis-CI";
 
+		/// <summary>
+		/// The <see cref="ILogger{TCategoryName}"/> for the <see cref="TravisContinuousIntegration"/>
+		/// </summary>
+		readonly ILogger<TravisContinuousIntegration> logger;
 		/// <summary>
 		/// The <see cref="IGitHubManager"/> for the <see cref="TravisContinuousIntegration"/>
 		/// </summary>
@@ -47,14 +52,14 @@ namespace TGWebhooks.Core
 		/// <summary>
 		/// Construct a <see cref="TravisContinuousIntegration"/>
 		/// </summary>
+		/// <param name="_logger">The value of <see cref="logger"/></param>
 		/// <param name="_gitHubManager">The value of <see cref="gitHubManager"/></param>
 		/// <param name="_requestManager">The value of <see cref="requestManager"/></param>
 		/// <param name="travisConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the value of <see cref="travisConfiguration"/></param>
-		public TravisContinuousIntegration(IGitHubManager _gitHubManager, IWebRequestManager _requestManager, IOptions<TravisConfiguration> travisConfigurationOptions)
+		public TravisContinuousIntegration(ILogger<TravisContinuousIntegration> _logger, IGitHubManager _gitHubManager, IWebRequestManager _requestManager, IOptions<TravisConfiguration> travisConfigurationOptions)
 		{
-			if (travisConfigurationOptions == null)
-				throw new ArgumentNullException(nameof(travisConfigurationOptions));
-			travisConfiguration = travisConfigurationOptions.Value;
+			logger = _logger ?? throw new ArgumentNullException(nameof(_logger));
+			travisConfiguration = travisConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(travisConfigurationOptions));
 			gitHubManager = _gitHubManager ?? throw new ArgumentNullException(nameof(_gitHubManager));
 			requestManager = _requestManager ?? throw new ArgumentNullException(nameof(_requestManager));
 		}
@@ -76,6 +81,7 @@ namespace TGWebhooks.Core
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
 		async Task RestartBuild(string buildNumber, CancellationToken cancellationToken)
 		{
+			logger.LogDebug("Restarting build #{0}", buildNumber);
 			const string baseBuildURL = "https://api.travis-ci.org/build";
 			var baseUrl = String.Join('/', baseBuildURL, buildNumber);
 			Task DoBuildPost(string method)
@@ -89,15 +95,22 @@ namespace TGWebhooks.Core
 		}
 
 		/// <inheritdoc />
-		public async Task<ContinuousIntegrationStatus> GetJobStatus(Octokit.Repository repository, PullRequest pullRequest, CancellationToken cancellationToken)
+		public async Task<ContinuousIntegrationStatus> GetJobStatus(PullRequest pullRequest, CancellationToken cancellationToken)
 		{
+			if (pullRequest == null)
+				throw new ArgumentNullException(nameof(pullRequest));
+			logger.LogTrace("Getting job status for pull request #{0}", pullRequest.Number);
 			var statuses = await gitHubManager.GetLatestCommitStatus(pullRequest).ConfigureAwait(false);
 			var result = ContinuousIntegrationStatus.NotPresent;
 			foreach(var I in statuses.Statuses)
 			{
 				if (!IsTravisStatus(I))
+				{
+					logger.LogTrace("Skipping status #{0} as it is not a travis status", I.Id);
 					continue;
-				else if (result == ContinuousIntegrationStatus.NotPresent)
+				}
+
+				if (result == ContinuousIntegrationStatus.NotPresent)
 					result = ContinuousIntegrationStatus.Passed;
 				if (I.State == "error")
 					return ContinuousIntegrationStatus.Failed;
@@ -108,8 +121,11 @@ namespace TGWebhooks.Core
 		}
 
 		/// <inheritdoc />
-		public async Task TriggerJobRestart(Octokit.Repository repository, PullRequest pullRequest, CancellationToken cancellationToken)
+		public async Task TriggerJobRestart(PullRequest pullRequest, CancellationToken cancellationToken)
 		{
+			if (pullRequest == null)
+				throw new ArgumentNullException(nameof(pullRequest));
+			logger.LogDebug("Restarting jobs for pull request #{0}", pullRequest.Number);
 			var statuses = await gitHubManager.GetLatestCommitStatus(pullRequest).ConfigureAwait(false);
 			var buildNumberRegex = new Regex(@"/builds/([1-9][0-9]*)\?");
 			var tasks = new List<Task>();

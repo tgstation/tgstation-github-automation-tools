@@ -1,4 +1,5 @@
-﻿using Octokit;
+﻿using Microsoft.Extensions.Logging;
+using Octokit;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
