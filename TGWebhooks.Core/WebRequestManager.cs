@@ -19,7 +19,7 @@ namespace TGWebhooks.Core
 		/// <summary>
 		/// The <see cref="ILogger{TCategoryName}"/> for the <see cref="WebRequestManager"/>
 		/// </summary>
-		ILogger<WebRequestManager> logger;
+		readonly ILogger<WebRequestManager> logger;
 
 		/// <summary>
 		/// Construct a <see cref="WebRequestManager"/>
