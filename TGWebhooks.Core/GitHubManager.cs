@@ -172,7 +172,7 @@ namespace TGWebhooks.Core
 			{
 				CommitTitle = String.Format(CultureInfo.InvariantCulture, "{0} (#{1})", pullRequest.Title, pullRequest.Body),
 				CommitMessage = pullRequest.Body,
-				MergeMethod = PullRequestMergeMethod.Squash,
+				MergeMethod = PullRequestMergeMethod.Merge,
 				Sha = pullRequest.Head.Sha
 			});
 		}

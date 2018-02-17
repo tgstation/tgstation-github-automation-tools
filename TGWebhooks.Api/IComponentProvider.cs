@@ -14,6 +14,11 @@ namespace TGWebhooks.Api
 		IEnumerable<IMergeRequirement> MergeRequirements { get; }
 
 		/// <summary>
+		/// The <see cref="IMergeHook"/>s the <see cref="IComponentProvider"/> contains
+		/// </summary>
+		IEnumerable<IMergeHook> MergeHooks { get; }
+
+		/// <summary>
 		/// The <see cref="IPayloadHandler{TPayload}"/>s the <see cref="IComponentProvider"/> contains
 		/// </summary>
 		IEnumerable<IPayloadHandler<TPayload>> GetPayloadHandlers<TPayload>() where TPayload : ActivityPayload;

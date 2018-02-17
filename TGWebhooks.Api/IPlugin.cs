@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 
 namespace TGWebhooks.Api
@@ -6,13 +7,8 @@ namespace TGWebhooks.Api
 	/// <summary>
 	/// Representation of a plugin for <see cref="TGWebhooks"/>
 	/// </summary>
-    public interface IPlugin : IComponentProvider
+	public interface IPlugin : IComponentProvider
 	{
-		/// <summary>
-		/// If the <see cref="IPlugin"/> is enabled or not
-		/// </summary>
-		bool Enabled { get; set; }
-
 		/// <summary>
 		/// A unique <see cref="Uid"/> for the <see cref="IPlugin"/>
 		/// </summary>
@@ -37,6 +33,7 @@ namespace TGWebhooks.Api
 		/// <param name="ioManager">The <see cref="IIOManager"/> for the <see cref="IPlugin"/></param>
 		/// <param name="webRequestManager">The <see cref="IWebRequestManager"/> for the <see cref="IPlugin"/></param>
 		/// <param name="dataStore">The <see cref="IDataStore"/> for the <see cref="IPlugin"/></param>
-		void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager, IDataStore dataStore);
+		/// <param name="stringLocalizer">The <see cref="IStringLocalizer"/> for the <see cref="IPlugin"/></param>
+		void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager, IDataStore dataStore, IStringLocalizer stringLocalizer);
 	}
 }

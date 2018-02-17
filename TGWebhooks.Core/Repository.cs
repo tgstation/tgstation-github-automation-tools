@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using TGWebhooks.Core.Configuration;
 using TGWebhooks.Api;
 using Microsoft.Extensions.Logging;
+using Octokit;
+using System.Collections.Generic;
 
 namespace TGWebhooks.Core
 {
@@ -121,7 +123,7 @@ namespace TGWebhooks.Core
 
 										LibGit2Sharp.Repository.Clone(String.Format(CultureInfo.InvariantCulture, "https://github.com/{0}/{1}", gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName), repoPath, new CloneOptions
 										{
-											Checkout = true,
+											Checkout = false,
 											RecurseSubmodules = true,
 											OnProgress = (a) => !cancellationToken.IsCancellationRequested,
 											OnUpdateTips = (a, b, c) => !cancellationToken.IsCancellationRequested,
@@ -148,6 +150,30 @@ namespace TGWebhooks.Core
 						}
 					}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Current);
 			await startupTask.ConfigureAwait(false);
+		}
+
+		/// <inheritdoc />
+		public Task<string> CreatePullRequestWorkingCommit(PullRequest pullRequest, CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <inheritdoc />
+		public Task<SemaphoreSlimContext> LockToCallStack(CancellationToken cancellationToken)
+		{
+			return SemaphoreSlimContext.Lock(semaphore, cancellationToken);
+		}
+
+		/// <inheritdoc />
+		public Task<string> CommitChanges(IEnumerable<string> pathsToStage, CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <inheritdoc />
+		public Task Push(string remote, string branch, string commit, bool force, CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

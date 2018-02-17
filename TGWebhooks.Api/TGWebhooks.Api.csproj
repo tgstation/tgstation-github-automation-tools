@@ -24,4 +24,10 @@
     <PackageReference Include="Octokit" Version="0.28.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Microsoft.Extensions.Localization.Abstractions">
+      <HintPath>C:\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.extensions.localization.abstractions\2.0.1\lib\netstandard2.0\Microsoft.Extensions.Localization.Abstractions.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

@@ -5,14 +5,17 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.Data.Sqlite;
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Threading;
 using TGWebhooks.Core.Configuration;
 using TGWebhooks.Api;
 using TGWebhooks.Core.Model;
-using System.Threading;
-using Microsoft.Extensions.Logging;
 
 namespace TGWebhooks.Core
 {
@@ -44,10 +47,10 @@ namespace TGWebhooks.Core
 		/// <param name="_configuration">The value of <see cref="configuration"/></param>
 		/// <param name="hostingEnvironment">The <see cref="IHostingEnvironment"/> used to determin the <see cref="DataDirectory"/></param>
 		public Application(IConfiguration _configuration, IHostingEnvironment hostingEnvironment)
-        {
+		{
 			if (hostingEnvironment == null)
 				throw new ArgumentNullException(nameof(hostingEnvironment));
-            configuration = _configuration ?? throw new ArgumentNullException(nameof(_configuration));
+			configuration = _configuration ?? throw new ArgumentNullException(nameof(_configuration));
 			DataDirectory = Path.Combine(hostingEnvironment.ContentRootPath, "App_Data");
 		}
 
@@ -55,13 +58,14 @@ namespace TGWebhooks.Core
 		/// Configure dependency injected services
 		/// </summary>
 		/// <param name="services">The <see cref="IServiceCollection"/> to configure</param>
-        public void ConfigureServices(IServiceCollection services)
-        {
-			services.AddHangfire(_ => _.UseSQLiteStorage(new SqliteConnectionStringBuilder {
+		public void ConfigureServices(IServiceCollection services)
+		{
+			services.AddHangfire(_ => _.UseSQLiteStorage(new SqliteConnectionStringBuilder
+			{
 				DataSource = Path.Combine(DataDirectory, "HangfireDatabase.sqlite3"),
 				Mode = SqliteOpenMode.ReadWriteCreate
 			}.ConnectionString));
-            services.AddMvc();
+			services.AddMvc();
 			services.AddOptions();
 			services.Configure<GitHubConfiguration>(configuration.GetSection(GitHubConfiguration.Section));
 			services.Configure<TravisConfiguration>(configuration.GetSection(TravisConfiguration.Section));
@@ -89,12 +93,25 @@ namespace TGWebhooks.Core
 			app.ApplicationServices.GetRequiredService<IIOManager>().CreateDirectory(DataDirectory, CancellationToken.None).GetAwaiter().GetResult();
 
 			app.UseAsyncInitialization<IPluginManager>((pluginManager, cancellationToken) => pluginManager.Initialize(cancellationToken));
+			app.UseAsyncInitialization<IRepository>((repository, cancellationToken) => repository.Initialize(cancellationToken));
 
 			if (env.IsDevelopment())
-                app.UseDeveloperExceptionPage();
+				app.UseDeveloperExceptionPage();
 
+			var supportedCultures = new List<CultureInfo>
+			{
+				new CultureInfo("en-US"),
+			};
+			var options = new RequestLocalizationOptions
+			{
+				DefaultRequestCulture = new RequestCulture(supportedCultures.First()),
+				SupportedCultures = supportedCultures,
+				SupportedUICultures = supportedCultures,
+			};
+
+			app.UseRequestLocalization(options);
 			app.UseHangfireServer();
-            app.UseMvc();
-        }
-    }
+			app.UseMvc();
+		}
+	}
 }

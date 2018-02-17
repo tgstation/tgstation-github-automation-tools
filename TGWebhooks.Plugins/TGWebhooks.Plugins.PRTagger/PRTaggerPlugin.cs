@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 using Octokit;
 using System;
 using System.Collections.Generic;
@@ -16,9 +17,6 @@ namespace TGWebhooks.Plugins.PRTagger
 	sealed public class PRTaggerPlugin : IPlugin, IPayloadHandler<PullRequestEventPayload>
 	{
 		/// <inheritdoc />
-		public bool Enabled { get; set; }
-
-		/// <inheritdoc />
 		public Guid Uid => new Guid("3a6dd37c-3dee-4a7a-a016-885a4a775968");
 
 		/// <inheritdoc />
@@ -29,6 +27,9 @@ namespace TGWebhooks.Plugins.PRTagger
 
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => Enumerable.Empty<IMergeRequirement>();
+
+		/// <inheritdoc />
+		public IEnumerable<IMergeHook> MergeHooks => Enumerable.Empty<IMergeHook>();
 
 		/// <summary>
 		/// The <see cref="IGitHubManager"/> for the <see cref="PRTaggerPlugin"/>
@@ -163,7 +164,7 @@ namespace TGWebhooks.Plugins.PRTagger
 		}
 
 		/// <inheritdoc />
-		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager, IDataStore dataStore)
+		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager, IDataStore dataStore, IStringLocalizer stringLocalizer)
 		{
 			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
 		}

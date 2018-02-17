@@ -100,14 +100,15 @@ namespace TGWebhooks.Core.Controllers
 		/// Invoke the active <see cref="IPayloadHandler{TPayload}"/> for a given <typeparamref name="TPayload"/>
 		/// </summary>
 		/// <typeparam name="TPayload">The payload type to invoke</typeparam>
-		/// <param name="payload">The <typeparamref name="TPayload"/> to process</param>
+		/// <param name="json">The JSON <see cref="string"/> of the <typeparamref name="TPayload"/> to process</param>
 		/// <param name="jobCancellationToken">The <see cref="IJobCancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running handlers</returns>
-		async Task InvokeHandlers<TPayload>(TPayload payload, IJobCancellationToken jobCancellationToken) where TPayload : ActivityPayload
+		async Task InvokeHandlers<TPayload>(string json, IJobCancellationToken jobCancellationToken) where TPayload : ActivityPayload
 		{
 			logger.LogTrace("Beginning payload processing job: {0}");
 			var cancellationToken = jobCancellationToken.ShutdownToken;
 
+			var payload = new SimpleJsonSerializer().Deserialize<TPayload>(json);
 			var tasks = new List<Task>();
 			async Task RunHandler(IPayloadHandler<TPayload> payloadHandler)
 			{
@@ -204,7 +205,8 @@ namespace TGWebhooks.Core.Controllers
 				}
 
 				logger.LogTrace("Queuing payload processing job.");
-				var jobName = BackgroundJob.Enqueue(() => InvokeHandlers<TPayload>(payload, JobCancellationToken.Null));
+				//we pass in json because of the limitations of background job
+				var jobName = BackgroundJob.Enqueue(() => InvokeHandlers<TPayload>(json, JobCancellationToken.Null));
 				logger.LogTrace("Started background job for payload: {0}", jobName);
 				return Ok();
 			};

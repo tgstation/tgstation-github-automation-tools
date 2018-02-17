@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 using Octokit;
 using System;
 using System.Collections.Generic;
@@ -16,9 +17,6 @@ namespace TGWebhooks.Plugins.MaintainerApproval
 	public class MaintainerApprovalPlugin : IPlugin, IMergeRequirement
 	{
 		/// <inheritdoc />
-		public bool Enabled { get; set; }
-
-		/// <inheritdoc />
 		public Guid Uid => new Guid("8d8122d0-ad0d-4a91-977f-204d617efd04");
 
 		/// <inheritdoc />
@@ -30,13 +28,16 @@ namespace TGWebhooks.Plugins.MaintainerApproval
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => new List<IMergeRequirement> { this };
 
+		/// <inheritdoc />
+		public IEnumerable<IMergeHook> MergeHooks => Enumerable.Empty<IMergeHook>();
+
 		/// <summary>
 		/// The <see cref="IGitHubManager"/> for the <see cref="MaintainerApproval"/>
 		/// </summary>
 		IGitHubManager gitHubManager;
 
 		/// <inheritdoc />
-		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager, IDataStore dataStore)
+		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager, IDataStore dataStore, IStringLocalizer stringLocalizer)
 		{
 			this.gitHubManager = gitHubManager;
 		}

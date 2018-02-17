@@ -1,14 +1,15 @@
-﻿using Octokit;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Localization;
+using Octokit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using TGWebhooks.Api;
 using TGWebhooks.Core.Configuration;
 using TGWebhooks.Core.Model;
-using TGWebhooks.Api;
-using Microsoft.Extensions.Logging;
 
 namespace TGWebhooks.Core
 {
@@ -18,7 +19,9 @@ namespace TGWebhooks.Core
 #pragma warning restore CA1812
 	{
 		/// <inheritdoc />
-		public IEnumerable<IMergeRequirement> MergeRequirements => plugins.Where(x => x.Enabled).SelectMany(x => x.MergeRequirements).ToList();
+		public IEnumerable<IMergeRequirement> MergeRequirements => pluginsAndEnabledStatus.Where(x => x.Value).SelectMany(x => x.Key.MergeRequirements);
+
+		public IEnumerable<IMergeHook> MergeHooks => pluginsAndEnabledStatus.Where(x => x.Value).SelectMany(x => x.Key.MergeHooks);
 
 		/// <summary>
 		/// The <see cref="ILoggerFactory"/> for the <see cref="PluginManager"/>
@@ -48,11 +51,15 @@ namespace TGWebhooks.Core
 		/// The <see cref="IRootDataStore"/> for the <see cref="PluginManager"/>
 		/// </summary>
 		readonly IRootDataStore rootDataStore;
+		/// <summary>
+		/// The <see cref="IStringLocalizerFactory"/> for the <see cref="PluginManager"/>
+		/// </summary>
+		readonly IStringLocalizerFactory stringLocalizerFactory;
 
 		/// <summary>
 		/// List of loaded <see cref="IPlugin"/>s
 		/// </summary>
-		IReadOnlyList<IPlugin> plugins;
+		IReadOnlyDictionary<IPlugin, bool> pluginsAndEnabledStatus;
 
 		/// <summary>
 		/// Construct a <see cref="PluginManager"/>
@@ -64,7 +71,8 @@ namespace TGWebhooks.Core
 		/// <param name="_ioManager">The value of <see cref="ioManager"/></param>
 		/// <param name="_requestManager">The value of <see cref="requestManager"/></param>
 		/// <param name="_rootDataStore">The value of <see cref="rootDataStore"/></param>
-		public PluginManager(ILoggerFactory _loggerFactory, ILogger<PluginManager> _logger, IRepository _repository, IGitHubManager _gitHubManager, IIOManager _ioManager, IWebRequestManager _requestManager, IRootDataStore _rootDataStore)
+		/// <param name="_stringLocalizerFactory">The value of <see cref="stringLocalizerFactory"/></param>
+		public PluginManager(ILoggerFactory _loggerFactory, ILogger<PluginManager> _logger, IRepository _repository, IGitHubManager _gitHubManager, IIOManager _ioManager, IWebRequestManager _requestManager, IRootDataStore _rootDataStore, IStringLocalizerFactory _stringLocalizerFactory)
 		{
 			loggerFactory = _loggerFactory ?? throw new ArgumentNullException(nameof(_loggerFactory));
 			logger = _logger ?? throw new ArgumentNullException(nameof(_logger));
@@ -73,12 +81,15 @@ namespace TGWebhooks.Core
 			ioManager = _ioManager ?? throw new ArgumentNullException(nameof(_ioManager));
 			requestManager = _requestManager ?? throw new ArgumentNullException(nameof(_requestManager));
 			rootDataStore = _rootDataStore ?? throw new ArgumentNullException(nameof(_rootDataStore));
+			stringLocalizerFactory = _stringLocalizerFactory ?? throw new ArgumentNullException(nameof(_stringLocalizerFactory));
 		}
 		
 		/// <inheritdoc />
 		public async Task Initialize(CancellationToken cancellationToken)
 		{
 			var logger = loggerFactory.CreateLogger<PluginManager>();
+
+			var test = Assembly.GetExecutingAssembly().GetReferencedAssemblies();
 
 			async Task<PluginConfiguration> DBInit()
 			{
@@ -88,13 +99,14 @@ namespace TGWebhooks.Core
 			//start initializing the db
 			var dbInit = DBInit();
 
-			var pluginsBuilder = new List<IPlugin>();
-			plugins = pluginsBuilder;
+			var pluginsBuilder = new Dictionary<IPlugin, bool>();
+			pluginsAndEnabledStatus = pluginsBuilder;
 
-			var pluginConfigs = await dbInit.ConfigureAwait(false);
 			var dataIOManager = new ResolvingIOManager(ioManager, Application.DataDirectory);
 
 			var tasks = new List<Task<IPlugin>>();
+
+			var pluginConfigs = await dbInit.ConfigureAwait(false);
 
 			async Task<IPlugin> InitPlugin(Type type)
 			{
@@ -117,7 +129,7 @@ namespace TGWebhooks.Core
 				var pluginData = rootDataStore.BranchOnKey(plugin.Uid.ToString());
 				try
 				{
-					plugin.Configure(loggerFactory.CreateLogger(type.FullName), repository, gitHubManager, dataIOManager, requestManager, pluginData);
+					plugin.Configure(loggerFactory.CreateLogger(type.FullName), repository, gitHubManager, dataIOManager, requestManager, pluginData, stringLocalizerFactory.Create(type));
 				}
 				catch (Exception e)
 				{
@@ -130,8 +142,7 @@ namespace TGWebhooks.Core
 					enabled = true;
 					pluginConfigs.EnabledPlugins.Add(plugin.Uid, enabled);
 				}
-
-				plugin.Enabled = enabled;
+				
 				logger.LogTrace("Plugin {0}.Enabled: {1}", type, enabled);
 				if (!enabled)
 					return plugin;
@@ -152,7 +163,8 @@ namespace TGWebhooks.Core
 			using (logger.BeginScope("Loading plugins..."))
 			{
 				var loadedPlugins = await Task.WhenAll(AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes().Where(y => y.IsPublic && y.IsClass && !y.IsAbstract && typeof(IPlugin).IsAssignableFrom(y) && y.GetConstructors().Any(z => z.IsPublic && z.GetParameters().Count() == 0)).Select(p => InitPlugin(p)))).ConfigureAwait(false);
-				pluginsBuilder.AddRange(loadedPlugins.Where(x => x != null));
+				foreach (var p in loadedPlugins.Where(x => x != null))
+					pluginsBuilder.Add(p, pluginConfigs.EnabledPlugins[p.Uid]);
 			}
 		}
 
@@ -160,7 +172,7 @@ namespace TGWebhooks.Core
 		public IEnumerable<IPayloadHandler<TPayload>> GetPayloadHandlers<TPayload>() where TPayload : ActivityPayload
 		{
 			logger.LogTrace("Enumerating payload handlers.");
-			return plugins.Where(x => x.Enabled).SelectMany(x => x.GetPayloadHandlers<TPayload>());
+			return pluginsAndEnabledStatus.Where(x => x.Value).SelectMany(x => x.Key.GetPayloadHandlers<TPayload>());
 		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Logging;
 using Octokit;
 using System;
 using System.Collections.Generic;
@@ -20,9 +21,6 @@ namespace TGWebhooks.Plugins.TwentyFourHourRule
 		const int HoursRequired = 24;
 
 		/// <inheritdoc />
-		public bool Enabled { get; set; }
-
-		/// <inheritdoc />
 		public Guid Uid => new Guid("78544889-5447-47f2-b300-3fb7b703c3cc");
 
 		/// <inheritdoc />
@@ -35,7 +33,10 @@ namespace TGWebhooks.Plugins.TwentyFourHourRule
 		public IEnumerable<IMergeRequirement> MergeRequirements => new List<IMergeRequirement> { this };
 
 		/// <inheritdoc />
-		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager, IDataStore dataStore)
+		public IEnumerable<IMergeHook> MergeHooks => Enumerable.Empty<IMergeHook>();
+
+		/// <inheritdoc />
+		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager, IDataStore dataStore, IStringLocalizer stringLocalizer)
 		{
 			//intentionally left blank
 		}

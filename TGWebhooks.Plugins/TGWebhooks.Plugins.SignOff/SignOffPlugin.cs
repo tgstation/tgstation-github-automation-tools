@@ -1,9 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Octokit;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using TGWebhooks.Api;
 
 namespace TGWebhooks.Plugins.SignOff
@@ -19,9 +21,6 @@ namespace TGWebhooks.Plugins.SignOff
 		const string SignOffDataKey = "Signoffs";
 
 		/// <inheritdoc />
-		public bool Enabled { get; set; }
-
-		/// <inheritdoc />
 		public Guid Uid => new Guid("bde81200-a275-4e93-b855-13865f3629fe");
 
 		/// <inheritdoc />
@@ -32,6 +31,9 @@ namespace TGWebhooks.Plugins.SignOff
 
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => new List<IMergeRequirement> { this };
+
+		/// <inheritdoc />
+		public IEnumerable<IMergeHook> MergeHooks => Enumerable.Empty<IMergeHook>();
 
 		/// <summary>
 		/// The <see cref="IGitHubManager"/> for the <see cref="SignOffPlugin"/>
@@ -52,7 +54,7 @@ namespace TGWebhooks.Plugins.SignOff
 		}
 
 		/// <inheritdoc />
-		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager, IDataStore dataStore)
+		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager, IDataStore dataStore, IStringLocalizer stringLocalizer)
 		{
 			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
 			this.dataStore = dataStore ?? throw new ArgumentNullException(nameof(dataStore));
