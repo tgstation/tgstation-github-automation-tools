@@ -3,16 +3,17 @@ using Hangfire;
 using Hangfire.SQLite;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Data.Sqlite;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Localization;
-using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using TGWebhooks.Core.Configuration;
 using TGWebhooks.Api;
 using TGWebhooks.Core.Model;
@@ -67,6 +68,7 @@ namespace TGWebhooks.Core
 			}.ConnectionString));
 			services.AddMvc();
 			services.AddOptions();
+			services.AddLocalization();
 			services.Configure<GitHubConfiguration>(configuration.GetSection(GitHubConfiguration.Section));
 			services.Configure<TravisConfiguration>(configuration.GetSection(TravisConfiguration.Section));
 			services.AddSingleton<IPluginManager, PluginManager>();
@@ -92,15 +94,12 @@ namespace TGWebhooks.Core
 		{
 			app.ApplicationServices.GetRequiredService<IIOManager>().CreateDirectory(DataDirectory, CancellationToken.None).GetAwaiter().GetResult();
 
-			app.UseAsyncInitialization<IPluginManager>((pluginManager, cancellationToken) => pluginManager.Initialize(cancellationToken));
-			app.UseAsyncInitialization<IRepository>((repository, cancellationToken) => repository.Initialize(cancellationToken));
-
 			if (env.IsDevelopment())
 				app.UseDeveloperExceptionPage();
 
 			var supportedCultures = new List<CultureInfo>
 			{
-				new CultureInfo("en-US"),
+				new CultureInfo("en-US")
 			};
 			var options = new RequestLocalizationOptions
 			{
@@ -108,8 +107,11 @@ namespace TGWebhooks.Core
 				SupportedCultures = supportedCultures,
 				SupportedUICultures = supportedCultures,
 			};
-
 			app.UseRequestLocalization(options);
+			
+			app.UseAsyncInitialization<IPluginManager>((pluginManager, cancellationToken) => pluginManager.Initialize(cancellationToken));
+			app.UseAsyncInitialization<IRepository>((repository, cancellationToken) => repository.Initialize(cancellationToken));
+
 			app.UseHangfireServer();
 			app.UseMvc();
 		}

@@ -40,6 +40,10 @@ namespace TGWebhooks.Core.Controllers
 		/// The <see cref="IAutoMergeHandler"/> for the <see cref="PayloadsController"/>
 		/// </summary>
 		readonly IAutoMergeHandler autoMergeHandler;
+		/// <summary>
+		/// The <see cref="IBackgroundJobClient"/> for the <see cref="PayloadsController"/>
+		/// </summary>
+		readonly IBackgroundJobClient backgroundJobClient;
 
 		/// <summary>
 		/// Convert some <paramref name="bytes"/> to a hex string
@@ -61,7 +65,8 @@ namespace TGWebhooks.Core.Controllers
 		/// <param name="logger">The value of <see cref="logger"/></param>
 		/// <param name="componentProvider">The value of <see cref="componentProvider"/></param>
 		/// <param name="autoMergeHandler">The value of <see cref="autoMergeHandler"/></param>
-		public PayloadsController(IOptions<GitHubConfiguration> gitHubConfigurationOptions, ILogger<PayloadsController> logger, IComponentProvider componentProvider, IAutoMergeHandler autoMergeHandler)
+		/// <param name="backgroundJobClient">The value of <see cref="backgroundJobClient"/></param>
+		public PayloadsController(IOptions<GitHubConfiguration> gitHubConfigurationOptions, ILogger<PayloadsController> logger, IComponentProvider componentProvider, IAutoMergeHandler autoMergeHandler, IBackgroundJobClient backgroundJobClient)
 		{
 			if (gitHubConfigurationOptions == null)
 				throw new ArgumentNullException(nameof(gitHubConfigurationOptions));
@@ -69,6 +74,7 @@ namespace TGWebhooks.Core.Controllers
 			this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 			this.componentProvider = componentProvider ?? throw new ArgumentNullException(nameof(componentProvider));
 			this.autoMergeHandler = autoMergeHandler ?? throw new ArgumentNullException(nameof(autoMergeHandler));
+			this.backgroundJobClient = backgroundJobClient ?? throw new ArgumentNullException(nameof(backgroundJobClient));
 		}
 
 		/// <summary>
@@ -206,7 +212,7 @@ namespace TGWebhooks.Core.Controllers
 
 				logger.LogTrace("Queuing payload processing job.");
 				//we pass in json because of the limitations of background job
-				var jobName = BackgroundJob.Enqueue(() => InvokeHandlers<TPayload>(json, JobCancellationToken.Null));
+				var jobName = backgroundJobClient.Enqueue(() => InvokeHandlers<TPayload>(json, JobCancellationToken.Null));
 				logger.LogTrace("Started background job for payload: {0}", jobName);
 				return Ok();
 			};

@@ -36,6 +36,10 @@ namespace TGWebhooks.Core
 		/// The <see cref="IStringLocalizer{T}"/> for the <see cref="AutoMergeHandler"/>
 		/// </summary>
 		readonly IStringLocalizer<AutoMergeHandler> stringLocalizer;
+		/// <summary>
+		/// The <see cref="IBackgroundJobClient"/> for the <see cref="AutoMergeHandler"/>
+		/// </summary>
+		readonly IBackgroundJobClient backgroundJobClient;
 
 		/// <summary>
 		/// Construct an <see cref="AutoMergeHandler"/>
@@ -45,19 +49,28 @@ namespace TGWebhooks.Core
 		/// <param name="_logger">The value of <see cref="logger"/></param>
 		/// <param name="_repository">The value of <see cref="repository"/></param>
 		/// <param name="_stringLocalizer">The value of <see cref="stringLocalizer"/></param>
-		public AutoMergeHandler(IComponentProvider _componentProvider, IGitHubManager _gitHubManager, ILogger<AutoMergeHandler> _logger, IRepository _repository, IStringLocalizer<AutoMergeHandler> _stringLocalizer)
+		/// <param name="_backgroundJobClient">The value of <see cref="backgroundJobClient"/></param>
+		public AutoMergeHandler(IComponentProvider _componentProvider, IGitHubManager _gitHubManager, ILogger<AutoMergeHandler> _logger, IRepository _repository, IStringLocalizer<AutoMergeHandler> _stringLocalizer, IBackgroundJobClient _backgroundJobClient)
 		{
 			componentProvider = _componentProvider ?? throw new ArgumentNullException(nameof(_componentProvider));
 			gitHubManager = _gitHubManager ?? throw new ArgumentNullException(nameof(_gitHubManager));
 			logger = _logger ?? throw new ArgumentNullException(nameof(_logger));
 			repository = _repository ?? throw new ArgumentNullException(nameof(_repository));
 			stringLocalizer = _stringLocalizer ?? throw new ArgumentNullException(nameof(_stringLocalizer));
+			backgroundJobClient = _backgroundJobClient ?? throw new ArgumentNullException(nameof(_backgroundJobClient));
 		}
 
+		/// <summary>
+		/// Merges a <paramref name="pullRequest"/>
+		/// </summary>
+		/// <param name="pullRequest">The <see cref="PullRequest"/> to merge</param>
+		/// <param name="mergerToken">The token to use for merging</param>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
 		async Task MergePullRequest(PullRequest pullRequest, string mergerToken, CancellationToken cancellationToken)
 		{
 			var acceptedHEAD = pullRequest.Head.Sha;
-
+			
 			var startoffCommit = await repository.CreatePullRequestWorkingCommit(pullRequest, cancellationToken).ConfigureAwait(false);
 			//run any merge handlers
 			var workingCommit = startoffCommit;
@@ -67,7 +80,7 @@ namespace TGWebhooks.Core
 			var anyUpdate = acceptedHEAD != workingCommit;
 			if (anyUpdate)
 				//force push this bitch up
-				await repository.Push(pullRequest.Head.Repository.GitUrl, pullRequest.Head.Ref.Split(':')[1], workingCommit, true, cancellationToken).ConfigureAwait(false);
+				await repository.Push(pullRequest.Head.Repository.GitUrl, pullRequest.Head.Ref.Split(':')[1], workingCommit, mergerToken, true, cancellationToken).ConfigureAwait(false);
 
 			try
 			{
