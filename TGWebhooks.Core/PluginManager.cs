@@ -62,6 +62,18 @@ namespace TGWebhooks.Core
 		IReadOnlyDictionary<IPlugin, bool> pluginsAndEnabledStatus;
 
 		/// <summary>
+		/// Instantiates all <see cref="IPlugin"/>s
+		/// </summary>
+		/// <returns>An <see cref="IEnumerable{T}"/> of instantiated <see cref="IPlugin"/>s</returns>
+		static IEnumerable<IPlugin> InstantiatePlugins()
+		{
+			yield return new Plugins.MaintainerApproval.MaintainerApprovalPlugin();
+			yield return new Plugins.PRTagger.PRTaggerPlugin();
+			yield return new Plugins.SignOff.SignOffPlugin();
+			yield return new Plugins.TwentyFourHourRule.TwentyFourHourRulePlugin();
+		}
+
+		/// <summary>
 		/// Construct a <see cref="PluginManager"/>
 		/// </summary>
 		/// <param name="_loggerFactory">The value of <see cref="loggerFactory"/></param>
@@ -83,7 +95,7 @@ namespace TGWebhooks.Core
 			rootDataStore = _rootDataStore ?? throw new ArgumentNullException(nameof(_rootDataStore));
 			stringLocalizerFactory = _stringLocalizerFactory ?? throw new ArgumentNullException(nameof(_stringLocalizerFactory));
 		}
-		
+
 		/// <inheritdoc />
 		public async Task Initialize(CancellationToken cancellationToken)
 		{
@@ -108,20 +120,9 @@ namespace TGWebhooks.Core
 
 			var pluginConfigs = await dbInit.ConfigureAwait(false);
 
-			async Task<IPlugin> InitPlugin(Type type)
+			async Task InitPlugin(IPlugin plugin)
 			{
-				IPlugin plugin;
-				try
-				{
-					logger.LogDebug("Instantiating plugin {0}...", type);
-					plugin = (IPlugin)Activator.CreateInstance(type);
-				}
-				catch (Exception e)
-				{
-					logger.LogError(e, "Failed to instantiate plugin {0}!", type);
-					return null;
-				}
-
+				var type = plugin.GetType();
 				logger.LogTrace("Plugin {0}.Name: {1}", type, plugin.Name);
 				logger.LogTrace("Plugin {0}.Description: {1}", type, plugin.Description);
 				logger.LogTrace("Plugin {0}.Uid: {1}", type, plugin.Uid);
@@ -134,7 +135,7 @@ namespace TGWebhooks.Core
 				catch (Exception e)
 				{
 					logger.LogError(e, "Failed to configure plugin {0}!", type);
-					return null;
+					return;
 				}
 
 				if (!pluginConfigs.EnabledPlugins.TryGetValue(plugin.Uid, out bool enabled))
@@ -145,26 +146,28 @@ namespace TGWebhooks.Core
 				
 				logger.LogTrace("Plugin {0}.Enabled: {1}", type, enabled);
 				if (!enabled)
-					return plugin;
+					return;
 
 				logger.LogDebug("Initializing plugin {0}...", type);
 				try
 				{
 					await plugin.Initialize(cancellationToken).ConfigureAwait(false);
 					logger.LogDebug("Plugin {0} initialized!", type);
-					return plugin;
 				}
 				catch (Exception e)
 				{
 					logger.LogError(e, "Failed to instantiate plugin {0}!", type);
-					return null;
 				}
 			};
 			using (logger.BeginScope("Loading plugins..."))
 			{
-				var loadedPlugins = await Task.WhenAll(AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes().Where(y => y.IsPublic && y.IsClass && !y.IsAbstract && typeof(IPlugin).IsAssignableFrom(y) && y.GetConstructors().Any(z => z.IsPublic && z.GetParameters().Count() == 0)).Select(p => InitPlugin(p)))).ConfigureAwait(false);
-				foreach (var p in loadedPlugins.Where(x => x != null))
+				var tasks2 = new List<Task>();
+				foreach (var p in InstantiatePlugins())
+				{
+					tasks2.Add(InitPlugin(p));
 					pluginsBuilder.Add(p, pluginConfigs.EnabledPlugins[p.Uid]);
+				}
+				await Task.WhenAll(tasks).ConfigureAwait(false);
 			}
 		}
 
