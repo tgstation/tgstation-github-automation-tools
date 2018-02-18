@@ -10,7 +10,7 @@ namespace TGWebhooks.Api
 		/// <summary>
 		/// If the reported commit status should register as a failure
 		/// </summary>
-		bool FailStatusReport { get; set; }
+		public bool FailStatusReport { get; set; }
 		/// <summary>
 		/// How many requirements have been fufilled
 		/// </summary>

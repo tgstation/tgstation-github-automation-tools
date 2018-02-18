@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Octokit;
 using System;
@@ -7,10 +8,10 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TGWebhooks.Core.Configuration;
-using TGWebhooks.Core.Model;
 using TGWebhooks.Api;
+using TGWebhooks.Core.Configuration;
 using TGWebhooks.Core.Controllers;
+using TGWebhooks.Core.Model;
 
 namespace TGWebhooks.Core
 {
@@ -48,6 +49,10 @@ namespace TGWebhooks.Core
 		/// The <see cref="IDataStore"/> for the <see cref="GitHubManager"/>
 		/// </summary>
 		readonly IDataStore dataStore;
+		/// <summary>
+		/// The <see cref="ILogger"/> for the <see cref="GitHubManager"/>
+		/// </summary>
+		readonly ILogger logger;
 
 		/// <summary>
 		/// Used for controlled access of <see cref="knownUser"/>
@@ -74,10 +79,11 @@ namespace TGWebhooks.Core
 		/// <param name="generalConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the value of <see cref="generalConfiguration"/></param>
 		/// <param name="gitHubConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the value of <see cref="gitHubConfiguration"/></param>
 		/// <param name="branchingDataStore">The <see cref="IBranchingDataStore"/> used to create <see cref="dataStore"/></param>
-		public GitHubManager(IOptions<GeneralConfiguration> generalConfigurationOptions, IOptions<GitHubConfiguration> gitHubConfigurationOptions, IBranchingDataStore branchingDataStore)
+		public GitHubManager(IOptions<GeneralConfiguration> generalConfigurationOptions, IOptions<GitHubConfiguration> gitHubConfigurationOptions, IBranchingDataStore branchingDataStore, ILogger<GitHubManager> _logger)
 		{
 			gitHubConfiguration = gitHubConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(gitHubConfigurationOptions));
 			generalConfiguration = generalConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(generalConfigurationOptions));
+			logger = _logger ?? throw new ArgumentNullException(nameof(_logger));
 			if (branchingDataStore == null)
 				throw new ArgumentNullException(nameof(branchingDataStore));
 			gitHubClient = new GitHubClient(new ProductHeaderValue(Application.UserAgent))
@@ -128,12 +134,14 @@ namespace TGWebhooks.Core
 		public Task<PullRequest> GetPullRequest(int number)
 		{
 			IssueArgumentCheck(number);
+			logger.LogTrace("Get pull request #{0}", number);
 			return gitHubClient.PullRequest.Get(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, number);
 		}
 
 		/// <inheritdoc />
 		public Task<IReadOnlyList<Label>> GetIssueLabels(int number)
 		{
+			logger.LogTrace("Get issue labels for #{0}", number);
 			return gitHubClient.Issue.Labels.GetAllForIssue(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, number);
 		}
 
@@ -141,6 +149,7 @@ namespace TGWebhooks.Core
 		public Task SetIssueLabels(int number, IEnumerable<string> newLabels)
 		{
 			IssueArgumentCheck(number);
+			logger.LogTrace("Set issue labels for #{0}: {1}", number, newLabels);
 			return gitHubClient.Issue.Labels.ReplaceAllForIssue(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, number, newLabels.ToArray());
 		}
 
@@ -148,6 +157,7 @@ namespace TGWebhooks.Core
 		public Task<IReadOnlyList<PullRequestFile>> GetPullRequestChangedFiles(int number)
 		{
 			IssueArgumentCheck(number);
+			logger.LogTrace("Get changed files for #{0}", number);
 			return gitHubClient.PullRequest.Files(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, number);
 		}
 
@@ -157,6 +167,7 @@ namespace TGWebhooks.Core
 			if (pullRequest == null)
 				throw new ArgumentNullException(nameof(pullRequest));
 
+			logger.LogTrace("Get latest commit status for #{0}", pullRequest.Number);
 			return gitHubClient.Repository.Status.GetCombined(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, pullRequest.Head.Sha);
 		}
 
@@ -168,6 +179,7 @@ namespace TGWebhooks.Core
 			if (accessToken == null)
 				throw new ArgumentNullException(nameof(accessToken));
 
+			logger.LogTrace("Merge #{0}", pullRequest.Number);
 			var mergerClient = new GitHubClient(new ProductHeaderValue(Application.UserAgent))
 			{
 				Credentials = new Credentials(accessToken)
@@ -187,7 +199,8 @@ namespace TGWebhooks.Core
 		{
 			if (pullRequest == null)
 				throw new ArgumentNullException(nameof(pullRequest));
-			
+
+			logger.LogTrace("Get reviews for #{0}", pullRequest.Number);
 			return gitHubClient.PullRequest.Review.GetAll(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, pullRequest.Number);
 		}
 
@@ -197,6 +210,7 @@ namespace TGWebhooks.Core
 			if (user == null)
 				throw new ArgumentNullException(nameof(user));
 
+			logger.LogTrace("Check user write access for {0}", user.Login);
 			var permissionLevel = await gitHubClient.Repository.Collaborator.ReviewPermission(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, user.Login).ConfigureAwait(false);
 			var permission = permissionLevel.Permission.Value;
 			return permission == PermissionLevel.Write || permission == PermissionLevel.Admin;
@@ -205,6 +219,7 @@ namespace TGWebhooks.Core
 		/// <inheritdoc />
 		public Task<IReadOnlyList<PullRequest>> GetOpenPullRequests()
 		{
+			logger.LogTrace("Get open pull requests");
 			return gitHubClient.PullRequest.GetAllForRepository(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, new PullRequestRequest
 			{
 				State = ItemStateFilter.Open
@@ -214,6 +229,7 @@ namespace TGWebhooks.Core
 		/// <inheritdoc />
 		public Task AddLabel(int number, string label)
 		{
+			logger.LogTrace("Add label {0} to #{1}", label, number);
 			IssueArgumentCheck(number);
 			if (label == null)
 				throw new ArgumentNullException(nameof(label));
@@ -224,6 +240,7 @@ namespace TGWebhooks.Core
 		/// <inheritdoc />
 		public Uri GetAuthorizationURL(Uri callbackURL)
 		{
+			logger.LogTrace("GetAuthorizationURL for {0}", callbackURL);
 			var olr = new OauthLoginRequest(gitHubConfiguration.OauthClientID);
 			olr.Scopes.Add(RequiredScope);  //all we need
 			olr.RedirectUri = callbackURL;
@@ -237,6 +254,9 @@ namespace TGWebhooks.Core
 				throw new ArgumentNullException(nameof(code));
 			if (cookies == null)
 				throw new ArgumentNullException(nameof(cookies));
+
+			logger.LogTrace("CompleteAuthorization for with code: {0}", code);
+
 			var otr = new OauthTokenRequest(gitHubConfiguration.OauthClientID, gitHubConfiguration.OauthSecret, code);
 			var result = await gitHubClient.Oauth.CreateAccessToken(otr).ConfigureAwait(false);
 			if (!result.Scope.Contains(RequiredScope))
@@ -258,12 +278,41 @@ namespace TGWebhooks.Core
 		}
 
 		/// <inheritdoc />
+		public Task CreateComment(int number, string body)
+		{
+			IssueArgumentCheck(number);
+			if (body == null)
+				throw new ArgumentNullException(nameof(body));
+			logger.LogTrace("Create comment: \"{0}\" on #{1}", body, number);
+
+			return gitHubClient.Issue.Comment.Create(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, number, body);
+		}
+
+		/// <inheritdoc />
+		public Task ApprovePullRequest(PullRequest pullRequest, string approveMessage)
+		{
+			if (pullRequest == null)
+				throw new ArgumentNullException(nameof(pullRequest));
+			if (approveMessage == null)
+				throw new ArgumentNullException(nameof(approveMessage));
+
+			logger.LogTrace("Approve #{0} with message: {1}", pullRequest.Number, approveMessage);
+
+			return gitHubClient.PullRequest.Review.Create(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, pullRequest.Number, new PullRequestReviewCreate
+			{
+				Body = approveMessage,
+				Event = PullRequestReviewEvent.Approve
+			});
+		}
+
+		/// <inheritdoc />
 		public async Task CreateSingletonComment(int number, string body, CancellationToken cancellationToken)
 		{
 			IssueArgumentCheck(number);
 			if (body == null)
 				throw new ArgumentNullException(nameof(body));
 
+			logger.LogTrace("Create singleton comment: \"{0}\" on #{1}", body, number);
 			var openComments = gitHubClient.Issue.Comment.GetAllForIssue(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, number);
 
 			await CheckUser(true, cancellationToken).ConfigureAwait(false);
@@ -279,30 +328,6 @@ namespace TGWebhooks.Core
 		}
 
 		/// <inheritdoc />
-		public Task CreateComment(int number, string body)
-		{
-			IssueArgumentCheck(number);
-			if (body == null)
-				throw new ArgumentNullException(nameof(body));
-			return gitHubClient.Issue.Comment.Create(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, number, body);
-		}
-
-		/// <inheritdoc />
-		public Task ApprovePullRequest(PullRequest pullRequest, string approveMessage)
-		{
-			if (pullRequest == null)
-				throw new ArgumentNullException(nameof(pullRequest));
-			if (approveMessage == null)
-				throw new ArgumentNullException(nameof(approveMessage));
-
-			return gitHubClient.PullRequest.Review.Create(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, pullRequest.Number, new PullRequestReviewCreate
-			{
-				Body = approveMessage,
-				Event = PullRequestReviewEvent.Approve
-			});
-		}
-
-		/// <inheritdoc />
 		public Task DismissReview(PullRequest pullRequest, PullRequestReview pullRequestReview, string dismissMessage)
 		{
 			if (pullRequest == null)
@@ -312,6 +337,7 @@ namespace TGWebhooks.Core
 			if (dismissMessage == null)
 				throw new ArgumentNullException(nameof(dismissMessage));
 
+			logger.LogTrace("Dismiss review {0} on #{1}", pullRequestReview.Id, pullRequest.Number);
 			return gitHubClient.PullRequest.Review.Dismiss(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, pullRequest.Number, pullRequestReview.Id, new PullRequestReviewDismiss
 			{
 				Message = dismissMessage
@@ -321,6 +347,7 @@ namespace TGWebhooks.Core
 		/// <inheritdoc />
 		public async Task<User> GetBotLogin(CancellationToken cancellationToken)
 		{
+			logger.LogTrace("Get bot login.");
 			using (await SemaphoreSlimContext.Lock(semaphore, cancellationToken).ConfigureAwait(false))
 			{
 				await CheckUser(false, cancellationToken).ConfigureAwait(false);
@@ -331,6 +358,7 @@ namespace TGWebhooks.Core
 		/// <inheritdoc />
 		public Task SetCommitStatus(string commit, CommitState commitState, string description)
 		{
+			logger.LogTrace("SetCommitStatus for {0} to {1} with desc: {2}", commit, commitState, description);
 			return gitHubClient.Repository.Status.Create(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, commit, new NewCommitStatus()
 			{
 				Context = String.Concat(Application.UserAgent, '/', "status"),

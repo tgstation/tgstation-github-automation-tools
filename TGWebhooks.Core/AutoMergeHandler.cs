@@ -133,49 +133,81 @@ namespace TGWebhooks.Core
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
 		async Task CheckMergePullRequest(PullRequest pullRequest, CancellationToken cancellationToken)
 		{
-			using (logger.BeginScope("Checking mergability of pull request #{0}.", pullRequest.Number)) {
-				for (var I = 0; I < 4 && !pullRequest.Mergeable.HasValue; ++I)
-				{
-					await Task.Delay(I * 1000, cancellationToken).ConfigureAwait(false);
-					logger.LogTrace("Rechecking git mergeablility.");
-					pullRequest = await gitHubManager.GetPullRequest(pullRequest.Number).ConfigureAwait(false);
-				}
-
-				if (!pullRequest.Mergeable.HasValue || !pullRequest.Mergeable.Value)
-				{
-					logger.LogDebug("Aborted due to lack of mergeablility: {0}", pullRequest.Mergeable);
-					return;
-				}
-
-				var tasks = new List<Task<AutoMergeStatus>>();
-				foreach (var I in componentProvider.MergeRequirements)
-					tasks.Add(I.EvaluateFor(pullRequest, cancellationToken));
-
-				await Task.WhenAll(tasks).ConfigureAwait(false);
-
+			using (logger.BeginScope("Checking mergability of pull request #{0}.", pullRequest.Number))
+			{
 				bool merge = true;
 				string mergerToken = null;
 				int rescheduleIn = 0;
-				foreach (var I in tasks.Select(x => x.Result))
+				Task pendingStatusTask = null;
+				try
 				{
-					if (I.Progress < I.RequiredProgress && merge)
+					pendingStatusTask = gitHubManager.SetCommitStatus(pullRequest.Head.Sha, CommitState.Pending, stringLocalizer["Commit status pending"]);
+					for (var I = 0; I < 4 && !pullRequest.Mergeable.HasValue; ++I)
 					{
-						logger.LogDebug("Aborting merge due to status failure: {0}/{1}", I.Progress, I.RequiredProgress);
-						merge = false;
+						await Task.Delay(I * 1000, cancellationToken).ConfigureAwait(false);
+						logger.LogTrace("Rechecking git mergeablility.");
+						pullRequest = await gitHubManager.GetPullRequest(pullRequest.Number).ConfigureAwait(false);
 					}
-					if (I.ReevaluateIn > 0)
+
+					if (!pullRequest.Mergeable.HasValue || !pullRequest.Mergeable.Value)
 					{
-						if (rescheduleIn == 0)
-							rescheduleIn = I.ReevaluateIn;
-						else
-							rescheduleIn = Math.Min(rescheduleIn, I.ReevaluateIn);
+						logger.LogDebug("Aborted due to lack of mergeablility: {0}", pullRequest.Mergeable);
+						return;
 					}
-					if (I.MergerAccessToken != null)
+
+					var tasks = new List<Task<AutoMergeStatus>>();
+					foreach (var I in componentProvider.MergeRequirements)
+						tasks.Add(I.EvaluateFor(pullRequest, cancellationToken));
+
+					await Task.WhenAll(tasks).ConfigureAwait(false);
+
+					bool goodStatus = true;
+					var failReasons = new List<string>();
+					foreach (var I in tasks.Select(x => x.Result))
 					{
-						if (mergerToken != null)
-							throw new InvalidOperationException("Multiple AutoMergeResults with MergerAccessTokens!");
-						mergerToken = I.MergerAccessToken;
+						if (I.Progress < I.RequiredProgress && merge)
+						{
+							logger.LogDebug("Aborting merge due to status failure: {0}/{1}", I.Progress, I.RequiredProgress);
+							merge = false;
+						}
+						if (I.FailStatusReport)
+						{
+							goodStatus = false;
+							failReasons.AddRange(I.Notes);
+						}
+
+						if (I.ReevaluateIn > 0)
+						{
+							if (rescheduleIn == 0)
+								rescheduleIn = I.ReevaluateIn;
+							else
+								rescheduleIn = Math.Min(rescheduleIn, I.ReevaluateIn);
+						}
+						if (I.MergerAccessToken != null)
+						{
+							if (mergerToken != null)
+								throw new InvalidOperationException("Multiple AutoMergeResults with MergerAccessTokens!");
+							mergerToken = I.MergerAccessToken;
+						}
 					}
+
+					await pendingStatusTask.ConfigureAwait(false);
+					await gitHubManager.SetCommitStatus(pullRequest.Head.Sha, goodStatus ? CommitState.Success : CommitState.Failure, goodStatus ? stringLocalizer["Commit status success"] : stringLocalizer["Commit status fail", failReasons]).ConfigureAwait(false);
+				}
+				catch (Exception e)
+				{
+					if (pendingStatusTask.Exception != null && pendingStatusTask.Exception != e)
+						logger.LogError(e, "Error setting pending status!");
+					logger.LogDebug(e, "Error occurred. Setting commit state to errored.");
+					try
+					{
+						await gitHubManager.SetCommitStatus(pullRequest.Head.Sha, CommitState.Error, stringLocalizer["An error occurred while evaluating mergeability: {0}", e]).ConfigureAwait(false);
+					}
+					catch (Exception e2)
+					{
+						logger.LogError(e2, "Unable to create error status!");
+					}
+					throw;
 				}
 
 				if (merge)
