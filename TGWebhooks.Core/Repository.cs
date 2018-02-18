@@ -127,6 +127,8 @@ namespace TGWebhooks.Core
 									OnTransferProgress = (a) => !cancellationToken.IsCancellationRequested
 								});
 
+								logger.LogInformation("Repo clone completed.");
+
 								repositoryObject = new LibGit2Sharp.Repository(repoPath);
 							}
 							catch (UserCancelledException e2)
