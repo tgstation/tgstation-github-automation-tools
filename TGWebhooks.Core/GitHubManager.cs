@@ -356,8 +356,13 @@ namespace TGWebhooks.Core
 		}
 
 		/// <inheritdoc />
-		public Task SetCommitStatus(string commit, CommitState commitState, string description)
+		public Task SetCommitStatus(PullRequest pullRequest, CommitState commitState, string description)
 		{
+			if (pullRequest == null)
+				throw new ArgumentNullException(nameof(pullRequest));
+			if (description == null)
+				throw new ArgumentNullException(nameof(description));
+			var commit = pullRequest.Head.Sha;
 			logger.LogTrace("SetCommitStatus for {0} to {1} with desc: {2}", commit, commitState, description);
 			return gitHubClient.Repository.Status.Create(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, commit, new NewCommitStatus()
 			{

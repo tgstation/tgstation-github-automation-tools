@@ -8,6 +8,9 @@ namespace TGWebhooks.Core.Controllers
 	[Route(Route)]
 	public class PullRequestController : Controller
     {
-		public const string Route = "PullRequest";
+		/// <summary>
+		/// The route to the primary controller action formatted with a pull request number
+		/// </summary>
+		public const string Route = "PullRequest/{0}";
     }
 }
