@@ -139,5 +139,14 @@ namespace TGWebhooks.Api
 		/// </summary>
 		/// <returns>A <see cref="Task{TResult}"/> the configured <see cref="User"/></returns>
 		Task<User> GetBotLogin(CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Creates a <see cref="CommitStatus"/> for a <paramref name="commit"/>
+		/// </summary>
+		/// <param name="commit">The SHA of the commit to create a <see cref="CommitStatus"/></param>
+		/// <param name="commitState">The <see cref="CommitState"/> of the commit</param>
+		/// <param name="description">A description of the <see cref="CommitStatus"/></param>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		Task SetCommitStatus(string commit, CommitState commitState, string description);
 	}
 }

@@ -8,6 +8,10 @@ namespace TGWebhooks.Api
 	public sealed class AutoMergeStatus
 	{
 		/// <summary>
+		/// If the reported commit status should register as a failure
+		/// </summary>
+		bool FailStatusReport { get; set; }
+		/// <summary>
 		/// How many requirements have been fufilled
 		/// </summary>
 		public int Progress { get; set; }

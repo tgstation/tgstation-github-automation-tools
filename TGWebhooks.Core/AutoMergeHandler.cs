@@ -126,7 +126,7 @@ namespace TGWebhooks.Core
 		}
 
 		/// <summary>
-		/// Checks if a given <paramref name="pullRequest"/> is considered mergeable and does so if need be
+		/// Checks if a given <paramref name="pullRequest"/> is considered mergeable and does so if need be and sets it's commit status
 		/// </summary>
 		/// <param name="pullRequest">The <see cref="PullRequest"/> to check</param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>

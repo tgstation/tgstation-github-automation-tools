@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using TGWebhooks.Core.Configuration;
 using TGWebhooks.Core.Model;
 using TGWebhooks.Api;
+using TGWebhooks.Core.Controllers;
 
 namespace TGWebhooks.Core
 {
@@ -31,6 +32,10 @@ namespace TGWebhooks.Core
 		/// </summary>
 		const int AccessTokenCookieExpriationDays = 7;
 
+		/// <summary>
+		/// The <see cref="GeneralConfiguration"/> for the <see cref="GitHubManager"/>
+		/// </summary>
+		readonly GeneralConfiguration generalConfiguration;
 		/// <summary>
 		/// The <see cref="GitHubConfiguration"/> for the <see cref="GitHubManager"/>
 		/// </summary>
@@ -66,15 +71,15 @@ namespace TGWebhooks.Core
 		/// <summary>
 		/// Construct a <see cref="GitHubManager"/>
 		/// </summary>
+		/// <param name="generalConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the value of <see cref="generalConfiguration"/></param>
 		/// <param name="gitHubConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the value of <see cref="gitHubConfiguration"/></param>
 		/// <param name="branchingDataStore">The <see cref="IBranchingDataStore"/> used to create <see cref="dataStore"/></param>
-		public GitHubManager(IOptions<GitHubConfiguration> gitHubConfigurationOptions, IBranchingDataStore branchingDataStore)
+		public GitHubManager(IOptions<GeneralConfiguration> generalConfigurationOptions, IOptions<GitHubConfiguration> gitHubConfigurationOptions, IBranchingDataStore branchingDataStore)
 		{
-			if(gitHubConfigurationOptions == null)
-				throw new ArgumentNullException(nameof(gitHubConfigurationOptions));
+			gitHubConfiguration = gitHubConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(gitHubConfigurationOptions));
+			generalConfiguration = generalConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(generalConfigurationOptions));
 			if (branchingDataStore == null)
 				throw new ArgumentNullException(nameof(branchingDataStore));
-			gitHubConfiguration = gitHubConfigurationOptions.Value;
 			gitHubClient = new GitHubClient(new ProductHeaderValue(Application.UserAgent))
 			{
 				Credentials = new Credentials(gitHubConfiguration.PersonalAccessToken)
@@ -321,6 +326,18 @@ namespace TGWebhooks.Core
 				await CheckUser(false, cancellationToken).ConfigureAwait(false);
 				return knownUser;
 			}
+		}
+
+		/// <inheritdoc />
+		public Task SetCommitStatus(string commit, CommitState commitState, string description)
+		{
+			return gitHubClient.Repository.Status.Create(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, commit, new NewCommitStatus()
+			{
+				Context = String.Concat(Application.UserAgent, '/', "status"),
+				Description = description,
+				State = commitState,
+				TargetUrl = String.Concat(generalConfiguration.RootURL, StatusesController.Route)
+			});
 		}
 	}
 }

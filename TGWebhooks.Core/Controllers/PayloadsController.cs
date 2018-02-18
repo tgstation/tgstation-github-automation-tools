@@ -164,6 +164,7 @@ namespace TGWebhooks.Core.Controllers
 		/// </summary>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in the <see cref="IActionResult"/> of the POST</returns>
 		[HttpPost]
+		[HttpGet]
 		public async Task<IActionResult> Receive()
 		{
 			logger.LogTrace("Recieved POST.");

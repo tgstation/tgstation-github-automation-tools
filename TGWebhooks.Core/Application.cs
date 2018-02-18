@@ -7,13 +7,13 @@ using Microsoft.Data.Sqlite;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using TGWebhooks.Core.Configuration;
 using TGWebhooks.Api;
 using TGWebhooks.Core.Model;
@@ -69,6 +69,7 @@ namespace TGWebhooks.Core
 			services.AddMvc();
 			services.AddOptions();
 			services.AddLocalization();
+			services.Configure<GeneralConfiguration>(configuration.GetSection(GeneralConfiguration.Section));
 			services.Configure<GitHubConfiguration>(configuration.GetSection(GitHubConfiguration.Section));
 			services.Configure<TravisConfiguration>(configuration.GetSection(TravisConfiguration.Section));
 			services.AddSingleton<IPluginManager, PluginManager>();
@@ -101,9 +102,21 @@ namespace TGWebhooks.Core
 			{
 				new CultureInfo("en-US")
 			};
+
+			var defaultLocale = app.ApplicationServices.GetRequiredService<IOptions<GeneralConfiguration>>().Value.DefaultLocale;
+			CultureInfo defaultCulture;
+			try
+			{
+				defaultCulture = supportedCultures.Where(x => x.Name == defaultLocale).First();
+			}
+			catch (InvalidOperationException e)
+			{
+				throw new InvalidOperationException(String.Format(CultureInfo.CurrentCulture, "Locale: {0} is not supported!", defaultLocale), e);
+			}
+
 			var options = new RequestLocalizationOptions
 			{
-				DefaultRequestCulture = new RequestCulture(supportedCultures.First()),
+				DefaultRequestCulture = new RequestCulture(defaultCulture),
 				SupportedCultures = supportedCultures,
 				SupportedUICultures = supportedCultures,
 			};
