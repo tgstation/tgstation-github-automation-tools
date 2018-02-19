@@ -100,7 +100,7 @@ namespace TGWebhooks.Core
 
 			var supportedCultures = new List<CultureInfo>
 			{
-				new CultureInfo("en-US")
+				new CultureInfo("en")
 			};
 
 			var defaultLocale = app.ApplicationServices.GetRequiredService<IOptions<GeneralConfiguration>>().Value.DefaultLocale;
@@ -113,6 +113,9 @@ namespace TGWebhooks.Core
 			{
 				throw new InvalidOperationException(String.Format(CultureInfo.CurrentCulture, "Locale: {0} is not supported!", defaultLocale), e);
 			}
+
+			CultureInfo.CurrentCulture = defaultCulture;
+			CultureInfo.CurrentUICulture = defaultCulture;
 
 			var options = new RequestLocalizationOptions
 			{

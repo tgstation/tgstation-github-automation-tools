@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Octokit;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -91,7 +92,7 @@ namespace TGWebhooks.Core
 				logger.LogError(e2, "Merge process unable to be completed!");
 				try
 				{
-					await gitHubManager.CreateComment(pullRequest.Number, stringLocalizer["Merge process interupted! Error:\n```\n{0}\n```", e2.ToString()]).ConfigureAwait(false);
+					await gitHubManager.CreateComment(pullRequest.Number, stringLocalizer["MergeProcessInterruption", e2.ToString()]).ConfigureAwait(false);
 				}
 				catch (Exception e)
 				{
@@ -141,7 +142,7 @@ namespace TGWebhooks.Core
 				Task pendingStatusTask = null;
 				try
 				{
-					pendingStatusTask = gitHubManager.SetCommitStatus(pullRequest, CommitState.Pending, stringLocalizer["Commit status pending"]);
+					pendingStatusTask = gitHubManager.SetCommitStatus(pullRequest, CommitState.Pending, stringLocalizer["CommitStatusPending"]);
 					for (var I = 0; I < 4 && !pullRequest.Mergeable.HasValue; ++I)
 					{
 						await Task.Delay(I * 1000, cancellationToken).ConfigureAwait(false);
@@ -191,8 +192,12 @@ namespace TGWebhooks.Core
 						}
 					}
 
+					var failReasonMessage = String.Empty;
+					foreach (var I in failReasons)
+						failReasonMessage = String.Format(CultureInfo.InvariantCulture, "{0}{1}  - {2}", failReasonMessage, Environment.NewLine, I);
+
 					await pendingStatusTask.ConfigureAwait(false);
-					await gitHubManager.SetCommitStatus(pullRequest, goodStatus ? CommitState.Success : CommitState.Failure, goodStatus ? stringLocalizer["Commit status success"] : stringLocalizer["Commit status fail", failReasons]).ConfigureAwait(false);
+					await gitHubManager.SetCommitStatus(pullRequest, goodStatus ? CommitState.Success : CommitState.Failure, goodStatus ? stringLocalizer["CommitStatusSuccess"] : stringLocalizer["CommitStatusFail", failReasonMessage]).ConfigureAwait(false);
 				}
 				catch (Exception e)
 				{
@@ -201,7 +206,7 @@ namespace TGWebhooks.Core
 					logger.LogDebug(e, "Error occurred. Setting commit state to errored.");
 					try
 					{
-						await gitHubManager.SetCommitStatus(pullRequest, CommitState.Error, stringLocalizer["An error occurred while evaluating mergeability: {0}", e]).ConfigureAwait(false);
+						await gitHubManager.SetCommitStatus(pullRequest, CommitState.Error, stringLocalizer["CommitStatusError", e]).ConfigureAwait(false);
 					}
 					catch (Exception e2)
 					{

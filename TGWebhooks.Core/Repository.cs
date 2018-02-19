@@ -45,7 +45,7 @@ namespace TGWebhooks.Core
 		LibGit2Sharp.Repository repositoryObject;
 
 		/// <summary>
-		/// Used for guarding writes to <see cref="startupTask"/>
+		/// Used for guarding access to the <see cref="Repository"/>
 		/// </summary>
 		SemaphoreSlim semaphore;
 

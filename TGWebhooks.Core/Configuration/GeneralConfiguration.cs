@@ -3,7 +3,9 @@
 	/// <summary>
 	/// General <see cref="Application"/> settings
 	/// </summary>
-    sealed class GeneralConfiguration
+#pragma warning disable CA1812
+	sealed class GeneralConfiguration
+#pragma warning restore CA1812
 	{
 		/// <summary>
 		/// The configuration section the <see cref="GeneralConfiguration"/> resides in
