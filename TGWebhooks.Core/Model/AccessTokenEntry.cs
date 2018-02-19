@@ -5,8 +5,8 @@ namespace TGWebhooks.Core.Model
 	/// <summary>
 	/// Describes a GitHub AccessToken stored within a cookie
 	/// </summary>
-    sealed class AccessTokenEntry
-    {
+	public sealed class AccessTokenEntry
+	{
 		/// <summary>
 		/// The name of the cookie
 		/// </summary>
@@ -26,5 +26,5 @@ namespace TGWebhooks.Core.Model
 		/// When the <see cref="Cookie"/> expires
 		/// </summary>
 		public DateTimeOffset Expiry { get; set; }
-    }
+	}
 }

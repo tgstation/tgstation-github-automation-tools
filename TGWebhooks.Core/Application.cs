@@ -129,6 +129,9 @@ namespace TGWebhooks.Core
 			app.UseAsyncInitialization<IRepository>((repository, cancellationToken) => repository.Initialize(cancellationToken));
 
 			app.UseHangfireServer();
+
+			app.UseStaticFiles();
+
 			app.UseMvc();
 		}
 	}

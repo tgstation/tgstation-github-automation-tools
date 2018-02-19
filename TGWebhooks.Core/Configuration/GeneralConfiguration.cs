@@ -1,11 +1,11 @@
-﻿namespace TGWebhooks.Core.Configuration
+﻿using System;
+
+namespace TGWebhooks.Core.Configuration
 {
 	/// <summary>
 	/// General <see cref="Application"/> settings
 	/// </summary>
-#pragma warning disable CA1812
-	sealed class GeneralConfiguration
-#pragma warning restore CA1812
+	public sealed class GeneralConfiguration
 	{
 		/// <summary>
 		/// The configuration section the <see cref="GeneralConfiguration"/> resides in
@@ -20,6 +20,6 @@
 		/// <summary>
 		/// The URL used to access the <see cref="Application"/>
 		/// </summary>
-		public string RootURL { get; set; }
+		public Uri RootURL { get; set; }
     }
 }

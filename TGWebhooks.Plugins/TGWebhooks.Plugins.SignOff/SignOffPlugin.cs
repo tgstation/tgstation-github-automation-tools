@@ -108,7 +108,7 @@ namespace TGWebhooks.Plugins.SignOff
 
 			await dataStore.WriteData(SignOffDataKey, signOff, cancellationToken).ConfigureAwait(false);
 
-			var botLoginTask = gitHubManager.GetBotLogin(cancellationToken);
+			var botLoginTask = gitHubManager.GetUserLogin(null, cancellationToken);
 			var reviews = await gitHubManager.GetPullRequestReviews(payload.PullRequest).ConfigureAwait(false);
 			var botLogin = await botLoginTask.ConfigureAwait(false);
 			foreach(var I in reviews)

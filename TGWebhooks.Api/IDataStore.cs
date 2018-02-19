@@ -15,7 +15,7 @@ namespace TGWebhooks.Api
 		/// <param name="key">The data storage key</param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in the read <typeparamref name="TData"/> if it exists, <see langword="null"/> otherwise</returns>
-		Task<TData> ReadData<TData>(string key, CancellationToken cancellationToken) where TData : class;
+		Task<TData> ReadData<TData>(string key, CancellationToken cancellationToken) where TData : class, new();
 
 		/// <summary>
 		/// Save some <typeparamref name="TData"/> to the <see cref="IDataStore"/>
@@ -25,6 +25,6 @@ namespace TGWebhooks.Api
 		/// <param name="data">The data to write</param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
-		Task WriteData<TData>(string key, TData data, CancellationToken cancellationToken) where TData : class;
+		Task WriteData<TData>(string key, TData data, CancellationToken cancellationToken) where TData : class, new();
 	}
 }

@@ -101,6 +101,22 @@ namespace TGWebhooks.Api
 		Task CompleteAuthorization(string code, IResponseCookies cookies, CancellationToken cancellationToken);
 
 		/// <summary>
+		/// Expire an oauth cookie
+		/// </summary>
+		/// <param name="cookies">The <see cref="IResponseCookies"/> to write session information to</param>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		void ExpireAuthorization(IResponseCookies cookies);
+
+		/// <summary>
+		/// Checks some <paramref name="cookies"/> for the oauth cookie
+		/// </summary>
+		/// <param name="cookies">The <see cref="IRequestCookieCollection"/> to check</param>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task{TResult}"/> resulting in the associated GitHub access token on success, <see langword="null"/> on failure</returns>
+		Task<string> CheckAuthorization(IRequestCookieCollection cookies, CancellationToken cancellationToken);
+
+		/// <summary>
 		/// Creates a comment on the specified <see cref="Issue"/>, or updates the first one if it has already done so
 		/// </summary>
 		/// <param name="number">The number of the <see cref="Issue"/></param>
@@ -135,10 +151,11 @@ namespace TGWebhooks.Api
 		Task DismissReview(PullRequest pullRequest, PullRequestReview pullRequestReview, string dismissMessage);
 
 		/// <summary>
-		/// Get the GitHub <see cref="User"/> of the configured access token
+		/// Get the GitHub <see cref="User"/> of either the configured or specified <paramref name="accessToken"/>
 		/// </summary>
+		/// <param name="accessToken">Optional GitHub access token to get the user for</param>
 		/// <returns>A <see cref="Task{TResult}"/> the configured <see cref="User"/></returns>
-		Task<User> GetBotLogin(CancellationToken cancellationToken);
+		Task<User> GetUserLogin(string accessToken, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Creates a <see cref="CommitStatus"/> for a <paramref name="pullRequest"/>

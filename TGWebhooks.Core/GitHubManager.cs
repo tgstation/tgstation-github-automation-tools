@@ -21,6 +21,10 @@ namespace TGWebhooks.Core
 #pragma warning restore CA1812
 	{
 		/// <summary>
+		/// The name cookie containing authorization keys
+		/// </summary>
+		const string CookieName = Application.UserAgent + ".AuthCookie";
+		/// <summary>
 		/// The scope required on Oauth tokens
 		/// </summary>
 		const string RequiredScope = "public_repo";
@@ -44,7 +48,7 @@ namespace TGWebhooks.Core
 		/// <summary>
 		/// The <see cref="GitHubClient"/> for the <see cref="GitHubManager"/>
 		/// </summary>
-		readonly GitHubClient gitHubClient;
+		readonly IGitHubClient gitHubClient;
 		/// <summary>
 		/// The <see cref="IDataStore"/> for the <see cref="GitHubManager"/>
 		/// </summary>
@@ -73,6 +77,11 @@ namespace TGWebhooks.Core
 				throw new ArgumentOutOfRangeException(nameof(number), number, String.Format(CultureInfo.CurrentCulture, "{0} must be greater than zero!", nameof(number)));
 		}
 
+		static IGitHubClient CreateGitHubClient(string accessToken)
+		{
+			return new GitHubClient(new ProductHeaderValue(Application.UserAgent)) { Credentials = new Credentials(accessToken) };
+		}
+
 		/// <summary>
 		/// Construct a <see cref="GitHubManager"/>
 		/// </summary>
@@ -87,10 +96,7 @@ namespace TGWebhooks.Core
 			logger = _logger ?? throw new ArgumentNullException(nameof(_logger));
 			if (branchingDataStore == null)
 				throw new ArgumentNullException(nameof(branchingDataStore));
-			gitHubClient = new GitHubClient(new ProductHeaderValue(Application.UserAgent))
-			{
-				Credentials = new Credentials(gitHubConfiguration.PersonalAccessToken)
-			};
+			gitHubClient = CreateGitHubClient(gitHubConfiguration.PersonalAccessToken);
 			dataStore = branchingDataStore.BranchOnKey("GitHub");
 			semaphore = new SemaphoreSlim(1);
 		}
@@ -260,7 +266,7 @@ namespace TGWebhooks.Core
 
 			var otr = new OauthTokenRequest(gitHubConfiguration.OauthClientID, gitHubConfiguration.OauthSecret, code);
 			var result = await gitHubClient.Oauth.CreateAccessToken(otr).ConfigureAwait(false);
-			if (!result.Scope.Contains(RequiredScope))
+			if (result.AccessToken == null || !result.Scope.Contains(RequiredScope))
 				//user is fucking with us, don't even bother
 				return;
 
@@ -273,9 +279,14 @@ namespace TGWebhooks.Core
 				Expiry = expiry
 			};
 
-			cookies.Append(newEntry.Cookie.ToString(), newEntry.AccessToken);
+			cookies.Append(CookieName, newEntry.Cookie.ToString(), new CookieOptions{
+				SameSite = SameSiteMode.Strict,
+				Secure = true,
+				Expires = expiry
+			});
 			var tokenEntries = await GetTrimmedTokenEntries(cancellationToken).ConfigureAwait(false);
 			tokenEntries.Add(newEntry);
+			await dataStore.WriteData(AccessTokensKey, tokenEntries, cancellationToken).ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -346,14 +357,18 @@ namespace TGWebhooks.Core
 		}
 
 		/// <inheritdoc />
-		public async Task<User> GetBotLogin(CancellationToken cancellationToken)
+		public async Task<User> GetUserLogin(string accessToken, CancellationToken cancellationToken)
 		{
-			logger.LogTrace("Get bot login.");
-			using (await SemaphoreSlimContext.Lock(semaphore, cancellationToken).ConfigureAwait(false))
-			{
-				await CheckUser(false, cancellationToken).ConfigureAwait(false);
-				return knownUser;
-			}
+			logger.LogTrace("GetUserLogin. accessToken: {0}", accessToken);
+
+			if (accessToken == null)
+				using (await SemaphoreSlimContext.Lock(semaphore, cancellationToken).ConfigureAwait(false))
+				{
+					await CheckUser(false, cancellationToken).ConfigureAwait(false);
+					return knownUser;
+				}
+
+			return await CreateGitHubClient(accessToken).User.Current().ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -372,6 +387,31 @@ namespace TGWebhooks.Core
 				State = commitState,
 				TargetUrl = String.Concat(generalConfiguration.RootURL, PullRequestController.Route)
 			});
+		}
+
+		/// <inheritdoc />
+		public void ExpireAuthorization(IResponseCookies cookies)
+		{
+			cookies.Delete(CookieName);
+		}
+
+
+		/// <inheritdoc />
+		public async Task<string> CheckAuthorization(IRequestCookieCollection cookies, CancellationToken cancellationToken)
+		{
+			if (!cookies.TryGetValue(CookieName, out string cookieGuid))
+				return null;
+
+			if (!Guid.TryParse(cookieGuid, out Guid guid))
+				return null;
+			
+			var allEntries = await GetTrimmedTokenEntries(cancellationToken).ConfigureAwait(false);
+
+			var entry = allEntries.FirstOrDefault(x => x.Cookie == guid);
+			if (entry == default(AccessTokenEntry))
+				return null;
+
+			return entry.AccessToken;
 		}
 	}
 }
