@@ -32,6 +32,10 @@ namespace TGWebhooks.Controllers
 		/// The <see cref="GeneralConfiguration"/> for the <see cref="PullRequestController"/>
 		/// </summary>
 		readonly GeneralConfiguration generalConfiguration;
+		/// <summary>
+		/// The <see cref="GitHubConfiguration"/> for the <see cref="PullRequestController"/>
+		/// </summary>
+		readonly GitHubConfiguration gitHubConfiguration;
 
 		/// <summary>
 		/// Construct a <see cref="PullRequestController"/>
@@ -39,11 +43,13 @@ namespace TGWebhooks.Controllers
 		/// <param name="gitHubManager">The value of <see cref="gitHubManager"/></param>
 		/// <param name="stringLocalizer">The value of <see cref="stringLocalizer"/></param>
 		/// <param name="generalConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing value of <see cref="generalConfiguration"/></param>
-		public PullRequestController(IGitHubManager gitHubManager, IStringLocalizer<PullRequestController> stringLocalizer, IOptions<GeneralConfiguration> generalConfigurationOptions)
+		/// <param name="githubConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing value of <see cref="generalConfiguration"/></param>
+		public PullRequestController(IGitHubManager gitHubManager, IStringLocalizer<PullRequestController> stringLocalizer, IOptions<GeneralConfiguration> generalConfigurationOptions, IOptions<GitHubConfiguration> githubConfigurationOptions)
 		{
 			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
 			this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
 			generalConfiguration = generalConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(generalConfigurationOptions));
+			gitHubConfiguration = githubConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(githubConfigurationOptions));
 		}
 
 		/// <summary>
@@ -56,6 +62,17 @@ namespace TGWebhooks.Controllers
 		public async Task<IActionResult> ReviewPullRequest(int number, CancellationToken cancellationToken)
 		{
 			var token = await gitHubManager.CheckAuthorization(Request.Cookies, cancellationToken).ConfigureAwait(false);
+
+			ViewBag.Title = stringLocalizer["PullRequest", number];
+			ViewBag.PRNumber = number;
+			ViewBag.RepoOwner = gitHubConfiguration.RepoOwner;
+			ViewBag.RepoName = gitHubConfiguration.RepoName;
+
+			var pr = await gitHubManager.GetPullRequest(number).ConfigureAwait(false);
+			ViewBag.PullRequestAuthor = pr.User.Login;
+			ViewBag.PullRequestAuthorID = pr.User.Id;
+			ViewBag.PullRequestTitle = pr.Title;
+
 
 			if (token == null)
 			{
