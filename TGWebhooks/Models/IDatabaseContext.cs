@@ -1,13 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Threading;
 using System.Threading.Tasks;
+using TGWebhooks.Modules;
 
 namespace TGWebhooks.Models
 {
 	/// <summary>
 	/// Represents a database containing models
 	/// </summary>
-    interface IDatabaseContext
+    interface IDatabaseContext : IInitializable
 	{
 		/// <summary>
 		/// The <see cref="AccessTokenEntry"/>s in the database

@@ -1,9 +1,9 @@
 ﻿using Cyberboss.AspNetCore.AsyncInitializer;
 using Hangfire;
+using Hangfire.MySql;
 using Hangfire.SQLite;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Data.Sqlite;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +17,7 @@ using System.Threading;
 using TGWebhooks.Configuration;
 using TGWebhooks.Modules;
 using TGWebhooks.Models;
+using Hangfire.SqlServer;
 
 namespace TGWebhooks.Core
 {
@@ -61,19 +62,21 @@ namespace TGWebhooks.Core
 		/// <param name="services">The <see cref="IServiceCollection"/> to configure</param>
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddHangfire(_ => _.UseSQLiteStorage(new SqliteConnectionStringBuilder
-			{
-				DataSource = Path.Combine(DataDirectory, "HangfireDatabase.sqlite3"),
-				Mode = SqliteOpenMode.ReadWriteCreate
-			}.ConnectionString));
-			services.AddMvc();
-			services.AddOptions();
-			services.AddLocalization();
+			var dbConfigSection = configuration.GetSection(DatabaseConfiguration.Section);
 
 			services.Configure<GeneralConfiguration>(configuration.GetSection(GeneralConfiguration.Section));
 			services.Configure<GitHubConfiguration>(configuration.GetSection(GitHubConfiguration.Section));
 			services.Configure<TravisConfiguration>(configuration.GetSection(TravisConfiguration.Section));
-			services.Configure<DatabaseConfiguration>(configuration.GetSection(DatabaseConfiguration.Section));
+			services.Configure<DatabaseConfiguration>(dbConfigSection);
+
+			services.AddHangfire((builder) => DatabaseContext.SelectDatabaseType(dbConfigSection.Get<DatabaseConfiguration>(),
+				x => builder.UseSqlServerStorage(x, new SqlServerStorageOptions { PrepareSchemaIfNecessary = true }),
+				x => builder.UseStorage(new MySqlStorage(x, new MySqlStorageOptions { PrepareSchemaIfNecessary = true })),
+				x => builder.UseSQLiteStorage(x, new SQLiteStorageOptions { PrepareSchemaIfNecessary = true })
+			));
+			services.AddMvc();
+			services.AddOptions();
+			services.AddLocalization();
 
 			services.AddDbContext<DatabaseContext>(ServiceLifetime.Singleton);
 			services.AddSingleton<IDatabaseContext>(x => x.GetRequiredService<DatabaseContext>());

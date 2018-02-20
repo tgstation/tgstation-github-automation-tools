@@ -100,7 +100,7 @@ namespace TGWebhooks.Core
 		{
 			var logger = loggerFactory.CreateLogger<PluginManager>();
 
-			var test = Assembly.GetExecutingAssembly().GetReferencedAssemblies();
+			await databaseContext.Initialize(cancellationToken).ConfigureAwait(false);
 
 			pluginsAndEnabledStatus = new Dictionary<IModule, bool>();
 
@@ -162,6 +162,7 @@ namespace TGWebhooks.Core
 						await addInTask.ConfigureAwait(false);
 				}
 			};
+
 			using (logger.BeginScope("Loading plugins..."))
 			{
 				var tasks2 = new List<Task<KeyValuePair<IModule, bool>>>();
