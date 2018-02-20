@@ -20,6 +20,7 @@ namespace TGWebhooks.Core
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => pluginsAndEnabledStatus.Where(x => x.Value).SelectMany(x => x.Key.MergeRequirements);
 
+		/// <inheritdoc />
 		public IEnumerable<IMergeHook> MergeHooks => pluginsAndEnabledStatus.Where(x => x.Value).SelectMany(x => x.Key.MergeHooks);
 
 		/// <summary>
@@ -67,7 +68,7 @@ namespace TGWebhooks.Core
 		static IEnumerable<IModule> InstantiatePlugins()
 		{
 			var moduleType = typeof(IModule);
-			foreach (var I in Assembly.GetExecutingAssembly().GetTypes().Where(x => x.IsClass && moduleType.IsAssignableFrom(x) && !x.IsAbstract))
+			foreach (var I in Assembly.GetExecutingAssembly().GetTypes().Where(x => x.IsClass && moduleType.IsAssignableFrom(x) && !x.IsAbstract && !x.GetConstructors().Any(y => y.GetParameters().Count() > 0)))
 				yield return (IModule)Activator.CreateInstance(I);
 		}
 
