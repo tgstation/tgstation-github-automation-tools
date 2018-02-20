@@ -7,7 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TGWebhooks.Api;
+using TGWebhooks.Modules;
 
 namespace TGWebhooks.Modules.MaintainerApproval
 {

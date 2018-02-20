@@ -6,7 +6,7 @@ using Octokit;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using TGWebhooks.Api;
+using TGWebhooks.Modules;
 
 namespace TGWebhooks.Tests
 {

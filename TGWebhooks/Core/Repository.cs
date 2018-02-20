@@ -1,21 +1,21 @@
 ﻿using LibGit2Sharp;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Octokit;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TGWebhooks.Core.Configuration;
-using TGWebhooks.Api;
-using Microsoft.Extensions.Logging;
-using Octokit;
-using System.Collections.Generic;
-using System.Linq;
+using TGWebhooks.Configuration;
+using TGWebhooks.Modules;
 
 namespace TGWebhooks.Core
 {
 	/// <inheritdoc />
 #pragma warning disable CA1812
-	sealed class Repository : Api.IRepository, IInitializable, IDisposable
+	sealed class Repository : Modules.IRepository, IInitializable, IDisposable
 #pragma warning restore CA1812
 	{
 		/// <summary>

@@ -260,4 +260,4 @@ paket-files/
 __pycache__/
 *.pyc
 /TGWebhooks/App_Data/
-/TGWebhooks/Core/appsettings.Development.json
+/TGWebhooks/appsettings.Development.json

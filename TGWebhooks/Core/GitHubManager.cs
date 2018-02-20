@@ -8,10 +8,10 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TGWebhooks.Api;
-using TGWebhooks.Core.Configuration;
-using TGWebhooks.Core.Controllers;
-using TGWebhooks.Core.Models;
+using TGWebhooks.Modules;
+using TGWebhooks.Configuration;
+using TGWebhooks.Controllers;
+using TGWebhooks.Models;
 
 namespace TGWebhooks.Core
 {

@@ -7,8 +7,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using TGWebhooks.Api;
-using TGWebhooks.Core.Models;
+using TGWebhooks.Modules;
+using TGWebhooks.Models;
 
 namespace TGWebhooks.Core
 {

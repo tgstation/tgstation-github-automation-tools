@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using TGWebhooks.Api;
+using TGWebhooks.Modules;
 
 namespace TGWebhooks.Core
 {

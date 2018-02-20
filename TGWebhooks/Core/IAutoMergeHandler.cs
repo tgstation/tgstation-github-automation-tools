@@ -1,5 +1,5 @@
 ﻿using Octokit;
-using TGWebhooks.Api;
+using TGWebhooks.Modules;
 
 namespace TGWebhooks.Core
 {
