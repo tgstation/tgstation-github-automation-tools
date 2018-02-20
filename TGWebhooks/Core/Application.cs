@@ -78,9 +78,9 @@ namespace TGWebhooks.Core
 				x => builder.UseStorage(new MySqlStorage(x, new MySqlStorageOptions { PrepareSchemaIfNecessary = true })),
 				x => builder.UseSQLiteStorage(x, new SQLiteStorageOptions { PrepareSchemaIfNecessary = true })
 			));
-			services.AddMvc();
 			services.AddOptions();
-			services.AddLocalization();
+			services.AddLocalization(options => options.ResourcesPath = "Resources/Localizations");
+			services.AddMvc();
 
 			services.AddDbContext<DatabaseContext>(ServiceLifetime.Singleton);
 			services.AddSingleton<IDatabaseContext>(x => x.GetRequiredService<DatabaseContext>());
@@ -130,7 +130,6 @@ namespace TGWebhooks.Core
 
 			var options = new RequestLocalizationOptions
 			{
-				DefaultRequestCulture = new RequestCulture(defaultCulture),
 				SupportedCultures = supportedCultures,
 				SupportedUICultures = supportedCultures,
 			};

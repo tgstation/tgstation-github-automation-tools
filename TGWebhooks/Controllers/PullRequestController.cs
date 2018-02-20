@@ -59,14 +59,14 @@ namespace TGWebhooks.Controllers
 
 			if (token == null)
 			{
-				ViewBag.AuthHref = String.Concat(generalConfiguration.RootURL.ToString(), "Authorize");
-				ViewBag.AuthTitle = "Sign In With GitHub";
+				ViewBag.AuthHref = String.Concat(generalConfiguration.RootURL.ToString(), "Authorize/Login/", number);
+				ViewBag.AuthTitle = stringLocalizer["SignIn"];
 			}
 			else
 			{
 				var user = await gitHubManager.GetUserLogin(token, cancellationToken).ConfigureAwait(false);
-				ViewBag.AuthHref = String.Concat(generalConfiguration.RootURL.ToString(), "SignOut/", number);
-				ViewBag.AuthTitle = stringLocalizer["SignOutText", user.Login];
+				ViewBag.AuthHref = String.Concat(generalConfiguration.RootURL.ToString(), "Authorize/SignOut/", number);
+				ViewBag.AuthTitle = stringLocalizer["SignOut", user.Login];
 			}
 			return View();
 		}

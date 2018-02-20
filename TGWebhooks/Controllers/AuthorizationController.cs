@@ -38,13 +38,13 @@ namespace TGWebhooks.Controllers
 		/// Handle a GET to the <see cref="AuthorizationController"/>
 		/// </summary>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in the <see cref="IActionResult"/> of the GET</returns>
-		[HttpGet]
-		public async Task<IActionResult> Begin(CancellationToken cancellationToken)
+		[HttpGet("Login/{prNumber}")]
+		public async Task<IActionResult> Begin(int prNumber, CancellationToken cancellationToken)
 		{
 			if (await gitHubManager.CheckAuthorization(Request.Cookies, cancellationToken).ConfigureAwait(false) != null)
-				return View("Close");
-			var redirectURI = new Uri(generalConfiguration.RootURL, Url.Action(nameof(Complete)));
-			return Redirect(gitHubManager.GetAuthorizationURL(redirectURI).ToString());
+				return RedirectToAction("ReviewPullRequest", "PullRequest", new { number = prNumber });
+			var redirectURI = new Uri(generalConfiguration.RootURL, Url.Action(nameof(Complete), prNumber));
+			return Redirect(String.Concat(gitHubManager.GetAuthorizationURL(redirectURI).ToString()));
 		}
 
 		/// <summary>
@@ -52,14 +52,14 @@ namespace TGWebhooks.Controllers
 		/// </summary>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in the <see cref="IActionResult"/> of the GET</returns>
-		[HttpGet("Complete")]
-		public async Task<IActionResult> Complete(CancellationToken cancellationToken)
+		[HttpGet("Complete/{prNumber}")]
+		public async Task<IActionResult> Complete(int prNumber, CancellationToken cancellationToken)
 		{
 			try
 			{
 				var code = Request.Query["code"];
 				await gitHubManager.CompleteAuthorization(code, Response.Cookies, cancellationToken).ConfigureAwait(false);
-				return Ok();
+				return RedirectToAction("ReviewPullRequest", "PullRequest", new { number = prNumber });
 			}
 			catch (Exception e)
 			{
@@ -71,22 +71,11 @@ namespace TGWebhooks.Controllers
 		/// Signs out the user and closes their window
 		/// </summary>
 		/// <returns>An <see cref="OkResult"/></returns>
-		[HttpGet("SignOut")]
-		public IActionResult SignOut()
+		[HttpGet("SignOut/{prNumber}")]
+		public IActionResult SignOut(int prNumber)
 		{
 			gitHubManager.ExpireAuthorization(Response.Cookies);
-			return View("Close");
-		}
-
-		/// <summary>
-		/// Signs out the user and redirects them a <see cref="PullRequestController"/> action
-		/// </summary>
-		/// <returns>A <see cref="RedirectToActionResult"/></returns>
-		[HttpGet("SignOut/{number}")]
-		public IActionResult SignOut(int number)
-		{
-			gitHubManager.ExpireAuthorization(Response.Cookies);
-			return RedirectToAction(null, "PullRequest", number);
+			return RedirectToAction("ReviewPullRequest", "PullRequest", new{ number = prNumber });
 		}
 	}
 }
