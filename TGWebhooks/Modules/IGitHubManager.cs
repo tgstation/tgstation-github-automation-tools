@@ -48,6 +48,13 @@ namespace TGWebhooks.Modules
 		Task<CombinedCommitStatus> GetLatestCommitStatus(PullRequest pullRequest);
 
 		/// <summary>
+		/// Close the specified <see cref="Issue"/>
+		/// </summary>
+		/// <param name="number">The <see cref="Issue.Number"/> to close</param>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		Task Close(int number);
+
+		/// <summary>
 		/// Get the files changed by a <see cref="PullRequest"/>
 		/// </summary>
 		/// <param name="number">The number of the <see cref="PullRequest"/></param>

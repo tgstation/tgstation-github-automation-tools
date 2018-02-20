@@ -381,7 +381,6 @@ namespace TGWebhooks.Core
 			cookies.Delete(CookieName);
 		}
 
-
 		/// <inheritdoc />
 		public async Task<string> CheckAuthorization(IRequestCookieCollection cookies, CancellationToken cancellationToken)
 		{
@@ -403,6 +402,13 @@ namespace TGWebhooks.Core
 				return null;
 
 			return entry.AccessToken;
+		}
+
+		/// <inheritdoc />
+		public Task Close(int number)
+		{
+			IssueArgumentCheck(number);
+			return gitHubClient.Issue.Update(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, number, new IssueUpdate { State = ItemState.Closed });
 		}
 	}
 }

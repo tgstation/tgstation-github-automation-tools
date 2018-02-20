@@ -9,18 +9,29 @@ using System.Threading.Tasks;
 
 namespace TGWebhooks.Modules.GoodBoyPoints
 {
-	public class GoodBoyPointsModule : IModule, IPayloadHandler<PullRequestEventPayload>, IMergeRequirement
+	/// <summary>
+	/// Implements the Good Boy Points tracking
+	/// </summary>
+	public sealed class GoodBoyPointsModule : IModule, IPayloadHandler<PullRequestEventPayload>, IMergeRequirement
 	{
+		/// <inheritdoc />
 		public Guid Uid => new Guid("a8875569-8807-4a58-adf6-ac5a408c7e16");
 
+		/// <inheritdoc />
 		public string Name => "Good Boy Points";
 
+		/// <inheritdoc />
 		public string Description => "Tracks user code improvement ratios";
 
+		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => new List<IMergeRequirement> { this };
 
+		/// <inheritdoc />
 		public IEnumerable<IMergeHook> MergeHooks => Enumerable.Empty<IMergeHook>();
 
+		/// <summary>
+		/// Map of labels to point values
+		/// </summary>
 		static readonly IReadOnlyDictionary<string, int> LabelValues = new Dictionary<string, int>
 		{
 			{ "Fix", 2 },
@@ -37,16 +48,29 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 			{ "Balance/Rebalance", -1 }
 		};
 
+		/// <summary>
+		/// The <see cref="IDataStore"/> for the <see cref="GoodBoyPointsModule"/>
+		/// </summary>
 		IDataStore dataStore;
+		/// <summary>
+		/// The <see cref="IGitHubManager"/> for the <see cref="GoodBoyPointsModule"/>
+		/// </summary>
 		IGitHubManager gitHubManager;
+		/// <summary>
+		/// The <see cref="IStringLocalizer"/> for the <see cref="GoodBoyPointsModule"/>
+		/// </summary>
 		IStringLocalizer stringLocalizer;
 
+		/// <summary>
+		/// Ensure that <see cref="Configure(ILogger, IRepository, IGitHubManager, IIOManager, IWebRequestManager, IDataStore, IStringLocalizer)"/> was called
+		/// </summary>
 		void CheckConfigured()
 		{
 			if (dataStore == null)
 				throw new InvalidOperationException("Configure wasn't called!");
 		}
 
+		/// <inheritdoc />
 		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager, IDataStore dataStore, IStringLocalizer stringLocalizer)
 		{
 			this.dataStore = dataStore;
@@ -54,6 +78,7 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 			this.stringLocalizer = stringLocalizer;
 		}
 
+		/// <inheritdoc />
 		public async Task<AutoMergeStatus> EvaluateFor(PullRequest pullRequest, CancellationToken cancellationToken)
 		{
 			CheckConfigured();
@@ -70,17 +95,22 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 			return result;
 		}
 
+		/// <inheritdoc />
 		public IEnumerable<IPayloadHandler<TPayload>> GetPayloadHandlers<TPayload>() where TPayload : ActivityPayload
 		{
 			CheckConfigured();
 			if (typeof(TPayload) == typeof(PullRequestEventPayload))
-				yield return (IPayloadHandler<TPayload>)this;
+				yield return (IPayloadHandler<TPayload>)(object)this;
 		}
 
+		/// <inheritdoc />
 		public Task Initialize(CancellationToken cancellationToken) => Task.CompletedTask;
 
+		/// <inheritdoc />
 		public async Task ProcessPayload(PullRequestEventPayload payload, CancellationToken cancellationToken)
 		{
+			if (payload == null)
+				throw new ArgumentNullException(nameof(payload));
 			CheckConfigured();
 			if (payload.Action != "closed" || !payload.PullRequest.Merged)
 				throw new NotSupportedException();
