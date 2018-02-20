@@ -19,10 +19,26 @@ namespace TGWebhooks.Controllers
 		/// The route to the primary controller action formatted with a pull request number
 		/// </summary>
 		public const string Route = "PullRequest";
+
+		/// <summary>
+		/// The <see cref="IGitHubManager"/> for the <see cref="PullRequestController"/>
+		/// </summary>
 		readonly IGitHubManager gitHubManager;
+		/// <summary>
+		/// The <see cref="IStringLocalizer"/> for the <see cref="PullRequestController"/>
+		/// </summary>
 		readonly IStringLocalizer<PullRequestController> stringLocalizer;
+		/// <summary>
+		/// The <see cref="GeneralConfiguration"/> for the <see cref="PullRequestController"/>
+		/// </summary>
 		readonly GeneralConfiguration generalConfiguration;
 
+		/// <summary>
+		/// Construct a <see cref="PullRequestController"/>
+		/// </summary>
+		/// <param name="gitHubManager">The value of <see cref="gitHubManager"/></param>
+		/// <param name="stringLocalizer">The value of <see cref="stringLocalizer"/></param>
+		/// <param name="generalConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing value of <see cref="generalConfiguration"/></param>
 		public PullRequestController(IGitHubManager gitHubManager, IStringLocalizer<PullRequestController> stringLocalizer, IOptions<GeneralConfiguration> generalConfigurationOptions)
 		{
 			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
@@ -30,6 +46,12 @@ namespace TGWebhooks.Controllers
 			generalConfiguration = generalConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(generalConfigurationOptions));
 		}
 
+		/// <summary>
+		/// Review automation information for a <see cref="Octokit.PullRequest"/>
+		/// </summary>
+		/// <param name="number">The <see cref="Octokit.PullRequest.Number"/></param>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="ViewResult"/></returns>
 		[HttpGet("{number}")]
 		public async Task<IActionResult> ReviewPullRequest(int number, CancellationToken cancellationToken)
 		{

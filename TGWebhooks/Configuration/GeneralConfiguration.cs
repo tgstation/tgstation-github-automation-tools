@@ -3,7 +3,7 @@
 namespace TGWebhooks.Configuration
 {
 	/// <summary>
-	/// General <see cref="Application"/> settings
+	/// General <see cref="Core.Application"/> settings
 	/// </summary>
 	public sealed class GeneralConfiguration
 	{
@@ -18,7 +18,7 @@ namespace TGWebhooks.Configuration
 		public string DefaultLocale { get; set; }
 
 		/// <summary>
-		/// The URL used to access the <see cref="Application"/>
+		/// The URL used to access the <see cref="Core.Application"/>
 		/// </summary>
 		public Uri RootURL { get; set; }
     }

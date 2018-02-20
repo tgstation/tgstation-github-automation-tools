@@ -67,6 +67,10 @@ namespace TGWebhooks.Controllers
 			}
 		}
 
+		/// <summary>
+		/// Signs out the user and closes their window
+		/// </summary>
+		/// <returns>An <see cref="OkResult"/></returns>
 		[HttpGet("SignOut")]
 		public IActionResult SignOut()
 		{
@@ -74,6 +78,10 @@ namespace TGWebhooks.Controllers
 			return Ok();
 		}
 
+		/// <summary>
+		/// Signs out the user and redirects them a <see cref="PullRequestController"/> action
+		/// </summary>
+		/// <returns>A <see cref="RedirectToActionResult"/></returns>
 		[HttpGet("SignOut/{number}")]
 		public IActionResult SignOut(int number)
 		{

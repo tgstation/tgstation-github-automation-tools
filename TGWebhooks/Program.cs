@@ -2,8 +2,9 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using TGWebhooks.Core;
 
-namespace TGWebhooks.Core
+namespace TGWebhooks
 {
 	/// <summary>
 	/// Entry <see langword="class"/> for the application

@@ -23,7 +23,7 @@ namespace TGWebhooks.Models
 		public string AccessToken { get; set; }
 
 		/// <summary>
-		/// When the <see cref="Cookie"/> expires
+		/// When the represented cookie expires
 		/// </summary>
 		public DateTimeOffset Expiry { get; set; }
 	}

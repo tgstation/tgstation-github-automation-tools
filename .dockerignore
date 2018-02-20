@@ -8,5 +8,6 @@ docker-compose.yml
 docker-compose.*.yml
 */bin
 */obj
+*/App_Data
 !obj/Docker/publish/*
 !obj/Docker/empty/

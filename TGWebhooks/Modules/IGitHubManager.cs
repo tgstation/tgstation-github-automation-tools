@@ -104,7 +104,6 @@ namespace TGWebhooks.Modules
 		/// Expire an oauth cookie
 		/// </summary>
 		/// <param name="cookies">The <see cref="IResponseCookies"/> to write session information to</param>
-		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
 		void ExpireAuthorization(IResponseCookies cookies);
 
@@ -154,6 +153,7 @@ namespace TGWebhooks.Modules
 		/// Get the GitHub <see cref="User"/> of either the configured or specified <paramref name="accessToken"/>
 		/// </summary>
 		/// <param name="accessToken">Optional GitHub access token to get the user for</param>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> the configured <see cref="User"/></returns>
 		Task<User> GetUserLogin(string accessToken, CancellationToken cancellationToken);
 

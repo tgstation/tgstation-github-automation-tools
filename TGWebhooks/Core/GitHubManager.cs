@@ -88,9 +88,8 @@ namespace TGWebhooks.Core
 		/// </summary>
 		/// <param name="generalConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the value of <see cref="generalConfiguration"/></param>
 		/// <param name="gitHubConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the value of <see cref="gitHubConfiguration"/></param>
-		/// <param name="branchingDataStore">The <see cref="IBranchingDataStore"/> used to create <see cref="dataStore"/></param>
-		/// <param name="_logger">The value of <see cref="logger"/></param>
 		/// <param name="_databaseContext">The value of <see cref="databaseContext"/></param>
+		/// <param name="_logger">The value of <see cref="logger"/></param>
 		public GitHubManager(IOptions<GeneralConfiguration> generalConfigurationOptions, IOptions<GitHubConfiguration> gitHubConfigurationOptions, DatabaseContext _databaseContext, ILogger<GitHubManager> _logger)
 		{
 			gitHubConfiguration = gitHubConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(gitHubConfigurationOptions));
