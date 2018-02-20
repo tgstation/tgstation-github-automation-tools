@@ -18,6 +18,8 @@ using TGWebhooks.Configuration;
 using TGWebhooks.Modules;
 using TGWebhooks.Models;
 using Hangfire.SqlServer;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Rewrite;
 
 namespace TGWebhooks.Core
 {
@@ -68,6 +70,8 @@ namespace TGWebhooks.Core
 			services.Configure<GitHubConfiguration>(configuration.GetSection(GitHubConfiguration.Section));
 			services.Configure<TravisConfiguration>(configuration.GetSection(TravisConfiguration.Section));
 			services.Configure<DatabaseConfiguration>(dbConfigSection);
+
+			services.Configure<MvcOptions>(options => options.Filters.Add(new RequireHttpsAttribute()));
 
 			services.AddHangfire((builder) => DatabaseContext.SelectDatabaseType(dbConfigSection.Get<DatabaseConfiguration>(),
 				x => builder.UseSqlServerStorage(x, new SqlServerStorageOptions { PrepareSchemaIfNecessary = true }),
@@ -138,6 +142,8 @@ namespace TGWebhooks.Core
 			app.UseHangfireServer();
 
 			app.UseStaticFiles();
+
+			app.UseRewriter(new RewriteOptions().AddRedirectToHttpsPermanent());
 
 			app.UseMvc();
 		}

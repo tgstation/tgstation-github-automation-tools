@@ -42,7 +42,7 @@ namespace TGWebhooks.Controllers
 		public async Task<IActionResult> Begin(CancellationToken cancellationToken)
 		{
 			if (await gitHubManager.CheckAuthorization(Request.Cookies, cancellationToken).ConfigureAwait(false) != null)
-				return View();
+				return View("Close");
 			var redirectURI = new Uri(generalConfiguration.RootURL, Url.Action(nameof(Complete)));
 			return Redirect(gitHubManager.GetAuthorizationURL(redirectURI).ToString());
 		}
@@ -75,7 +75,7 @@ namespace TGWebhooks.Controllers
 		public IActionResult SignOut()
 		{
 			gitHubManager.ExpireAuthorization(Response.Cookies);
-			return Ok();
+			return View("Close");
 		}
 
 		/// <summary>
