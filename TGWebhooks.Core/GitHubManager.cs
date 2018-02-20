@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using TGWebhooks.Api;
 using TGWebhooks.Core.Configuration;
 using TGWebhooks.Core.Controllers;
-using TGWebhooks.Core.Model;
+using TGWebhooks.Core.Models;
 
 namespace TGWebhooks.Core
 {
@@ -28,10 +28,6 @@ namespace TGWebhooks.Core
 		/// The scope required on Oauth tokens
 		/// </summary>
 		const string RequiredScope = "public_repo";
-		/// <summary>
-		/// The key on <see cref="dataStore"/> in which the <see cref="List{T}"/> of <see cref="AccessTokenEntry"/>s are stored
-		/// </summary>
-		const string AccessTokensKey = "AccessTokens";
 		/// <summary>
 		/// Days until a cookie for an <see cref="AccessTokenEntry"/> expires
 		/// </summary>
@@ -50,13 +46,13 @@ namespace TGWebhooks.Core
 		/// </summary>
 		readonly IGitHubClient gitHubClient;
 		/// <summary>
-		/// The <see cref="IDataStore"/> for the <see cref="GitHubManager"/>
-		/// </summary>
-		readonly IDataStore dataStore;
-		/// <summary>
 		/// The <see cref="ILogger"/> for the <see cref="GitHubManager"/>
 		/// </summary>
 		readonly ILogger logger;
+		/// <summary>
+		/// The <see cref="IDatabaseContext"/> for the <see cref="GitHubManager"/>
+		/// </summary>
+		readonly IDatabaseContext databaseContext;
 
 		/// <summary>
 		/// Used for controlled access of <see cref="knownUser"/>
@@ -77,6 +73,11 @@ namespace TGWebhooks.Core
 				throw new ArgumentOutOfRangeException(nameof(number), number, String.Format(CultureInfo.CurrentCulture, "{0} must be greater than zero!", nameof(number)));
 		}
 
+		/// <summary>
+		/// Construct a <see cref="IGitHubClient"/> with a given <paramref name="accessToken"/>
+		/// </summary>
+		/// <param name="accessToken">The GitHub access token</param>
+		/// <returns>A new <see cref="IGitHubClient"/> with the given <paramref name="accessToken"/></returns>
 		static IGitHubClient CreateGitHubClient(string accessToken)
 		{
 			return new GitHubClient(new ProductHeaderValue(Application.UserAgent)) { Credentials = new Credentials(accessToken) };
@@ -89,15 +90,14 @@ namespace TGWebhooks.Core
 		/// <param name="gitHubConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the value of <see cref="gitHubConfiguration"/></param>
 		/// <param name="branchingDataStore">The <see cref="IBranchingDataStore"/> used to create <see cref="dataStore"/></param>
 		/// <param name="_logger">The value of <see cref="logger"/></param>
-		public GitHubManager(IOptions<GeneralConfiguration> generalConfigurationOptions, IOptions<GitHubConfiguration> gitHubConfigurationOptions, IBranchingDataStore branchingDataStore, ILogger<GitHubManager> _logger)
+		/// <param name="_databaseContext">The value of <see cref="databaseContext"/></param>
+		public GitHubManager(IOptions<GeneralConfiguration> generalConfigurationOptions, IOptions<GitHubConfiguration> gitHubConfigurationOptions, DatabaseContext _databaseContext, ILogger<GitHubManager> _logger)
 		{
 			gitHubConfiguration = gitHubConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(gitHubConfigurationOptions));
 			generalConfiguration = generalConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(generalConfigurationOptions));
 			logger = _logger ?? throw new ArgumentNullException(nameof(_logger));
-			if (branchingDataStore == null)
-				throw new ArgumentNullException(nameof(branchingDataStore));
+			databaseContext = _databaseContext ?? throw new ArgumentNullException(nameof(_databaseContext));
 			gitHubClient = CreateGitHubClient(gitHubConfiguration.PersonalAccessToken);
-			dataStore = branchingDataStore.BranchOnKey("GitHub");
 			semaphore = new SemaphoreSlim(1);
 		}
 
@@ -124,19 +124,7 @@ namespace TGWebhooks.Core
 			using (SemaphoreSlimContext.Lock(semaphore, cancellationToken))
 				await CheckUser(false, cancellationToken).ConfigureAwait(false);
 		}
-
-		/// <summary>
-		/// Get the <see cref="AccessTokenEntry"/>s which have not expired
-		/// </summary>
-		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
-		/// <returns>A <see cref="Task{TResult}"/> resulting in the <see cref="List{T}"/> of active <see cref="AccessTokenEntry"/>s</returns>
-		async Task<List<AccessTokenEntry>> GetTrimmedTokenEntries(CancellationToken cancellationToken)
-		{
-			var allEntries = await dataStore.ReadData<List<AccessTokenEntry>>(AccessTokensKey, cancellationToken).ConfigureAwait(false);
-			var now = DateTimeOffset.Now;
-			return allEntries.Where(x => x.Expiry < now).ToList();
-		}
-
+		
 		/// <inheritdoc />
 		public Task<PullRequest> GetPullRequest(int number)
 		{
@@ -274,19 +262,18 @@ namespace TGWebhooks.Core
 
 			var newEntry = new AccessTokenEntry()
 			{
-				Cookie = Guid.NewGuid(),
+				Id = Guid.NewGuid(),
 				AccessToken = result.AccessToken,
 				Expiry = expiry
 			};
 
-			cookies.Append(CookieName, newEntry.Cookie.ToString(), new CookieOptions{
+			cookies.Append(CookieName, newEntry.Id.ToString(), new CookieOptions{
 				SameSite = SameSiteMode.Strict,
 				Secure = true,
 				Expires = expiry
 			});
-			var tokenEntries = await GetTrimmedTokenEntries(cancellationToken).ConfigureAwait(false);
-			tokenEntries.Add(newEntry);
-			await dataStore.WriteData(AccessTokensKey, tokenEntries, cancellationToken).ConfigureAwait(false);
+			await databaseContext.AccessTokenEntries.AddAsync(newEntry, cancellationToken).ConfigureAwait(false);
+			await databaseContext.Save(cancellationToken).ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
@@ -404,10 +391,15 @@ namespace TGWebhooks.Core
 
 			if (!Guid.TryParse(cookieGuid, out Guid guid))
 				return null;
-			
-			var allEntries = await GetTrimmedTokenEntries(cancellationToken).ConfigureAwait(false);
 
-			var entry = allEntries.FirstOrDefault(x => x.Cookie == guid);
+			//cleanup
+			var now = DateTimeOffset.Now;
+			var everything = await databaseContext.AccessTokenEntries.ToAsyncEnumerable().ToList().ConfigureAwait(false);
+			var toRemove = everything.Where(x => x.Expiry < now);
+			databaseContext.AccessTokenEntries.RemoveRange(toRemove);
+			await databaseContext.Save(cancellationToken).ConfigureAwait(false);
+
+			var entry = everything.Where(x => x.Id == guid && x.Expiry >= now).FirstOrDefault();
 			if (entry == default(AccessTokenEntry))
 				return null;
 

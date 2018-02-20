@@ -16,7 +16,7 @@ using System.Linq;
 using System.Threading;
 using TGWebhooks.Core.Configuration;
 using TGWebhooks.Api;
-using TGWebhooks.Core.Model;
+using TGWebhooks.Core.Models;
 
 namespace TGWebhooks.Core
 {
@@ -69,9 +69,15 @@ namespace TGWebhooks.Core
 			services.AddMvc();
 			services.AddOptions();
 			services.AddLocalization();
+
 			services.Configure<GeneralConfiguration>(configuration.GetSection(GeneralConfiguration.Section));
 			services.Configure<GitHubConfiguration>(configuration.GetSection(GitHubConfiguration.Section));
 			services.Configure<TravisConfiguration>(configuration.GetSection(TravisConfiguration.Section));
+			services.Configure<DatabaseConfiguration>(configuration.GetSection(DatabaseConfiguration.Section));
+
+			services.AddDbContext<DatabaseContext>(ServiceLifetime.Singleton);
+			services.AddSingleton<IDatabaseContext>(x => x.GetRequiredService<DatabaseContext>());
+
 			services.AddSingleton<IPluginManager, PluginManager>();
 			services.AddSingleton<IComponentProvider>(x => x.GetRequiredService<IPluginManager>());
 			services.AddSingleton<IGitHubManager, GitHubManager>();
@@ -79,8 +85,6 @@ namespace TGWebhooks.Core
 			services.AddSingleton<IIOManager, DefaultIOManager>();
 			services.AddSingleton<IWebRequestManager, WebRequestManager>();
 			services.AddSingleton<IContinuousIntegration, TravisContinuousIntegration>();
-			services.AddSingleton<IRootDataStore, SQLiteDataStore>();
-			services.AddSingleton<IBranchingDataStore>(x => x.GetRequiredService<IRootDataStore>());
 			services.AddSingleton<IAutoMergeHandler, AutoMergeHandler>();
 		}
 

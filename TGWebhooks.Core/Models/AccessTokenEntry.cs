@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace TGWebhooks.Core.Model
+namespace TGWebhooks.Core.Models
 {
 	/// <summary>
 	/// Describes a GitHub AccessToken stored within a cookie
 	/// </summary>
-	public sealed class AccessTokenEntry
+	sealed class AccessTokenEntry
 	{
 		/// <summary>
 		/// The name of the cookie
@@ -15,7 +15,7 @@ namespace TGWebhooks.Core.Model
 		/// <summary>
 		/// The identifier for the cookie
 		/// </summary>
-		public Guid Cookie { get; set; }
+		public Guid Id { get; set; }
 
 		/// <summary>
 		/// The GitHub access token
