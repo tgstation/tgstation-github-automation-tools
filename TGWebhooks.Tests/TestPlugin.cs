@@ -11,7 +11,7 @@ using TGWebhooks.Api;
 namespace TGWebhooks.Tests
 {
 	[TestClass]
-	public abstract class TestPlugin<TPlugin> where TPlugin : IPlugin, new()
+	public abstract class TestPlugin<TModule> where TModule : IModule, new()
 	{
 		protected Mock<ILogger> mockLogger;
 		protected Mock<IRepository> mockRepository;
@@ -24,7 +24,7 @@ namespace TGWebhooks.Tests
 		[TestMethod]
 		public void TestInstantiation()
 		{
-			var plugin = new TPlugin();
+			var plugin = new TModule();
 			Assert.IsFalse(String.IsNullOrWhiteSpace(plugin.Name));
 			Assert.IsFalse(String.IsNullOrWhiteSpace(plugin.Description));
 
@@ -38,9 +38,9 @@ namespace TGWebhooks.Tests
 			await GetBasicConfigured().ConfigureAwait(false);
 		}
 
-		protected async Task<TPlugin> GetBasicConfigured()
+		protected async Task<TModule> GetBasicConfigured()
 		{
-			var plugin = new TPlugin();
+			var plugin = new TModule();
 			mockLogger = new Mock<ILogger>();
 			mockRepository = new Mock<IRepository>();
 			mockGitHubManager = new Mock<IGitHubManager>();

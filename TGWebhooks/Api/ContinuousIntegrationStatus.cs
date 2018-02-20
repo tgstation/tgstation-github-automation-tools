@@ -4,7 +4,7 @@
 	/// <summary>
 	/// Describes the status for a <see cref="IContinuousIntegration"/> provider
 	/// </summary>
-	public enum ContinuousIntegrationStatus
+	enum ContinuousIntegrationStatus
 #pragma warning restore CA1717 // Only FlagsAttribute enums should have plural names
 	{
 		/// <summary>

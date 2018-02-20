@@ -8,15 +8,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Tests;
 
-namespace TGWebhooks.Plugins.MaintainerApproval.Tests
+namespace TGWebhooks.Modules.MaintainerApproval.Tests
 {
 	[TestClass]
-	public sealed class TestMaintainerApproval : TestPlugin<MaintainerApprovalPlugin>
+	public sealed class TestMaintainerApproval : TestPlugin<MaintainerApprovalModule>
 	{
 		[TestMethod]
 		public async Task TestInvalid()
 		{
-			var plugin = new MaintainerApprovalPlugin();
+			var plugin = new MaintainerApprovalModule();
 			await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => plugin.EvaluateFor(null, CancellationToken.None)).ConfigureAwait(false);
 		}
 

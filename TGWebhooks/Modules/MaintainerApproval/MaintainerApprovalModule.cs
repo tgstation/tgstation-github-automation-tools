@@ -9,12 +9,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Api;
 
-namespace TGWebhooks.Plugins.MaintainerApproval
+namespace TGWebhooks.Modules.MaintainerApproval
 {
 	/// <summary>
-	/// <see cref="IPlugin"/> for a <see cref="IMergeRequirement"/> that requires at least one maintainer approval and no outstanding changes requested
+	/// <see cref="IModule"/> for a <see cref="IMergeRequirement"/> that requires at least one maintainer approval and no outstanding changes requested
 	/// </summary>
-	public class MaintainerApprovalPlugin : IPlugin, IMergeRequirement
+	public sealed class MaintainerApprovalModule : IModule, IMergeRequirement
 	{
 		/// <inheritdoc />
 		public Guid Uid => new Guid("8d8122d0-ad0d-4a91-977f-204d617efd04");

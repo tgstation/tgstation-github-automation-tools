@@ -56,20 +56,19 @@ namespace TGWebhooks.Core
 		readonly IStringLocalizerFactory stringLocalizerFactory;
 
 		/// <summary>
-		/// <see cref="IDictionary{TKey, TValue}"/> of loaded <see cref="IPlugin"/>s and enabled status
+		/// <see cref="IDictionary{TKey, TValue}"/> of loaded <see cref="IModule"/>s and enabled status
 		/// </summary>
-		IDictionary<IPlugin, bool> pluginsAndEnabledStatus;
+		IDictionary<IModule, bool> pluginsAndEnabledStatus;
 
 		/// <summary>
-		/// Instantiates all <see cref="IPlugin"/>s
+		/// Instantiates all <see cref="IModule"/>s
 		/// </summary>
-		/// <returns>An <see cref="IEnumerable{T}"/> of instantiated <see cref="IPlugin"/>s</returns>
-		static IEnumerable<IPlugin> InstantiatePlugins()
+		/// <returns>An <see cref="IEnumerable{T}"/> of instantiated <see cref="IModule"/>s</returns>
+		static IEnumerable<IModule> InstantiatePlugins()
 		{
-			yield return new Plugins.MaintainerApproval.MaintainerApprovalPlugin();
-			yield return new Plugins.PRTagger.PRTaggerPlugin();
-			yield return new Plugins.SignOff.SignOffPlugin();
-			yield return new Plugins.TwentyFourHourRule.TwentyFourHourRulePlugin();
+			var moduleType = typeof(IModule);
+			foreach (var I in Assembly.GetExecutingAssembly().GetTypes().Where(x => x.IsClass && moduleType.IsAssignableFrom(x) && !x.IsAbstract))
+				yield return (IModule)Activator.CreateInstance(I);
 		}
 
 		/// <summary>
@@ -102,13 +101,13 @@ namespace TGWebhooks.Core
 
 			var test = Assembly.GetExecutingAssembly().GetReferencedAssemblies();
 
-			pluginsAndEnabledStatus = new Dictionary<IPlugin, bool>();
+			pluginsAndEnabledStatus = new Dictionary<IModule, bool>();
 
 			var dataIOManager = new ResolvingIOManager(ioManager, Application.DataDirectory);
 
-			var tasks = new List<Task<IPlugin>>();
+			var tasks = new List<Task<IModule>>();
 
-			async Task<KeyValuePair<IPlugin, bool>> InitPlugin(IPlugin plugin)
+			async Task<KeyValuePair<IModule, bool>> InitPlugin(IModule plugin)
 			{
 				var type = plugin.GetType();
 				logger.LogTrace("Plugin {0}.Name: {1}", type, plugin.Name);
@@ -123,7 +122,7 @@ namespace TGWebhooks.Core
 				catch (Exception e)
 				{
 					logger.LogError(e, "Failed to configure plugin {0}!", type);
-					return new KeyValuePair<IPlugin, bool>(plugin, false);
+					return new KeyValuePair<IModule, bool>(plugin, false);
 				}
 
 				var query = databaseContext.ModuleMetadatas.Where(x => x.Id == plugin.Uid);
@@ -148,12 +147,12 @@ namespace TGWebhooks.Core
 					{
 						await plugin.Initialize(cancellationToken).ConfigureAwait(false);
 						logger.LogDebug("Plugin {0} initialized!", type);
-						return new KeyValuePair<IPlugin, bool>(plugin, enabled);
+						return new KeyValuePair<IModule, bool>(plugin, enabled);
 					}
 					catch (Exception e)
 					{
 						logger.LogError(e, "Failed to initialize plugin {0}!", type);
-						return new KeyValuePair<IPlugin, bool>(plugin, false);
+						return new KeyValuePair<IModule, bool>(plugin, false);
 					}
 				}
 				finally
@@ -164,7 +163,7 @@ namespace TGWebhooks.Core
 			};
 			using (logger.BeginScope("Loading plugins..."))
 			{
-				var tasks2 = new List<Task<KeyValuePair<IPlugin, bool>>>();
+				var tasks2 = new List<Task<KeyValuePair<IModule, bool>>>();
 				tasks2.AddRange(InstantiatePlugins().Select(x => InitPlugin(x)));
 				await Task.WhenAll(tasks2).ConfigureAwait(false);
 				await databaseContext.Save(cancellationToken).ConfigureAwait(false);

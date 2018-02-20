@@ -5,4 +5,4 @@ services:
     image: tgstation-github-automation-tools
     build:
       context: .
-      dockerfile: TGWebhooks.Core\Dockerfile
+      dockerfile: TGWebhooks\Dockerfile

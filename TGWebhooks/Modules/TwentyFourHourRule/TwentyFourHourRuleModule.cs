@@ -8,12 +8,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Api;
 
-namespace TGWebhooks.Plugins.TwentyFourHourRule
+namespace TGWebhooks.Modules.TwentyFourHourRule
 {
 	/// <summary>
-	/// <see cref="IPlugin"/> for the 24-Hour Rule <see cref="IMergeRequirement"/>
+	/// <see cref="IModule"/> for the 24-Hour Rule <see cref="IMergeRequirement"/>
 	/// </summary>
-	public class TwentyFourHourRulePlugin : IPlugin, IMergeRequirement
+	public sealed class TwentyFourHourRuleModule : IModule, IMergeRequirement
 	{
 		/// <summary>
 		/// Twenty. Four. Hour. Rule.

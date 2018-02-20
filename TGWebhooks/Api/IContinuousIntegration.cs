@@ -7,7 +7,7 @@ namespace TGWebhooks.Api
 	/// <summary>
 	/// Describes continuous integration status for a <see cref="PullRequest"/>
 	/// </summary>
-	public interface IContinuousIntegration
+	interface IContinuousIntegration
     {
 		/// <summary>
 		/// The name of the <see cref="IContinuousIntegration"/> provider

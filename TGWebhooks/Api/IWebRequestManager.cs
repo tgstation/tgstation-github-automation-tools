@@ -8,8 +8,8 @@ namespace TGWebhooks.Api
 	/// <summary>
 	/// <see langword="interface"/> for making web requests
 	/// </summary>
-    public interface IWebRequestManager
-    {
+	public interface IWebRequestManager
+	{
 		/// <summary>
 		/// Make a web request
 		/// </summary>
@@ -20,5 +20,5 @@ namespace TGWebhooks.Api
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in the body of the response of the request on success, <see langword="null"/> on failure</returns>
 		Task<string> RunRequest(Uri url, string body, IEnumerable<string> headers, RequestMethod requestMethod, CancellationToken cancellationToken);
-    }
+	}
 }

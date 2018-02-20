@@ -8,12 +8,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Api;
 
-namespace TGWebhooks.Plugins.SignOff
+namespace TGWebhooks.Modules.SignOff
 {
 	/// <summary>
-	/// <see cref="IPlugin"/> containing the Maintainer Sign Off <see cref="IMergeRequirement"/>
+	/// <see cref="IModule"/> containing the Maintainer Sign Off <see cref="IMergeRequirement"/>
 	/// </summary>
-	public sealed class SignOffPlugin : IPlugin, IMergeRequirement, IPayloadHandler<PullRequestEventPayload>
+	public sealed class SignOffModule : IModule, IMergeRequirement, IPayloadHandler<PullRequestEventPayload>
 	{
 		/// <summary>
 		/// The key in <see cref="dataStore"/> where <see cref="PullRequestSignOffs"/>s are stored
@@ -36,11 +36,11 @@ namespace TGWebhooks.Plugins.SignOff
 		public IEnumerable<IMergeHook> MergeHooks => Enumerable.Empty<IMergeHook>();
 
 		/// <summary>
-		/// The <see cref="IGitHubManager"/> for the <see cref="SignOffPlugin"/>
+		/// The <see cref="IGitHubManager"/> for the <see cref="SignOffModule"/>
 		/// </summary>
 		IGitHubManager gitHubManager;
 		/// <summary>
-		/// The <see cref="IDataStore"/> for the <see cref="SignOffPlugin"/>
+		/// The <see cref="IDataStore"/> for the <see cref="SignOffModule"/>
 		/// </summary>
 		IDataStore dataStore;
 

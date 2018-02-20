@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace TGWebhooks.Plugins.SignOff
+namespace TGWebhooks.Modules.SignOff
 {
 	/// <summary>
 	/// Represents sign offs for a <see cref="Octokit.PullRequest"/>

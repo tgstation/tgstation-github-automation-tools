@@ -6,7 +6,7 @@ namespace TGWebhooks.Api
 	/// <summary>
 	/// Represents an object that requires initialization before use
 	/// </summary>
-    public interface IInitializable
+	public interface IInitializable
 	{
 		/// <summary>
 		/// Load components in the <see cref="IComponentProvider"/>. Will be called before any other function

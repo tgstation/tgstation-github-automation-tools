@@ -18,12 +18,16 @@ namespace TGWebhooks.Core.Controllers
 		/// The <see cref="IGitHubManager"/> for the <see cref="AuthorizationController"/>
 		/// </summary>
 		readonly IGitHubManager gitHubManager;
+		/// <summary>
+		/// The <see cref="GeneralConfiguration"/> for the <see cref="AuthorizationController"/>
+		/// </summary>
 		readonly GeneralConfiguration generalConfiguration;
 
 		/// <summary>
 		/// Construst an <see cref="AuthorizationController"/>
 		/// </summary>
 		/// <param name="gitHubManager">The value of <see cref="gitHubManager"/></param>
+		/// <param name="generalConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing value of <see cref="generalConfiguration"/></param>
 		public AuthorizationController(IGitHubManager gitHubManager, IOptions<GeneralConfiguration> generalConfigurationOptions)
 		{
 			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
@@ -64,14 +68,14 @@ namespace TGWebhooks.Core.Controllers
 		}
 
 		[HttpGet("SignOut")]
-		IActionResult SignOut()
+		public IActionResult SignOut()
 		{
 			gitHubManager.ExpireAuthorization(Response.Cookies);
 			return Ok();
 		}
 
 		[HttpGet("SignOut/{number}")]
-		IActionResult SignOut(int number)
+		public IActionResult SignOut(int number)
 		{
 			gitHubManager.ExpireAuthorization(Response.Cookies);
 			return RedirectToAction(null, "PullRequest", number);

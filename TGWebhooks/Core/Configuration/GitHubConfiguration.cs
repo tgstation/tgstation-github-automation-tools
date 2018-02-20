@@ -1,7 +1,7 @@
 ﻿namespace TGWebhooks.Core.Configuration
 {
 	/// <summary>
-	/// GitHub configuration entry
+	/// GitHub configuration settings
 	/// </summary>
     public sealed class GitHubConfiguration
     {

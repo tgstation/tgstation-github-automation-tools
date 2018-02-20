@@ -9,12 +9,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Api;
 
-namespace TGWebhooks.Plugins.PRTagger
+namespace TGWebhooks.Modules.PRTagger
 {
 	/// <summary>
-	/// <see cref="IPlugin"/> for auto labelling a <see cref="PullRequest"/>
+	/// <see cref="IModule"/> for auto labelling a <see cref="PullRequest"/>
 	/// </summary>
-	sealed public class PRTaggerPlugin : IPlugin, IPayloadHandler<PullRequestEventPayload>
+	public sealed class PullRequestLabellerModule : IModule, IPayloadHandler<PullRequestEventPayload>
 	{
 		/// <inheritdoc />
 		public Guid Uid => new Guid("3a6dd37c-3dee-4a7a-a016-885a4a775968");
@@ -32,7 +32,7 @@ namespace TGWebhooks.Plugins.PRTagger
 		public IEnumerable<IMergeHook> MergeHooks => Enumerable.Empty<IMergeHook>();
 
 		/// <summary>
-		/// The <see cref="IGitHubManager"/> for the <see cref="PRTaggerPlugin"/>
+		/// The <see cref="IGitHubManager"/> for the <see cref="PullRequestLabellerModule"/>
 		/// </summary>
 		IGitHubManager gitHubManager;
 

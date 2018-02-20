@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TGWebhooks.Core\TGWebhooks.Core.csproj" />
+    <ProjectReference Include="..\TGWebhooks\TGWebhooks.csproj" />
   </ItemGroup>
 
   <ItemGroup>
