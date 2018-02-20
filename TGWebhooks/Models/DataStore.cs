@@ -22,6 +22,7 @@ namespace TGWebhooks.Models
 		/// <inheritdoc />
 		public async Task<TData> ReadData<TData>(string key, CancellationToken cancellationToken) where TData : class, new()
 		{
+			key = prefix.ToString() + key ?? throw new ArgumentNullException(nameof(key));
 			var result = await databaseContext.KeyValuePairs.FirstOrDefaultAsync(x => x.Key == key, cancellationToken).ConfigureAwait(false);
 			if (result == default(KeyValuePair))
 				return new TData();
@@ -31,7 +32,8 @@ namespace TGWebhooks.Models
 		/// <inheritdoc />
 		public async Task WriteData<TData>(string key, TData data, CancellationToken cancellationToken) where TData : class, new()
 		{
-			var json = JsonConvert.SerializeObject(data);
+			key = prefix.ToString() + key ?? throw new ArgumentNullException(nameof(key));
+			var json = JsonConvert.SerializeObject(data ?? throw new ArgumentNullException(nameof(data)));
 			var result = await databaseContext.KeyValuePairs.FirstOrDefaultAsync(x => x.Key == key, cancellationToken).ConfigureAwait(false);
 			if (result == default(KeyValuePair))
 			{

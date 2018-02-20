@@ -19,13 +19,22 @@ namespace TGWebhooks.Models
 		/// <inheridoc />
 		public DbSet<ModuleMetadata> ModuleMetadatas { get; set; }
 
+		/// <summary>
+		/// The <see cref="DatabaseConfiguration"/> for the <see cref="DatabaseContext"/>
+		/// </summary>
 		readonly DatabaseConfiguration databaseConfiguration;
 
+		/// <summary>
+		/// Construct a <see cref="DatabaseContext"/>
+		/// </summary>
+		/// <param name="options">The <see cref="DbContextOptions{TContext}"/> for the <see cref="DatabaseContext"/></param>
+		/// <param name="databaseConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the value of <see cref="databaseConfiguration"/></param>
 		public DatabaseContext(DbContextOptions<DatabaseContext> options, IOptions<DatabaseConfiguration> databaseConfigurationOptions) : base(options)
 		{
 			databaseConfiguration = databaseConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(databaseConfigurationOptions));
 		}
 
+		/// <inheridoc />
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
 			switch(databaseConfiguration.DatabaseType.ToUpperInvariant())
