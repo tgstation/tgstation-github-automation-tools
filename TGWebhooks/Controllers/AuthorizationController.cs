@@ -50,6 +50,7 @@ namespace TGWebhooks.Controllers
 		/// <summary>
 		/// Handle a GET to the <see cref="AuthorizationController"/>
 		/// </summary>
+		/// <param name="prNumber">A <see cref="Octokit.PullRequest.Number"/></param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in the <see cref="IActionResult"/> of the GET</returns>
 		[HttpGet("Complete/{prNumber}")]
