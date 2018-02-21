@@ -5,7 +5,7 @@ namespace TGWebhooks.Core
 	/// <summary>
 	/// Manages webhook plugins
 	/// </summary>
-	interface IPluginManager : IComponentProvider
+	interface IModuleManager : IComponentProvider
 	{
 	}
 }

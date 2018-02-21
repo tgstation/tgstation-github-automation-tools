@@ -2,9 +2,11 @@
 using Hangfire;
 using Hangfire.MySql;
 using Hangfire.SQLite;
+using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -17,9 +19,6 @@ using System.Threading;
 using TGWebhooks.Configuration;
 using TGWebhooks.Modules;
 using TGWebhooks.Models;
-using Hangfire.SqlServer;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Rewrite;
 
 namespace TGWebhooks.Core
 {
@@ -70,6 +69,7 @@ namespace TGWebhooks.Core
 			services.Configure<GitHubConfiguration>(configuration.GetSection(GitHubConfiguration.Section));
 			services.Configure<TravisConfiguration>(configuration.GetSection(TravisConfiguration.Section));
 			services.Configure<DatabaseConfiguration>(dbConfigSection);
+			services.Configure<List<ServerConfiguration>>(configuration.GetSection(ServerConfiguration.Section));
 
 			services.Configure<MvcOptions>(options => options.Filters.Add(new RequireHttpsAttribute()));
 
@@ -83,16 +83,18 @@ namespace TGWebhooks.Core
 			services.AddMvc();
 
 			services.AddDbContext<DatabaseContext>(ServiceLifetime.Singleton);
-			services.AddSingleton<IDatabaseContext>(x => x.GetRequiredService<DatabaseContext>());
 
-			services.AddSingleton<IPluginManager, PluginManager>();
-			services.AddSingleton<IComponentProvider>(x => x.GetRequiredService<IPluginManager>());
+			services.AddSingleton<IDatabaseContext>(x => x.GetRequiredService<DatabaseContext>());
+			services.AddSingleton<IModuleManager, ModuleManager>();
+			services.AddSingleton<IComponentProvider>(x => x.GetRequiredService<IModuleManager>());
 			services.AddSingleton<IGitHubManager, GitHubManager>();
 			services.AddSingleton<IRepository, Repository>();
 			services.AddSingleton<IIOManager, DefaultIOManager>();
 			services.AddSingleton<IWebRequestManager, WebRequestManager>();
 			services.AddSingleton<IContinuousIntegration, TravisContinuousIntegration>();
 			services.AddSingleton<IAutoMergeHandler, AutoMergeHandler>();
+
+			services.AddModules();
 		}
 
 #pragma warning disable CA1822 // Mark members as static
@@ -135,7 +137,7 @@ namespace TGWebhooks.Core
 			};
 			app.UseRequestLocalization(options);
 			
-			app.UseAsyncInitialization<IPluginManager>((pluginManager, cancellationToken) => pluginManager.Initialize(cancellationToken));
+			app.UseAsyncInitialization<IModuleManager>((pluginManager, cancellationToken) => pluginManager.Initialize(cancellationToken));
 			app.UseAsyncInitialization<IRepository>((repository, cancellationToken) => repository.Initialize(cancellationToken));
 
 			app.UseHangfireServer();

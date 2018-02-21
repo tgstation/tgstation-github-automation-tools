@@ -34,7 +34,16 @@ namespace TGWebhooks.Modules.PRTagger
 		/// <summary>
 		/// The <see cref="IGitHubManager"/> for the <see cref="PullRequestLabellerModule"/>
 		/// </summary>
-		IGitHubManager gitHubManager;
+		readonly IGitHubManager gitHubManager;
+
+		/// <summary>
+		/// Construct a <see cref="PullRequestLabellerModule"/>
+		/// </summary>
+		/// <param name="gitHubManager">The valus of <see cref="gitHubManager"/></param>
+		public PullRequestLabellerModule(IGitHubManager gitHubManager)
+		{
+			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
+		}
 
 		/// <summary>
 		/// Label a pull request
@@ -164,16 +173,7 @@ namespace TGWebhooks.Modules.PRTagger
 		}
 
 		/// <inheritdoc />
-		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager, IDataStore dataStore, IStringLocalizer stringLocalizer)
-		{
-			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
-		}
-
-		/// <inheritdoc />
-		public Task Initialize(CancellationToken cancellationToken)
-		{
-			return Task.CompletedTask;
-		}
+		public Task Initialize(CancellationToken cancellationToken) => Task.CompletedTask;
 
 		/// <inheritdoc />
 		public IEnumerable<IPayloadHandler<TPayload>> GetPayloadHandlers<TPayload>() where TPayload : ActivityPayload

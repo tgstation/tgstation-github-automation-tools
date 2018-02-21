@@ -12,7 +12,7 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 	/// <summary>
 	/// Implements the Good Boy Points tracking
 	/// </summary>
-	public sealed class GoodBoyPointsModule : IModule, IPayloadHandler<PullRequestEventPayload>, IMergeRequirement
+	sealed class GoodBoyPointsModule : IModule, IPayloadHandler<PullRequestEventPayload>, IMergeRequirement
 	{
 		/// <inheritdoc />
 		public Guid Uid => new Guid("a8875569-8807-4a58-adf6-ac5a408c7e16");
@@ -51,37 +51,32 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 		/// <summary>
 		/// The <see cref="IDataStore"/> for the <see cref="GoodBoyPointsModule"/>
 		/// </summary>
-		IDataStore dataStore;
+		readonly IDataStore dataStore;
 		/// <summary>
 		/// The <see cref="IGitHubManager"/> for the <see cref="GoodBoyPointsModule"/>
 		/// </summary>
-		IGitHubManager gitHubManager;
+		readonly IGitHubManager gitHubManager;
 		/// <summary>
 		/// The <see cref="IStringLocalizer"/> for the <see cref="GoodBoyPointsModule"/>
 		/// </summary>
-		IStringLocalizer stringLocalizer;
+		readonly IStringLocalizer stringLocalizer;
 
 		/// <summary>
-		/// Ensure that <see cref="Configure(ILogger, IRepository, IGitHubManager, IIOManager, IWebRequestManager, IDataStore, IStringLocalizer)"/> was called
+		/// Construct a <see cref="GoodBoyPointsModule"/>
 		/// </summary>
-		void CheckConfigured()
+		/// <param name="gitHubManager">The value of <see cref="gitHubManager"/></param>
+		/// <param name="dataStore">The value of <see cref="gitHubManager"/></param>
+		/// <param name="stringLocalizer">The value of <see cref="gitHubManager"/></param>
+		public GoodBoyPointsModule(IGitHubManager gitHubManager, IDataStore dataStore, IStringLocalizer stringLocalizer)
 		{
-			if (dataStore == null)
-				throw new InvalidOperationException("Configure wasn't called!");
-		}
-
-		/// <inheritdoc />
-		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager, IDataStore dataStore, IStringLocalizer stringLocalizer)
-		{
-			this.dataStore = dataStore;
-			this.gitHubManager = gitHubManager;
-			this.stringLocalizer = stringLocalizer;
+			this.dataStore = dataStore ?? throw new ArgumentNullException(nameof(dataStore));
+			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
+			this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
 		}
 
 		/// <inheritdoc />
 		public async Task<AutoMergeStatus> EvaluateFor(PullRequest pullRequest, CancellationToken cancellationToken)
 		{
-			CheckConfigured();
 			var userGBP = await dataStore.ReadData<GoodBoyPointsEntry>(pullRequest.User.Login, cancellationToken).ConfigureAwait(false);
 			var passed = userGBP.Points >= 0;
 			var result = new AutoMergeStatus
@@ -98,7 +93,6 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 		/// <inheritdoc />
 		public IEnumerable<IPayloadHandler<TPayload>> GetPayloadHandlers<TPayload>() where TPayload : ActivityPayload
 		{
-			CheckConfigured();
 			if (typeof(TPayload) == typeof(PullRequestEventPayload))
 				yield return (IPayloadHandler<TPayload>)(object)this;
 		}
@@ -111,7 +105,6 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 		{
 			if (payload == null)
 				throw new ArgumentNullException(nameof(payload));
-			CheckConfigured();
 			if (payload.Action != "closed" || !payload.PullRequest.Merged)
 				throw new NotSupportedException();
 

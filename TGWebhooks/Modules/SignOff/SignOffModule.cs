@@ -13,7 +13,7 @@ namespace TGWebhooks.Modules.SignOff
 	/// <summary>
 	/// <see cref="IModule"/> containing the Maintainer Sign Off <see cref="IMergeRequirement"/>
 	/// </summary>
-	public sealed class SignOffModule : IModule, IMergeRequirement, IPayloadHandler<PullRequestEventPayload>
+	sealed class SignOffModule : IModule, IMergeRequirement, IPayloadHandler<PullRequestEventPayload>
 	{
 		/// <summary>
 		/// The key in <see cref="dataStore"/> where <see cref="PullRequestSignOffs"/>s are stored
@@ -38,23 +38,14 @@ namespace TGWebhooks.Modules.SignOff
 		/// <summary>
 		/// The <see cref="IGitHubManager"/> for the <see cref="SignOffModule"/>
 		/// </summary>
-		IGitHubManager gitHubManager;
+		readonly IGitHubManager gitHubManager;
 		/// <summary>
 		/// The <see cref="IDataStore"/> for the <see cref="SignOffModule"/>
 		/// </summary>
-		IDataStore dataStore;
-
-		/// <summary>
-		/// Throws an <see cref="InvalidOperationException"/> if <see cref="dataStore"/> is <see langword="null"/>
-		/// </summary>
-		void CheckConfigured()
-		{
-			if (dataStore == null)
-				throw new InvalidOperationException("Configure() was not called!");
-		}
-
+		readonly IDataStore dataStore;
+		
 		/// <inheritdoc />
-		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager, IDataStore dataStore, IStringLocalizer stringLocalizer)
+		public SignOffModule(IGitHubManager gitHubManager, IDataStore dataStore)
 		{
 			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
 			this.dataStore = dataStore ?? throw new ArgumentNullException(nameof(dataStore));
@@ -65,7 +56,6 @@ namespace TGWebhooks.Modules.SignOff
 		{
 			if (pullRequest == null)
 				throw new ArgumentNullException(nameof(pullRequest));
-			CheckConfigured();
 			var signOff = await dataStore.ReadData<PullRequestSignOffs>(SignOffDataKey, cancellationToken).ConfigureAwait(false);
 
 			var result = new AutoMergeStatus() { RequiredProgress = 1 };
@@ -87,10 +77,7 @@ namespace TGWebhooks.Modules.SignOff
 		}
 
 		/// <inheritdoc />
-		public Task Initialize(CancellationToken cancellationToken)
-		{
-			return Task.CompletedTask;
-		}
+		public Task Initialize(CancellationToken cancellationToken) => Task.CompletedTask;
 
 		/// <inheritdoc />
 		public async Task ProcessPayload(PullRequestEventPayload payload, CancellationToken cancellationToken)
@@ -100,7 +87,7 @@ namespace TGWebhooks.Modules.SignOff
 			
 			if(payload.Action != "edited")
 				throw new NotSupportedException();
-			CheckConfigured();
+
 			var signOff = await dataStore.ReadData<PullRequestSignOffs>(SignOffDataKey, cancellationToken).ConfigureAwait(false);
 
 			if (!signOff.Entries.Remove(payload.PullRequest.Number))

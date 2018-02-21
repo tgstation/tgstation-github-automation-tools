@@ -12,7 +12,7 @@ namespace TGWebhooks.Modules.Highlander
 	/// <summary>
 	/// Implements the One Per Person <see cref="IModule"/>
 	/// </summary>
-	public sealed class HighlanderModule : IModule, IPayloadHandler<PullRequestEventPayload>
+	sealed class HighlanderModule : IModule, IPayloadHandler<PullRequestEventPayload>
 	{
 		/// <inheritdoc />
 		public Guid Uid => new Guid("ec74d6d5-c0ac-46d2-bcec-f52494e2e8c6");
@@ -32,23 +32,18 @@ namespace TGWebhooks.Modules.Highlander
 		/// <summary>
 		/// The <see cref="IGitHubManager"/> for the <see cref="HighlanderModule"/>
 		/// </summary>
-		IGitHubManager gitHubManager;
+		readonly IGitHubManager gitHubManager;
 		/// <summary>
 		/// The <see cref="IStringLocalizer"/> for the <see cref="HighlanderModule"/>
 		/// </summary>
-		IStringLocalizer stringLocalizer;
+		readonly IStringLocalizer stringLocalizer;
 
 		/// <summary>
-		/// Ensure that <see cref="Configure(ILogger, IRepository, IGitHubManager, IIOManager, IWebRequestManager, IDataStore, IStringLocalizer)"/> was called
+		/// Construct a <see cref="HighlanderModule"/>
 		/// </summary>
-		void CheckConfigured()
-		{
-			if (gitHubManager == null)
-				throw new InvalidOperationException("Configure wasn't called!");
-		}
-
-		/// <inheritdoc />
-		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager, IDataStore dataStore, IStringLocalizer stringLocalizer)
+		/// <param name="gitHubManager">The value of <see cref="gitHubManager"/></param>
+		/// <param name="stringLocalizer">The value of <see cref="stringLocalizer"/></param>
+		public HighlanderModule(IGitHubManager gitHubManager, IStringLocalizer stringLocalizer)
 		{
 			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
 			this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
@@ -57,7 +52,6 @@ namespace TGWebhooks.Modules.Highlander
 		/// <inheritdoc />
 		public IEnumerable<IPayloadHandler<TPayload>> GetPayloadHandlers<TPayload>() where TPayload : ActivityPayload
 		{
-			CheckConfigured();
 			if (typeof(TPayload) == typeof(PullRequestEventPayload))
 				yield return (IPayloadHandler<TPayload>)(object)this;
 		}

@@ -30,7 +30,7 @@ namespace TGWebhooks.Controllers
 		/// </summary>
 		readonly GitHubConfiguration gitHubConfiguration;
 		/// <summary>
-		/// The <see cref="IPluginManager"/> for the <see cref="PayloadsController"/>
+		/// The <see cref="IModuleManager"/> for the <see cref="PayloadsController"/>
 		/// </summary>
 		readonly IComponentProvider componentProvider;
 		/// <summary>

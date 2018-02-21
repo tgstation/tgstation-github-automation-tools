@@ -14,7 +14,7 @@ namespace TGWebhooks.Modules.MaintainerApproval
 	/// <summary>
 	/// <see cref="IModule"/> for a <see cref="IMergeRequirement"/> that requires at least one maintainer approval and no outstanding changes requested
 	/// </summary>
-	public sealed class MaintainerApprovalModule : IModule, IMergeRequirement
+	sealed class MaintainerApprovalModule : IModule, IMergeRequirement
 	{
 		/// <inheritdoc />
 		public Guid Uid => new Guid("8d8122d0-ad0d-4a91-977f-204d617efd04");
@@ -34,12 +34,15 @@ namespace TGWebhooks.Modules.MaintainerApproval
 		/// <summary>
 		/// The <see cref="IGitHubManager"/> for the <see cref="MaintainerApproval"/>
 		/// </summary>
-		IGitHubManager gitHubManager;
+		readonly IGitHubManager gitHubManager;
 
-		/// <inheritdoc />
-		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager, IDataStore dataStore, IStringLocalizer stringLocalizer)
+		/// <summary>
+		/// Construct a <see cref="MaintainerApprovalModule"/>
+		/// </summary>
+		/// <param name="gitHubManager"></param>
+		public MaintainerApprovalModule(IGitHubManager gitHubManager)
 		{
-			this.gitHubManager = gitHubManager;
+			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
 		}
 
 		/// <inheritdoc />
@@ -49,10 +52,7 @@ namespace TGWebhooks.Modules.MaintainerApproval
 		}
 
 		/// <inheritdoc />
-		public Task Initialize(CancellationToken cancellationToken)
-		{
-			return Task.CompletedTask;
-		}
+		public Task Initialize(CancellationToken cancellationToken) => Task.CompletedTask;
 
 		/// <inheritdoc />
 		public async Task<AutoMergeStatus> EvaluateFor(PullRequest pullRequest, CancellationToken cancellationToken)

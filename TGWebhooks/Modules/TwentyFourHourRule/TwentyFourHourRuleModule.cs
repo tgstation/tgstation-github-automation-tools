@@ -36,10 +36,7 @@ namespace TGWebhooks.Modules.TwentyFourHourRule
 		public IEnumerable<IMergeHook> MergeHooks => Enumerable.Empty<IMergeHook>();
 
 		/// <inheritdoc />
-		public void Configure(ILogger logger, IRepository repository, IGitHubManager gitHubManager, IIOManager ioManager, IWebRequestManager webRequestManager, IDataStore dataStore, IStringLocalizer stringLocalizer)
-		{
-			//intentionally left blank
-		}
+		public IEnumerable<IPayloadHandler<TPayload>> GetPayloadHandlers<TPayload>() where TPayload : ActivityPayload => Enumerable.Empty<IPayloadHandler<TPayload>>();
 
 		/// <inheritdoc />
 		public Task<AutoMergeStatus> EvaluateFor(PullRequest pullRequest, CancellationToken cancellationToken)
@@ -59,15 +56,6 @@ namespace TGWebhooks.Modules.TwentyFourHourRule
 		}
 
 		/// <inheritdoc />
-		public IEnumerable<IPayloadHandler<TPayload>> GetPayloadHandlers<TPayload>() where TPayload : ActivityPayload
-		{
-			return Enumerable.Empty<IPayloadHandler<TPayload>>();
-		}
-
-		/// <inheritdoc />
-		public Task Initialize(CancellationToken cancellationToken)
-		{
-			return Task.CompletedTask;
-		}
+		public Task Initialize(CancellationToken cancellationToken) => Task.CompletedTask;
 	}
 }
