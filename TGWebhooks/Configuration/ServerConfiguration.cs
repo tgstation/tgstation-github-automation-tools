@@ -1,25 +1,30 @@
-﻿namespace TGWebhooks.Configuration
+﻿using System.Collections.Generic;
+
+namespace TGWebhooks.Configuration
 {
 	/// <summary>
-	/// Indicates a BYOND server
+	/// Configuration for communicating with BYOND servers
 	/// </summary>
     sealed class ServerConfiguration
-    {
+	{
 		/// <summary>
-		/// The section <see cref="ServerConfiguration"/>s reside in
+		/// The section <see cref="ServerEntry"/>s reside in
 		/// </summary>
 		public const string Section = "Servers";
+
 		/// <summary>
-		/// The address of the server
+		/// The value of <see cref="Byond.TopicSender.IByondTopicSender.SendTimeout"/>
 		/// </summary>
-		public string Address { get; set; }
+		public int SendTimeout { get; set; }
+
 		/// <summary>
-		/// The port of the server
+		/// The value of <see cref="Byond.TopicSender.IByondTopicSender.ReceiveTimeout"/>
 		/// </summary>
-		public ushort Port { get; set; }
+		public int ReceiveTimeout { get; set; }
+
 		/// <summary>
-		/// The communication key for the server
+		/// <see cref="List{T}"/> of <see cref="ServerEntry"/>s
 		/// </summary>
-		public string CommsKey { get; set; }
-    }
+		public List<ServerEntry> Entries { get; set; } = new List<ServerEntry>();
+	}
 }

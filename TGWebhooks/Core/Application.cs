@@ -1,4 +1,5 @@
-﻿using Cyberboss.AspNetCore.AsyncInitializer;
+﻿using Byond.TopicSender;
+using Cyberboss.AspNetCore.AsyncInitializer;
 using Hangfire;
 using Hangfire.MySql;
 using Hangfire.SQLite;
@@ -68,8 +69,8 @@ namespace TGWebhooks.Core
 			services.Configure<GeneralConfiguration>(configuration.GetSection(GeneralConfiguration.Section));
 			services.Configure<GitHubConfiguration>(configuration.GetSection(GitHubConfiguration.Section));
 			services.Configure<TravisConfiguration>(configuration.GetSection(TravisConfiguration.Section));
+			services.Configure<ServerConfiguration>(configuration.GetSection(ServerConfiguration.Section));
 			services.Configure<DatabaseConfiguration>(dbConfigSection);
-			services.Configure<List<ServerConfiguration>>(configuration.GetSection(ServerConfiguration.Section));
 
 			services.Configure<MvcOptions>(options => options.Filters.Add(new RequireHttpsAttribute()));
 
@@ -78,9 +79,9 @@ namespace TGWebhooks.Core
 				x => builder.UseStorage(new MySqlStorage(x, new MySqlStorageOptions { PrepareSchemaIfNecessary = true })),
 				x => builder.UseSQLiteStorage(x, new SQLiteStorageOptions { PrepareSchemaIfNecessary = true })
 			));
-			services.AddOptions();
 			services.AddLocalization(options => options.ResourcesPath = "Resources/Localizations");
 			services.AddMvc();
+			services.AddOptions();
 
 			services.AddDbContext<DatabaseContext>(ServiceLifetime.Singleton);
 
@@ -94,6 +95,8 @@ namespace TGWebhooks.Core
 			services.AddSingleton<IWebRequestManager, WebRequestManager>();
 			services.AddSingleton<IContinuousIntegration, TravisContinuousIntegration>();
 			services.AddSingleton<IAutoMergeHandler, AutoMergeHandler>();
+			services.AddSingleton<IByondTopicSender, ByondTopicSender>();	//note the send/recieve timeouts are configured by the GameAnnouncerModule
+			//I'll probably hate myself for that later
 
 			services.AddModules();
 		}
