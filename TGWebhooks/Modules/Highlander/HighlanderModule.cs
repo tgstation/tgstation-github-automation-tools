@@ -36,14 +36,14 @@ namespace TGWebhooks.Modules.Highlander
 		/// <summary>
 		/// The <see cref="IStringLocalizer"/> for the <see cref="HighlanderModule"/>
 		/// </summary>
-		readonly IStringLocalizer stringLocalizer;
+		readonly IStringLocalizer<HighlanderModule> stringLocalizer;
 
 		/// <summary>
 		/// Construct a <see cref="HighlanderModule"/>
 		/// </summary>
 		/// <param name="gitHubManager">The value of <see cref="gitHubManager"/></param>
 		/// <param name="stringLocalizer">The value of <see cref="stringLocalizer"/></param>
-		public HighlanderModule(IGitHubManager gitHubManager, IStringLocalizer stringLocalizer)
+		public HighlanderModule(IGitHubManager gitHubManager, IStringLocalizer<HighlanderModule> stringLocalizer)
 		{
 			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
 			this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));

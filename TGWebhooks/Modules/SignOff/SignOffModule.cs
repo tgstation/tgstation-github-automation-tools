@@ -42,10 +42,10 @@ namespace TGWebhooks.Modules.SignOff
 		/// <summary>
 		/// The <see cref="IDataStore"/> for the <see cref="SignOffModule"/>
 		/// </summary>
-		readonly IDataStore dataStore;
+		readonly IDataStore<SignOffModule> dataStore;
 		
 		/// <inheritdoc />
-		public SignOffModule(IGitHubManager gitHubManager, IDataStore dataStore)
+		public SignOffModule(IGitHubManager gitHubManager, IDataStore<SignOffModule> dataStore)
 		{
 			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
 			this.dataStore = dataStore ?? throw new ArgumentNullException(nameof(dataStore));

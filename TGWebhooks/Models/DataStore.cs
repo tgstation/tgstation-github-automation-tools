@@ -8,14 +8,14 @@ using TGWebhooks.Modules;
 namespace TGWebhooks.Models
 {
 	/// <inheritdoc />
-	sealed class DataStore : IDataStore
+	sealed class DataStore<TOwnerType> : IDataStore<TOwnerType>
 	{
-		readonly Guid prefix;
+		readonly string prefix;
 		readonly IDatabaseContext databaseContext;
 
-		public DataStore(Guid prefix, IDatabaseContext databaseContext)
+		public DataStore(IDatabaseContext databaseContext)
 		{
-			this.prefix = prefix;
+			prefix = typeof(TOwnerType).FullName;
 			this.databaseContext = databaseContext ?? throw new ArgumentNullException(nameof(databaseContext));
 		}
 

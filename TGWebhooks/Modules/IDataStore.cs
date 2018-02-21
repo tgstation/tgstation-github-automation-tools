@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 
 namespace TGWebhooks.Modules
 {
-	/// <summary>
-	/// Used for reading and writing POCOs
-	/// </summary>
+	public interface IDataStore<TOwnserType> : IDataStore
+	{ }
+
 	public interface IDataStore
 	{
 		/// <summary>
@@ -20,7 +20,7 @@ namespace TGWebhooks.Modules
 		/// <summary>
 		/// Save some <typeparamref name="TData"/> to the <see cref="IDataStore"/>
 		/// </summary>
-		/// <typeparam name="TData"></typeparam>
+		/// <typeparam name="TData">The POCO data</typeparam>
 		/// <param name="key">The data storage key</param>
 		/// <param name="data">The data to write</param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>

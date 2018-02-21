@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using TGWebhooks.Modules;
@@ -18,10 +20,15 @@ namespace TGWebhooks.Core
 		public static IServiceCollection AddModules(this IServiceCollection serviceCollection)
 		{
 			var moduleType = typeof(IModule);
-			var moduleImplementations = Assembly.GetExecutingAssembly().GetTypes().Where(x => x.IsClass && moduleType.IsAssignableFrom(x) && !x.IsAbstract).ToList();
+			var moduleImplementations = Assembly.GetExecutingAssembly().GetTypes().Where(x => x.IsClass && moduleType.IsAssignableFrom(x) && !x.IsAbstract);
 			foreach (var I in moduleImplementations)
 				serviceCollection.AddSingleton(I);
-			serviceCollection.AddSingleton(x => x.GetServices<IModule>());
+			IEnumerable < IModule >GetModules(IServiceProvider serviceProvider)
+			{
+				foreach (var I in moduleImplementations)
+					yield return (IModule)serviceProvider.GetRequiredService(I);
+			}
+			serviceCollection.AddSingleton(x => GetModules(x));
 			return serviceCollection;
 		}
     }

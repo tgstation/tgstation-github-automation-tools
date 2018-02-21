@@ -85,6 +85,7 @@ namespace TGWebhooks.Core
 			services.AddDbContext<DatabaseContext>(ServiceLifetime.Singleton);
 
 			services.AddSingleton<IDatabaseContext>(x => x.GetRequiredService<DatabaseContext>());
+			services.AddSingleton(typeof(IDataStore<>), typeof(DataStore<>));
 			services.AddSingleton<IModuleManager, ModuleManager>();
 			services.AddSingleton<IComponentProvider>(x => x.GetRequiredService<IModuleManager>());
 			services.AddSingleton<IGitHubManager, GitHubManager>();
