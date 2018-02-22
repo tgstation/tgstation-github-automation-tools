@@ -23,7 +23,7 @@ namespace TGWebhooks.Core
 			var moduleImplementations = Assembly.GetExecutingAssembly().GetTypes().Where(x => x.IsClass && moduleType.IsAssignableFrom(x) && !x.IsAbstract);
 			foreach (var I in moduleImplementations)
 				serviceCollection.AddSingleton(I);
-			IEnumerable < IModule >GetModules(IServiceProvider serviceProvider)
+			IEnumerable<IModule> GetModules(IServiceProvider serviceProvider)
 			{
 				foreach (var I in moduleImplementations)
 					yield return (IModule)serviceProvider.GetRequiredService(I);
