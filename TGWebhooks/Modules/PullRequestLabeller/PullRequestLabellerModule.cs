@@ -1,13 +1,11 @@
-﻿using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
-using Octokit;
+﻿using Octokit;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TGWebhooks.Modules;
+using TGWebhooks.Models;
 
 namespace TGWebhooks.Modules.PRTagger
 {
@@ -121,6 +119,64 @@ namespace TGWebhooks.Modules.PRTagger
 						if (I.FileName.StartsWith(J.Key, StringComparison.CurrentCulture))
 							labelsToAdd.Add(J.Value);
 			}
+
+			void UniqueAdd(string label)
+			{
+				if (!labelsToAdd.Contains(label))
+					labelsToAdd.Add(label);
+			}
+
+			//run through the changelog
+			var changelog = Changelog.GetChangelog(payload.PullRequest, out bool malformed);
+			if(changelog != null)
+				foreach(var I in changelog.Changes.Select(x => x.Type))
+					switch (I)
+					{
+						case ChangelogEntryType.Admin:
+							UniqueAdd("Administration");
+							break;
+						case ChangelogEntryType.Balance:
+							UniqueAdd("Balance/Rebalance");
+							break;
+						case ChangelogEntryType.BugFix:
+							UniqueAdd("Fix");
+							break;
+						case ChangelogEntryType.Code_Imp:
+							UniqueAdd("Code Improvement");
+							break;
+						case ChangelogEntryType.Config:
+							UniqueAdd("Config Update");
+							break;
+						case ChangelogEntryType.ImageAdd:
+							UniqueAdd("Sprites");
+							break;
+						case ChangelogEntryType.ImageDel:
+							UniqueAdd("Sprites");
+							UniqueAdd("Removal");
+							break;
+						case ChangelogEntryType.Refactor:
+							UniqueAdd("Refactor");
+							break;
+						case ChangelogEntryType.RscAdd:
+							UniqueAdd("Feature");
+							break;
+						case ChangelogEntryType.RscDel:
+							UniqueAdd("Removal");
+							break;
+						case ChangelogEntryType.SoundAdd:
+							UniqueAdd("Sounds");
+							break;
+						case ChangelogEntryType.SoundDel:
+							UniqueAdd("Sounds");
+							UniqueAdd("Removal");
+							break;
+						case ChangelogEntryType.SpellCheck:
+							UniqueAdd("Grammar and Formatting");
+							break;
+						case ChangelogEntryType.Tweak:
+							UniqueAdd("Tweak");
+							break;
+					}
 
 			labelsToAdd.RemoveAll(x => labelsToRemove.Contains(x));
 			
