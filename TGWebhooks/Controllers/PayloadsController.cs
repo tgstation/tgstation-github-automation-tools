@@ -222,6 +222,8 @@ namespace TGWebhooks.Controllers
 			{
 				case "pull_request":
 					return StartJob<PullRequestEventPayload>();
+				case "pull_request_review":
+					return StartJob<PullRequestReviewEventPayload>();
 				default:
 					return Ok();
 			}
