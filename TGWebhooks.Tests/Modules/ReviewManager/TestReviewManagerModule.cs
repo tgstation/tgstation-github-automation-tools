@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 using TGWebhooks.Modules.Tests;
 using TGWebhooks.Tests;
 
-namespace TGWebhooks.Modules.MaintainerApproval.Tests
+namespace TGWebhooks.Modules.ReviewManager.Tests
 {
 	/// <summary>
-	/// Tests for <see cref="MaintainerApprovalModule"/>
+	/// Tests for <see cref="ReviewManagerModule"/>
 	/// </summary>
 	[TestClass]
-	public sealed class TestMaintainerApproval : TestModule<MaintainerApprovalModule>
+	public sealed class TestReviewManagerModule : TestModule<ReviewManagerModule>
 	{
 		[TestMethod]
 		public async Task TestApprovalChecking()
@@ -33,9 +33,9 @@ namespace TGWebhooks.Modules.MaintainerApproval.Tests
 			Assert.AreEqual(2, result.RequiredProgress);
 		}
 
-		protected override MaintainerApprovalModule Instantiate()
+		protected override ReviewManagerModule Instantiate()
 		{
-			return new MaintainerApprovalModule(MockGitHubManager.Object, MockStringLocalizer.Object);
+			return new ReviewManagerModule(MockGitHubManager.Object, MockStringLocalizer.Object);
 		}
 	}
 }

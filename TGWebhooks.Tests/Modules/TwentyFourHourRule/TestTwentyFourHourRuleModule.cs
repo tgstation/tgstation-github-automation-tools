@@ -12,7 +12,7 @@ namespace TGWebhooks.Modules.TwentyFourHourRule.Tests
 	/// Tests for <see cref="TwentyFourHourRuleModule"/>
 	/// </summary>
 	[TestClass]
-	public sealed class TestTwentyFourHourRule : TestModule<TwentyFourHourRuleModule>
+	public sealed class TestTwentyFourHourRuleModule : TestModule<TwentyFourHourRuleModule>
 	{
 		[TestMethod]
 		public async Task TestInvalid()

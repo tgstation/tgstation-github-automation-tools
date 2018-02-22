@@ -7,21 +7,21 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TGWebhooks.Modules.MaintainerApproval
+namespace TGWebhooks.Modules.ReviewManager
 {
 	/// <summary>
-	/// <see cref="IModule"/> for a <see cref="IMergeRequirement"/> that requires at least one maintainer approval and no outstanding changes requested
+	/// <see cref="IModule"/> for managing maintainer reviews
 	/// </summary>
-	public sealed class MaintainerApprovalModule : IModule, IMergeRequirement
+	public sealed class ReviewManagerModule : IModule, IMergeRequirement
 	{
 		/// <inheritdoc />
 		public Guid Uid => new Guid("8d8122d0-ad0d-4a91-977f-204d617efd04");
 
 		/// <inheritdoc />
-		public string Name => "Maintainer Approval";
+		public string Name => "Review Manager";
 
 		/// <inheritdoc />
-		public string Description => "Merge requirement for having at least one maintainer approval and no outstanding changes requested";
+		public string Description => "Manages maintainer reviews";
 
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => new List<IMergeRequirement> { this };
@@ -30,20 +30,20 @@ namespace TGWebhooks.Modules.MaintainerApproval
 		public IEnumerable<IMergeHook> MergeHooks => Enumerable.Empty<IMergeHook>();
 
 		/// <summary>
-		/// The <see cref="IGitHubManager"/> for the <see cref="MaintainerApprovalModule"/>
+		/// The <see cref="IGitHubManager"/> for the <see cref="ReviewManagerModule"/>
 		/// </summary>
 		readonly IGitHubManager gitHubManager;
 		/// <summary>
-		/// The <see cref="IStringLocalizer"/> for the <see cref="MaintainerApprovalModule"/>
+		/// The <see cref="IStringLocalizer"/> for the <see cref="ReviewManagerModule"/>
 		/// </summary>
-		readonly IStringLocalizer<MaintainerApprovalModule> stringLocalizer;
+		readonly IStringLocalizer<ReviewManagerModule> stringLocalizer;
 
 		/// <summary>
-		/// Construct a <see cref="MaintainerApprovalModule"/>
+		/// Construct a <see cref="ReviewManagerModule"/>
 		/// </summary>
 		/// <param name="gitHubManager">The value of <see cref="gitHubManager"/></param>
 		/// <param name="stringLocalizer">The value of <see cref="stringLocalizer"/></param>
-		public MaintainerApprovalModule(IGitHubManager gitHubManager, IStringLocalizer<MaintainerApprovalModule> stringLocalizer)
+		public ReviewManagerModule(IGitHubManager gitHubManager, IStringLocalizer<ReviewManagerModule> stringLocalizer)
 		{
 			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
 			this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
