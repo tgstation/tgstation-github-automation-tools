@@ -89,6 +89,7 @@ namespace TGWebhooks.Core
 			services.AddSingleton(typeof(IDataStoreFactory<>), typeof(DataStoreFactory<>));
 			services.AddSingleton<IModuleManager, ModuleManager>();
 			services.AddSingleton<IComponentProvider>(x => x.GetRequiredService<IModuleManager>());
+			services.AddSingleton<IGitHubClientFactory, IGitHubClientFactory>();
 			services.AddSingleton<IGitHubManager, GitHubManager>();
 			services.AddSingleton<IRepository, Repository>();
 			services.AddSingleton<IIOManager, DefaultIOManager>();

@@ -42,9 +42,13 @@ namespace TGWebhooks.Core
 		/// </summary>
 		readonly GitHubConfiguration gitHubConfiguration;
 		/// <summary>
-		/// The <see cref="GitHubClient"/> for the <see cref="GitHubManager"/>
+		/// The <see cref="IGitHubClient"/> for the <see cref="GitHubManager"/>
 		/// </summary>
 		readonly IGitHubClient gitHubClient;
+		/// <summary>
+		/// The <see cref="IGitHubClientFactory"/> for the <see cref="GitHubManager"/>
+		/// </summary>
+		readonly IGitHubClientFactory gitHubClientFactory;
 		/// <summary>
 		/// The <see cref="ILogger"/> for the <see cref="GitHubManager"/>
 		/// </summary>
@@ -74,29 +78,21 @@ namespace TGWebhooks.Core
 		}
 
 		/// <summary>
-		/// Construct a <see cref="IGitHubClient"/> with a given <paramref name="accessToken"/>
-		/// </summary>
-		/// <param name="accessToken">The GitHub access token</param>
-		/// <returns>A new <see cref="IGitHubClient"/> with the given <paramref name="accessToken"/></returns>
-		static IGitHubClient CreateGitHubClient(string accessToken)
-		{
-			return new GitHubClient(new ProductHeaderValue(Application.UserAgent)) { Credentials = new Credentials(accessToken) };
-		}
-
-		/// <summary>
 		/// Construct a <see cref="GitHubManager"/>
 		/// </summary>
 		/// <param name="generalConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the value of <see cref="generalConfiguration"/></param>
 		/// <param name="gitHubConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the value of <see cref="gitHubConfiguration"/></param>
 		/// <param name="_databaseContext">The value of <see cref="databaseContext"/></param>
 		/// <param name="_logger">The value of <see cref="logger"/></param>
-		public GitHubManager(IOptions<GeneralConfiguration> generalConfigurationOptions, IOptions<GitHubConfiguration> gitHubConfigurationOptions, DatabaseContext _databaseContext, ILogger<GitHubManager> _logger)
+		/// <param name="_gitHubClientFactory">The value of <see cref="gitHubClientFactory"/></param>
+		public GitHubManager(IOptions<GeneralConfiguration> generalConfigurationOptions, IOptions<GitHubConfiguration> gitHubConfigurationOptions, DatabaseContext _databaseContext, ILogger<GitHubManager> _logger, IGitHubClientFactory _gitHubClientFactory)
 		{
 			gitHubConfiguration = gitHubConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(gitHubConfigurationOptions));
 			generalConfiguration = generalConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(generalConfigurationOptions));
 			logger = _logger ?? throw new ArgumentNullException(nameof(_logger));
 			databaseContext = _databaseContext ?? throw new ArgumentNullException(nameof(_databaseContext));
-			gitHubClient = CreateGitHubClient(gitHubConfiguration.PersonalAccessToken);
+			gitHubClientFactory = _gitHubClientFactory ?? throw new ArgumentNullException(nameof(_gitHubClientFactory));
+			gitHubClient = gitHubClientFactory.CreateGitHubClient(gitHubConfiguration.PersonalAccessToken);
 			semaphore = new SemaphoreSlim(1);
 		}
 
@@ -354,7 +350,7 @@ namespace TGWebhooks.Core
 					return knownUser;
 				}
 
-			return await CreateGitHubClient(accessToken).User.Current().ConfigureAwait(false);
+			return await gitHubClientFactory.CreateGitHubClient(accessToken).User.Current().ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
