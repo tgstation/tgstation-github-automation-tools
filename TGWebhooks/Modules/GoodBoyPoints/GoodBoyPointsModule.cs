@@ -62,6 +62,30 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 		readonly IStringLocalizer<GoodBoyPointsModule> stringLocalizer;
 
 		/// <summary>
+		/// Calculates the change to a <paramref name="goodBoyPointsEntry"/> given a set of <paramref name="labels"/>
+		/// </summary>
+		/// <param name="goodBoyPointsEntry">The <see cref="GoodBoyPointsEntry"/> to adjust</param>
+		/// <param name="labels">The <see cref="Label"/>s to make adjustments from</param>
+		/// <returns>A new <see cref="GoodBoyPointsEntry"/> based off changing <paramref name="goodBoyPointsEntry"/> with <paramref name="labels"/></returns>
+		static GoodBoyPointsEntry AdjustGBP(GoodBoyPointsEntry goodBoyPointsEntry, IEnumerable<Label> labels)
+		{
+			var result = new GoodBoyPointsEntry { Points = goodBoyPointsEntry.Points };
+			foreach (var L in labels)
+				switch (L.Name)
+				{
+					case "PRB: No Update":
+						return new GoodBoyPointsEntry { Points = goodBoyPointsEntry.Points };
+					case "PRB: Reset":
+						return new GoodBoyPointsEntry();
+					default:
+						if (LabelValues.TryGetValue(L.Name, out int award))
+							result.Points += award;
+						break;
+				}
+			return result;
+		}
+
+		/// <summary>
 		/// Construct a <see cref="GoodBoyPointsModule"/>
 		/// </summary>
 		/// <param name="gitHubManager">The value of <see cref="gitHubManager"/></param>
@@ -77,6 +101,7 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 		/// <inheritdoc />
 		public async Task<AutoMergeStatus> EvaluateFor(PullRequest pullRequest, CancellationToken cancellationToken)
 		{
+			var labelsTask = gitHubManager.GetIssueLabels(pullRequest.Number);
 			var userGBP = await dataStore.ReadData<GoodBoyPointsEntry>(pullRequest.User.Login, cancellationToken).ConfigureAwait(false);
 			var passed = userGBP.Points >= 0;
 			var result = new AutoMergeStatus
@@ -87,6 +112,10 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 			};
 			if (!passed)
 				result.Notes.Add(stringLocalizer["InsufficientGBP"]);
+
+			userGBP = AdjustGBP(userGBP, await labelsTask.ConfigureAwait(false));
+
+			result.Notes.Add(stringLocalizer["GBPResult", userGBP.Points]);
 			return result;
 		}
 
@@ -111,20 +140,7 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 			var labelsTask = gitHubManager.GetIssueLabels(payload.PullRequest.Number);
 			var gbp = await dataStore.ReadData<GoodBoyPointsEntry>(payload.PullRequest.User.Login, cancellationToken).ConfigureAwait(false);
 
-			foreach (var L in await labelsTask.ConfigureAwait(false))
-				switch (L.Name)
-				{
-					case "PRB: No Update":
-						return;
-					case "PRB: Reset":
-						gbp = new GoodBoyPointsEntry();
-						goto exitLoop;
-					default:
-						if (LabelValues.TryGetValue(L.Name, out int award))
-							gbp.Points += award;
-						break;
-				}
-			exitLoop:
+			gbp = AdjustGBP(gbp, await labelsTask.ConfigureAwait(false));
 
 			await dataStore.WriteData(payload.PullRequest.User.Login, gbp, cancellationToken);
 		}
