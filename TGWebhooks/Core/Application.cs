@@ -52,10 +52,8 @@ namespace TGWebhooks.Core
 		/// <param name="hostingEnvironment">The <see cref="IHostingEnvironment"/> used to determin the <see cref="DataDirectory"/></param>
 		public Application(IConfiguration _configuration, IHostingEnvironment hostingEnvironment)
 		{
-			if (hostingEnvironment == null)
-				throw new ArgumentNullException(nameof(hostingEnvironment));
 			configuration = _configuration ?? throw new ArgumentNullException(nameof(_configuration));
-			DataDirectory = Path.Combine(hostingEnvironment.ContentRootPath, "App_Data");
+			DataDirectory = Path.Combine(hostingEnvironment?.ContentRootPath ?? throw new ArgumentNullException(nameof(hostingEnvironment)), "App_Data");
 		}
 
 		/// <summary>
@@ -64,6 +62,9 @@ namespace TGWebhooks.Core
 		/// <param name="services">The <see cref="IServiceCollection"/> to configure</param>
 		public void ConfigureServices(IServiceCollection services)
 		{
+			if (services == null)
+				throw new ArgumentNullException(nameof(services));
+
 			var dbConfigSection = configuration.GetSection(DatabaseConfiguration.Section);
 
 			services.Configure<GeneralConfiguration>(configuration.GetSection(GeneralConfiguration.Section));
@@ -111,6 +112,10 @@ namespace TGWebhooks.Core
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 #pragma warning restore CA1822 // Mark members as static
 		{
+			if (app == null)
+				throw new ArgumentNullException(nameof(app));
+			if (env == null)
+				throw new ArgumentNullException(nameof(env));
 			app.ApplicationServices.GetRequiredService<IIOManager>().CreateDirectory(DataDirectory, CancellationToken.None).GetAwaiter().GetResult();
 
 			if (env.IsDevelopment())
