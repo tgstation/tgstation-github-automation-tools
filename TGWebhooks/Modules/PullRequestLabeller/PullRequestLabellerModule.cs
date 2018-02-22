@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Models;
@@ -125,6 +126,10 @@ namespace TGWebhooks.Modules.PRTagger
 				if (!labelsToAdd.Contains(label))
 					labelsToAdd.Add(label);
 			}
+
+			//github close syntax (without "close" variants)
+			if (Regex.IsMatch(payload.PullRequest.Body, "(?i)(fix|fixes|fixed|resolve|resolves|resolved)\\s*#[1-9][0-9]*"))
+				UniqueAdd("Fix");
 
 			//run through the changelog
 			var changelog = Changelog.GetChangelog(payload.PullRequest, out bool malformed);
