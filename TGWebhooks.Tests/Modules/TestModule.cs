@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace TGWebhooks.Modules.Tests
 {
 	[TestClass]
-	public abstract class TestModule
+	public abstract class TestModule<TModule> where TModule : IModule
 	{
 		protected Mock<ILogger> MockLogger { get; private set;  }
 		protected Mock<IRepository> MockRepository { get; private set; }
@@ -18,7 +18,7 @@ namespace TGWebhooks.Modules.Tests
 		protected Mock<IIOManager> MockIOManager { get; private set; }
 		protected Mock<IWebRequestManager> MockWebRequestManager { get; private set; }
 		protected Mock<IDataStore> MockDataStore { get; private set; }
-		protected Mock<IStringLocalizer> MockStringLocalizer { get; private set; }
+		protected Mock<IStringLocalizer<TModule>> MockStringLocalizer { get; private set; }
 
 		public TestModule()
 		{
@@ -28,12 +28,10 @@ namespace TGWebhooks.Modules.Tests
 			MockIOManager = new Mock<IIOManager>();
 			MockWebRequestManager = new Mock<IWebRequestManager>();
 			MockDataStore = new Mock<IDataStore>();
-			MockStringLocalizer = new Mock<IStringLocalizer>();
+			MockStringLocalizer = new Mock<IStringLocalizer<TModule>>();
 		}
 
-		protected TModule Module<TModule>() where TModule : IModule => (TModule)Instantiate();
-
-		protected abstract IModule Instantiate();
+		protected abstract TModule Instantiate();
 
 		[TestMethod]
 		public async Task TestModuleBasics()

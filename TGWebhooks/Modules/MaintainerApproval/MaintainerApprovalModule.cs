@@ -12,7 +12,7 @@ namespace TGWebhooks.Modules.MaintainerApproval
 	/// <summary>
 	/// <see cref="IModule"/> for a <see cref="IMergeRequirement"/> that requires at least one maintainer approval and no outstanding changes requested
 	/// </summary>
-	sealed class MaintainerApprovalModule : IModule, IMergeRequirement
+	public sealed class MaintainerApprovalModule : IModule, IMergeRequirement
 	{
 		/// <inheritdoc />
 		public Guid Uid => new Guid("8d8122d0-ad0d-4a91-977f-204d617efd04");

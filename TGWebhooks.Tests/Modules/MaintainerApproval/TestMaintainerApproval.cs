@@ -10,8 +10,11 @@ using TGWebhooks.Tests;
 
 namespace TGWebhooks.Modules.MaintainerApproval.Tests
 {
+	/// <summary>
+	/// Tests for <see cref="MaintainerApprovalModule"/>
+	/// </summary>
 	[TestClass]
-	public sealed class TestMaintainerApproval : TestModule
+	public sealed class TestMaintainerApproval : TestModule<MaintainerApprovalModule>
 	{
 		[TestMethod]
 		public async Task TestApprovalChecking()
@@ -19,7 +22,7 @@ namespace TGWebhooks.Modules.MaintainerApproval.Tests
 			var PR = new PullRequest();
 			var reviews = new SimpleJsonSerializer().Deserialize<IReadOnlyList<PullRequestReview>>(TestObjects.PR1Changes1Approved);
 
-			var plugin = Module<MaintainerApprovalModule>();
+			var plugin = Instantiate();
 
 			MockGitHubManager.Setup(x => x.GetPullRequestReviews(PR)).Returns(Task.FromResult(reviews));
 			MockGitHubManager.Setup(x => x.UserHasWriteAccess(It.IsAny<User>())).Returns(Task.FromResult(true));
@@ -30,9 +33,9 @@ namespace TGWebhooks.Modules.MaintainerApproval.Tests
 			Assert.AreEqual(2, result.RequiredProgress);
 		}
 
-		protected override IModule Instantiate()
+		protected override MaintainerApprovalModule Instantiate()
 		{
-			return new MaintainerApprovalModule(MockGitHubManager.Object);
+			return new MaintainerApprovalModule(MockGitHubManager.Object, MockStringLocalizer.Object);
 		}
 	}
 }
