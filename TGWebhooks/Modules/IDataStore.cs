@@ -3,11 +3,6 @@ using System.Threading.Tasks;
 
 namespace TGWebhooks.Modules
 {
-	/// <inheritdoc />
-	/// <typeparam name="TOwnserType">The <see cref="System.Type"/> that will be using the <see cref="IDataStore{TOwnserType}"/></typeparam>
-	public interface IDataStore<TOwnserType> : IDataStore
-	{ }
-
 	/// <summary>
 	/// Simple key-value data store
 	/// </summary>

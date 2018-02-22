@@ -51,7 +51,7 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 		/// <summary>
 		/// The <see cref="IDataStore"/> for the <see cref="GoodBoyPointsModule"/>
 		/// </summary>
-		readonly IDataStore<GoodBoyPointsModule> dataStore;
+		readonly IDataStore dataStore;
 		/// <summary>
 		/// The <see cref="IGitHubManager"/> for the <see cref="GoodBoyPointsModule"/>
 		/// </summary>
@@ -89,11 +89,11 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 		/// Construct a <see cref="GoodBoyPointsModule"/>
 		/// </summary>
 		/// <param name="gitHubManager">The value of <see cref="gitHubManager"/></param>
-		/// <param name="dataStore">The value of <see cref="gitHubManager"/></param>
-		/// <param name="stringLocalizer">The value of <see cref="gitHubManager"/></param>
-		public GoodBoyPointsModule(IGitHubManager gitHubManager, IDataStore<GoodBoyPointsModule> dataStore, IStringLocalizer<GoodBoyPointsModule> stringLocalizer)
+		/// <param name="dataStoreFactory">The <see cref="IDataStoreFactory{TModule}"/> for <see cref="dataStore"/></param>
+		/// <param name="stringLocalizer">The value of <see cref="stringLocalizer"/></param>
+		public GoodBoyPointsModule(IGitHubManager gitHubManager, IDataStoreFactory<GoodBoyPointsModule> dataStoreFactory, IStringLocalizer<GoodBoyPointsModule> stringLocalizer)
 		{
-			this.dataStore = dataStore ?? throw new ArgumentNullException(nameof(dataStore));
+			dataStore = dataStoreFactory?.CreateDataStore(this) ?? throw new ArgumentNullException(nameof(dataStoreFactory));
 			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
 			this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
 		}

@@ -42,7 +42,7 @@ namespace TGWebhooks.Modules.SignOff
 		/// <summary>
 		/// The <see cref="IDataStore"/> for the <see cref="SignOffModule"/>
 		/// </summary>
-		readonly IDataStore<SignOffModule> dataStore;
+		readonly IDataStore dataStore;
 		/// <summary>
 		/// The <see cref="IStringLocalizer"/> for the <see cref="SignOffModule"/>
 		/// </summary>
@@ -52,12 +52,12 @@ namespace TGWebhooks.Modules.SignOff
 		/// Construct a <see cref="SignOffModule"/>
 		/// </summary>
 		/// <param name="gitHubManager">The value of <see cref="gitHubManager"/></param>
-		/// <param name="dataStore">The value of <see cref="dataStore"/></param>
+		/// <param name="dataStoreFactory">The <see cref="IDataStoreFactory{TModule}"/> for <see cref="dataStore"/></param>
 		/// <param name="stringLocalizer">The value of <see cref="stringLocalizer"/></param>
-		public SignOffModule(IGitHubManager gitHubManager, IDataStore<SignOffModule> dataStore, IStringLocalizer<SignOffModule> stringLocalizer)
+		public SignOffModule(IGitHubManager gitHubManager, IDataStoreFactory<SignOffModule> dataStoreFactory, IStringLocalizer<SignOffModule> stringLocalizer)
 		{
+			dataStore = dataStoreFactory?.CreateDataStore(this) ?? throw new ArgumentNullException(nameof(dataStoreFactory));
 			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
-			this.dataStore = dataStore ?? throw new ArgumentNullException(nameof(dataStore));
 			this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
 		}
 
