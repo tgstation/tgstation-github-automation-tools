@@ -108,9 +108,14 @@ namespace TGWebhooks.Modules.SignOff
 			var botLoginTask = gitHubManager.GetUserLogin(null, cancellationToken);
 			var reviews = await gitHubManager.GetPullRequestReviews(payload.PullRequest).ConfigureAwait(false);
 			var botLogin = await botLoginTask.ConfigureAwait(false);
-			foreach(var I in reviews)
-				if (I.User.Id == botLogin.Id && I.State.Value == PullRequestReviewState.Approved)
-					await gitHubManager.DismissReview(payload.PullRequest, I, stringLocalizer["SignOffNulled"]).ConfigureAwait(false);
+			
+			await Task.WhenAll(
+				reviews.Where(
+					x => x.User.Id == botLogin.Id 
+					&& x.State.Value == PullRequestReviewState.Approved
+				).Select(
+					x => gitHubManager.DismissReview(payload.PullRequest, x, stringLocalizer["SignOffNulled"])
+				));
 		}
 	}
 }
