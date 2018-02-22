@@ -3,11 +3,9 @@ using Microsoft.Extensions.Logging;
 using Octokit;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TGWebhooks.Modules;
 
 namespace TGWebhooks.Modules.MaintainerApproval
 {
@@ -32,17 +30,23 @@ namespace TGWebhooks.Modules.MaintainerApproval
 		public IEnumerable<IMergeHook> MergeHooks => Enumerable.Empty<IMergeHook>();
 
 		/// <summary>
-		/// The <see cref="IGitHubManager"/> for the <see cref="MaintainerApproval"/>
+		/// The <see cref="IGitHubManager"/> for the <see cref="MaintainerApprovalModule"/>
 		/// </summary>
 		readonly IGitHubManager gitHubManager;
+		/// <summary>
+		/// The <see cref="IStringLocalizer"/> for the <see cref="MaintainerApprovalModule"/>
+		/// </summary>
+		readonly IStringLocalizer<MaintainerApprovalModule> stringLocalizer;
 
 		/// <summary>
 		/// Construct a <see cref="MaintainerApprovalModule"/>
 		/// </summary>
-		/// <param name="gitHubManager"></param>
-		public MaintainerApprovalModule(IGitHubManager gitHubManager)
+		/// <param name="gitHubManager">The value of <see cref="gitHubManager"/></param>
+		/// <param name="stringLocalizer">The value of <see cref="stringLocalizer"/></param>
+		public MaintainerApprovalModule(IGitHubManager gitHubManager, IStringLocalizer<MaintainerApprovalModule> stringLocalizer)
 		{
 			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
+			this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
 		}
 
 		/// <inheritdoc />
@@ -106,7 +110,7 @@ namespace TGWebhooks.Modules.MaintainerApproval
 					continue;
 
 				++result.RequiredProgress;
-				result.Notes.Add(String.Format(CultureInfo.CurrentCulture, "{0} requested changes", I.Login));
+				result.Notes.Add(stringLocalizer["RequestedChanges", I.Login]);
 			}
 
 			result.RequiredProgress = Math.Max(result.RequiredProgress, 1);

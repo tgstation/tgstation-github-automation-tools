@@ -43,12 +43,22 @@ namespace TGWebhooks.Modules.SignOff
 		/// The <see cref="IDataStore"/> for the <see cref="SignOffModule"/>
 		/// </summary>
 		readonly IDataStore<SignOffModule> dataStore;
-		
-		/// <inheritdoc />
-		public SignOffModule(IGitHubManager gitHubManager, IDataStore<SignOffModule> dataStore)
+		/// <summary>
+		/// The <see cref="IStringLocalizer"/> for the <see cref="SignOffModule"/>
+		/// </summary>
+		readonly IStringLocalizer<SignOffModule> stringLocalizer;
+
+		/// <summary>
+		/// Construct a <see cref="SignOffModule"/>
+		/// </summary>
+		/// <param name="gitHubManager">The value of <see cref="gitHubManager"/></param>
+		/// <param name="dataStore">The value of <see cref="dataStore"/></param>
+		/// <param name="stringLocalizer">The value of <see cref="stringLocalizer"/></param>
+		public SignOffModule(IGitHubManager gitHubManager, IDataStore<SignOffModule> dataStore, IStringLocalizer<SignOffModule> stringLocalizer)
 		{
 			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
 			this.dataStore = dataStore ?? throw new ArgumentNullException(nameof(dataStore));
+			this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
 		}
 
 		/// <inheritdoc />
@@ -62,10 +72,10 @@ namespace TGWebhooks.Modules.SignOff
 			if (signOff.Entries.TryGetValue(pullRequest.Number, out List<string> signers) && signers.Count > 0)
 			{
 				result.Progress = signers.Count;
-				result.Notes.AddRange(signers);
+				result.Notes.AddRange(signers.Select(x => (string)stringLocalizer["Signer", x]));
 			}
 			else
-				result.Notes.Add("No maintainers have signed off on this pull request");
+				result.Notes.Add(stringLocalizer["NoSignOffs"]);
 			return result;
 		}
 
@@ -100,7 +110,7 @@ namespace TGWebhooks.Modules.SignOff
 			var botLogin = await botLoginTask.ConfigureAwait(false);
 			foreach(var I in reviews)
 				if (I.User.Id == botLogin.Id && I.State.Value == PullRequestReviewState.Approved)
-					await gitHubManager.DismissReview(payload.PullRequest, I, "Sign off nullified due to edit of original post").ConfigureAwait(false);
+					await gitHubManager.DismissReview(payload.PullRequest, I, stringLocalizer["SignOffNulled"]).ConfigureAwait(false);
 		}
 	}
 }

@@ -113,9 +113,9 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 			if (!passed)
 				result.Notes.Add(stringLocalizer["InsufficientGBP"]);
 
-			userGBP = AdjustGBP(userGBP, await labelsTask.ConfigureAwait(false));
+			var newGBP = AdjustGBP(userGBP, await labelsTask.ConfigureAwait(false));
 
-			result.Notes.Add(stringLocalizer["GBPResult", userGBP.Points]);
+			result.Notes.Add(stringLocalizer["GBPResult", newGBP.Points - userGBP.Points, newGBP.Points]);
 			return result;
 		}
 

@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
 using Octokit;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -68,9 +68,13 @@ namespace TGWebhooks.Modules.Highlander
 				throw new NotSupportedException();
 
 			var allPrs = await gitHubManager.GetOpenPullRequests().ConfigureAwait(false);
-			if (allPrs.Any(x => x.User.Id == payload.PullRequest.User.Id && x.Id != payload.PullRequest.Id))
+			string result = null;
+			foreach (var I in allPrs.Where(x => x.User.Id == payload.PullRequest.User.Id && x.Id != payload.PullRequest.Id).Select(x => x.Number))
+				result = (result != null) ? result + String.Format(CultureInfo.InvariantCulture, ", #{0}", I) : String.Format(CultureInfo.InvariantCulture, "#{0}", I);
+
+			if(result != null)
 			{
-				await gitHubManager.CreateComment(payload.PullRequest.Number, stringLocalizer["TooManyPRs"]);
+				await gitHubManager.CreateComment(payload.PullRequest.Number, stringLocalizer["TooManyPRs", result]);
 				await gitHubManager.Close(payload.PullRequest.Number);
 			}
 		}

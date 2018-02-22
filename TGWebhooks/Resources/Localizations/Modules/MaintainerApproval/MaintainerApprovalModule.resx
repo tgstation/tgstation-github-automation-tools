@@ -117,13 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="PullRequest" xml:space="preserve">
-    <value>Pull Request #{0}</value>
-  </data>
-  <data name="SignIn" xml:space="preserve">
-    <value>Sign In With GitHub</value>
-  </data>
-  <data name="SignOut" xml:space="preserve">
-    <value>Log Out - {0}</value>
+  <data name="RequestedChanges" xml:space="preserve">
+    <value>{0} requested changes on this pull request</value>
   </data>
 </root>

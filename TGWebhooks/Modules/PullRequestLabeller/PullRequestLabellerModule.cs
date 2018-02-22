@@ -80,8 +80,10 @@ namespace TGWebhooks.Modules.PRTagger
 				labelsToAdd.Add("Do Not Merge");
 			if (lowerTitle.Contains("[wip]"))
 				labelsToAdd.Add("Work In Progress");
-			if (lowerTitle.Contains("revert") || lowerTitle.Contains("removes"))
-				labelsToAdd.Add("Revert/Removal");
+			if (lowerTitle.Contains("revert"))
+				labelsToAdd.Add("Revert");
+			if (lowerTitle.Contains("removes"))
+				labelsToAdd.Add("Removal");
 
 			var mergeableCheck = await mergeableTask;
 			if (mergeableCheck.HasValue)
