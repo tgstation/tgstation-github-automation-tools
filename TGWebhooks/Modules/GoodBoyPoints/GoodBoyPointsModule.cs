@@ -106,7 +106,7 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 			var passed = userGBP.Points >= 0;
 			var result = new AutoMergeStatus
 			{
-				FailStatusReport = !passed,
+				FailStatusReport = true,
 				Progress = userGBP.Points,
 				RequiredProgress = 0
 			};

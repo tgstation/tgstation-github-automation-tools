@@ -170,11 +170,11 @@ namespace TGWebhooks.Core
 						{
 							logger.LogDebug("Aborting merge due to status failure: {0}/{1}", I.Progress, I.RequiredProgress);
 							merge = false;
-						}
-						if (I.FailStatusReport)
-						{
-							goodStatus = false;
-							failReasons.AddRange(I.Notes);
+							if (I.FailStatusReport)
+							{
+								goodStatus = false;
+								failReasons.AddRange(I.Notes);
+							}
 						}
 
 						if (I.ReevaluateIn > 0)

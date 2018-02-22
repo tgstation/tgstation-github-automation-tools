@@ -17,7 +17,7 @@ namespace TGWebhooks.Modules.ChangelogGenerator
 	/// <summary>
 	/// Generates changelog .yaml files
 	/// </summary>
-	sealed class ChangelogGeneratorModule : IModule, IMergeRequirement, IMergeHook
+	public sealed class ChangelogGeneratorModule : IModule, IMergeRequirement, IMergeHook
 	{
 		/// <inheritdoc />
 		public Guid Uid => new Guid("eb442717-57a2-402f-bfd4-0d4dce80f16a");
@@ -83,7 +83,7 @@ namespace TGWebhooks.Modules.ChangelogGenerator
 
 			var setRequired = await dataStore.ReadData<RequireChangelogEntry>(pullRequest.Number.ToString(), cancellationToken).ConfigureAwait(false);
 			
-			if (setRequired.Required == null)
+			if (!setRequired.Required.HasValue)
 				setRequired.Required = generalConfiguration.DefaultChangelogRequired;
 
 			var changelog = Changelog.GetChangelog(pullRequest, out bool malformed);
@@ -91,8 +91,8 @@ namespace TGWebhooks.Modules.ChangelogGenerator
 			var result = new AutoMergeStatus
 			{
 				FailStatusReport = true,
-				RequiredProgress = setRequired.Required.Value || malformed ? 1 : 0,
-				Progress = changelog != null ? 1 : 0
+				RequiredProgress = 2, //setRequired.Required.Value || malformed ? 1 : 0, //TODO:maintainer_can_modify field
+				Progress = (changelog != null ? 1 : 0)
 			};
 			if (result.Progress < result.RequiredProgress || malformed)
 				result.Notes.Add(stringLocalizer[malformed ? "ChangelogMalformed" : "NeedsChangelog"]);
@@ -102,17 +102,17 @@ namespace TGWebhooks.Modules.ChangelogGenerator
 		/// <inheritdoc />
 		public async Task<string> ModifyMerge(PullRequest pullRequest, string workingCommit, CancellationToken cancellationToken)
 		{
+			if (pullRequest == null)
+				throw new ArgumentNullException(nameof(pullRequest));
+			if (workingCommit == null)
+				throw new ArgumentNullException(nameof(workingCommit));
+
 			var changelog = Changelog.GetChangelog(pullRequest, out bool malformed);
 			if (changelog == null)
 				return workingCommit;
 			
-			var result = new Dictionary<string, List<string>>();
-			foreach (var I in changelog.Changes) {
-				var key = I.Type.ToString();
-				if (!result.ContainsKey(key))
-					result.Add(key, new List<string>());
-				result[key].Add(I.Text);
-			}
+			var result = new List<Dictionary<string, string>>();
+			result.AddRange(changelog.Changes.Select(x => new Dictionary<string, string> { { x.Type.ToString().ToLowerInvariant(), x.Text } }));
 
 			//create the object graph
 			var graph = new

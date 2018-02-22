@@ -4,7 +4,7 @@
 	/// Factory for creating <see cref="IDataStore"/>s
 	/// </summary>
 	/// <typeparam name="TModule">The <see cref="IModule"/> the <see cref="IDataStoreFactory{TModule}"/> was made for</typeparam>
-    interface IDataStoreFactory<TModule> where TModule : IModule
+    public interface IDataStoreFactory<TModule> where TModule : IModule
     {
 		/// <summary>
 		/// Create a <see cref="IDataStore"/>
