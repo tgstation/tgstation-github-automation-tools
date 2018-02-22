@@ -1,0 +1,148 @@
+﻿using Octokit;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace TGWebhooks.Models
+{
+	/// <summary>
+	/// Represents a changelog in the body of a <see cref="PullRequest"/>
+	/// </summary>
+    sealed class Changelog
+    {
+		/// <summary>
+		/// The titled author(s) of the <see cref="Changelog"/>
+		/// </summary>
+		public string Author => author;
+		/// <summary>
+		/// The <see cref="ChangelogEntry"/>s in the <see cref="Changelog"/>
+		/// </summary>
+		public IReadOnlyList<ChangelogEntry> Entries => entries;
+
+		/// <summary>
+		/// Backing field for <see cref="Author"/>
+		/// </summary>
+		readonly string author;
+		/// <summary>
+		/// Backing field for <see cref="Entries"/>
+		/// </summary>
+		readonly List<ChangelogEntry> entries;
+
+		public static Changelog GetChangelog(PullRequest pullRequest, out bool malformed)
+		{
+			string author = null;
+			List<ChangelogEntry> entries = null;
+			foreach (var line in pullRequest?.Body?.Split('\n') ?? throw new ArgumentNullException(nameof(pullRequest)))
+			{
+				if (String.IsNullOrWhiteSpace(line))
+					continue;
+				var foundTag = line.StartsWith(":cl:") || line.StartsWith("🆑");
+				if (foundTag && author == null)
+				{
+					author = line.Replace(":cl:", String.Empty).Replace("🆑", String.Empty).Trim();
+					if (String.IsNullOrWhiteSpace(author) || author == "optional name here")
+						author = pullRequest.User.Login;
+					entries = new List<ChangelogEntry>();
+				}
+				else if (author != null)
+				{
+					if (foundTag)
+					{
+						if (entries.Count == 0)
+						{
+							malformed = true;
+							return null;
+						}
+						malformed = false;
+						return new Changelog(author, entries);
+					}
+					var firstColon = line.IndexOf(':');
+					if(firstColon == -1)
+					{
+						malformed = true;
+						return null;
+					}
+
+					var header = line.Substring(0, firstColon).ToLowerInvariant();
+					var body = line.Substring(firstColon + 1, line.Length - firstColon - 1);
+					ChangelogEntryType entryType;
+					switch (header)
+					{
+						case "fix":
+						case "fixes":
+						case "bugfix":
+							entryType = ChangelogEntryType.Fix;
+							break;
+						case "rsctweak":
+						case "tweaks":
+						case "tweak":
+							entryType = ChangelogEntryType.Tweak;
+							break;
+						case "soundadd":
+							entryType = ChangelogEntryType.SoundAdd;
+							break;
+						case "sounddel":
+							entryType = ChangelogEntryType.SoundDel;
+							break;
+						case "add":
+						case "adds":
+						case "rscadd":
+							entryType = ChangelogEntryType.Add;
+							break;
+						case "imageadd":
+							entryType = ChangelogEntryType.ImageAdd;
+							break;
+						case "imagedel":
+							entryType = ChangelogEntryType.ImageDel;
+							break;
+						case "type":
+						case "spellcheck":
+							entryType = ChangelogEntryType.SpellCheck;
+							break;
+						case "balance":
+						case "rebalance":
+							entryType = ChangelogEntryType.Balance;
+							break;
+						case "code_imp":
+						case "code":
+							entryType = ChangelogEntryType.Code;
+							break;
+						case "config":
+							entryType = ChangelogEntryType.Config;
+							break;
+						case "admin":
+							entryType = ChangelogEntryType.Admin;
+							break;
+						case "server":
+							entryType = ChangelogEntryType.Server;
+							break;
+						default:
+							var last = entries.LastOrDefault();
+							//attempt to add it to the last as a new line
+							if(last != null)
+							{
+								entries[entries.Count - 1] = new ChangelogEntry(String.Concat(last.Text, Environment.NewLine, body), last.Type);
+								continue;
+							}
+							malformed = true;
+							return null;
+					}
+					entries.Add(new ChangelogEntry(body, entryType));
+				}
+			}
+			malformed = false;
+			return null;
+		}
+
+		/// <summary>
+		/// Construct a <see cref="Changelog"/>
+		/// </summary>
+		/// <param name="author">The value of <see cref="Author"/></param>
+		/// <param name="entries">The value of <see cref="Entries"/></param>
+		Changelog(string author, List<ChangelogEntry> entries)
+		{
+			this.author = author;
+			this.entries = entries;
+		}
+    }
+}

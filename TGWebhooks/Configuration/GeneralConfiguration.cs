@@ -21,5 +21,10 @@ namespace TGWebhooks.Configuration
 		/// The URL used to access the <see cref="Core.Application"/>
 		/// </summary>
 		public Uri RootURL { get; set; }
-    }
+
+		/// <summary>
+		/// If changelogs are required by default, can also be adjusted on a per <see cref="Octokit.PullRequest"/> basis
+		/// </summary>
+		public bool DefaultChangelogRequired { get; set; }
+	}
 }
