@@ -1,8 +1,11 @@
 ﻿using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using Octokit;
+using SharpYaml;
+using SharpYaml.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -45,10 +48,26 @@ namespace TGWebhooks.Modules.ChangelogGenerator
 		/// The <see cref="IStringLocalizer"/> for the <see cref="ChangelogGeneratorModule"/>
 		/// </summary>
 		readonly IStringLocalizer<ChangelogGeneratorModule> stringLocalizer;
+		/// <summary>
+		/// The <see cref="IIOManager"/> for the <see cref="ChangelogGeneratorModule"/>
+		/// </summary>
+		readonly IIOManager ioManager;
+		/// <summary>
+		/// The <see cref="IRepository"/> for the <see cref="ChangelogGeneratorModule"/>
+		/// </summary>
+		readonly IRepository repository;
 
-		public ChangelogGeneratorModule(IDataStoreFactory<ChangelogGeneratorModule> dataStoreFactory, IStringLocalizer<ChangelogGeneratorModule> stringLocalizer, IOptions<GeneralConfiguration> generalConfigurationOptions)
+		/// <summary>
+		/// Construct a <see cref="ChangelogGeneratorModule"/>
+		/// </summary>
+		/// <param name="dataStoreFactory">The <see cref="IDataStoreFactory{TModule}"/> to create <see cref="dataStore"/> from</param>
+		/// <param name="stringLocalizer">The value of <see cref="stringLocalizer"/></param>
+		/// <param name="generalConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the value of <see cref="generalConfiguration"/></param>
+		public ChangelogGeneratorModule(IDataStoreFactory<ChangelogGeneratorModule> dataStoreFactory, IStringLocalizer<ChangelogGeneratorModule> stringLocalizer, IOptions<GeneralConfiguration> generalConfigurationOptions, IIOManager ioManager, IRepository repository)
 		{
 			this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
+			this.ioManager = ioManager ?? throw new ArgumentNullException(nameof(ioManager));
+			this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
 			generalConfiguration = generalConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(generalConfigurationOptions));
 			dataStore = dataStoreFactory?.CreateDataStore(this) ?? throw new ArgumentNullException(nameof(dataStoreFactory));
 		}
@@ -81,9 +100,36 @@ namespace TGWebhooks.Modules.ChangelogGenerator
 		}
 		
 		/// <inheritdoc />
-		public Task<string> ModifyMerge(PullRequest pullRequest, string workingCommit, CancellationToken cancellationToken)
+		public async Task<string> ModifyMerge(PullRequest pullRequest, string workingCommit, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException();
+			var changelog = Changelog.GetChangelog(pullRequest, out bool malformed);
+			if (changelog == null)
+				return workingCommit;
+			
+			var result = new Dictionary<string, List<string>>();
+			foreach (var I in changelog.Changes) {
+				var key = I.Type.ToString();
+				if (!result.ContainsKey(key))
+					result.Add(key, new List<string>());
+				result[key].Add(I.Text);
+			}
+
+			//create the object graph
+			var graph = new
+			{
+				author = changelog.Author,
+				delete_after_temporary_for_replacement = true,
+				changes = result
+			};
+			//hack because '-' isn't a valid identifier in c#
+			var yaml = new Serializer().Serialize(graph).Replace("delete_after_temporary_for_replacement", "delete-after");
+
+			var title = String.Format(CultureInfo.InvariantCulture, "AutoChangeLog-pr-{0}.yml", pullRequest.Number);
+
+			var pathToWrite = ioManager.ConcatPath(repository.Path, "html", "changelogs", title);
+			await ioManager.WriteAllText(pathToWrite, yaml, cancellationToken).ConfigureAwait(false);
+
+			return await repository.CommitChanges(new List<string> { pathToWrite }, cancellationToken);
 		}
 	}
 }

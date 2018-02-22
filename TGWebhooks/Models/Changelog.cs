@@ -17,16 +17,16 @@ namespace TGWebhooks.Models
 		/// <summary>
 		/// The <see cref="ChangelogEntry"/>s in the <see cref="Changelog"/>
 		/// </summary>
-		public IReadOnlyList<ChangelogEntry> Entries => entries;
+		public IReadOnlyList<ChangelogEntry> Changes => changes;
 
 		/// <summary>
 		/// Backing field for <see cref="Author"/>
 		/// </summary>
 		readonly string author;
 		/// <summary>
-		/// Backing field for <see cref="Entries"/>
+		/// Backing field for <see cref="Changes"/>
 		/// </summary>
-		readonly List<ChangelogEntry> entries;
+		readonly List<ChangelogEntry> changes;
 
 		public static Changelog GetChangelog(PullRequest pullRequest, out bool malformed)
 		{
@@ -71,7 +71,7 @@ namespace TGWebhooks.Models
 						case "fix":
 						case "fixes":
 						case "bugfix":
-							entryType = ChangelogEntryType.Fix;
+							entryType = ChangelogEntryType.BugFix;
 							break;
 						case "rsctweak":
 						case "tweaks":
@@ -87,7 +87,7 @@ namespace TGWebhooks.Models
 						case "add":
 						case "adds":
 						case "rscadd":
-							entryType = ChangelogEntryType.Add;
+							entryType = ChangelogEntryType.RscAdd;
 							break;
 						case "imageadd":
 							entryType = ChangelogEntryType.ImageAdd;
@@ -105,7 +105,7 @@ namespace TGWebhooks.Models
 							break;
 						case "code_imp":
 						case "code":
-							entryType = ChangelogEntryType.Code;
+							entryType = ChangelogEntryType.Code_Imp;
 							break;
 						case "config":
 							entryType = ChangelogEntryType.Config;
@@ -116,9 +116,12 @@ namespace TGWebhooks.Models
 						case "server":
 							entryType = ChangelogEntryType.Server;
 							break;
+						case "refactor":
+							entryType = ChangelogEntryType.Refactor;
+							break;
 						default:
-							var last = entries.LastOrDefault();
 							//attempt to add it to the last as a new line
+							var last = entries.LastOrDefault();
 							if(last != null)
 							{
 								entries[entries.Count - 1] = new ChangelogEntry(String.Concat(last.Text, Environment.NewLine, body), last.Type);
@@ -138,11 +141,11 @@ namespace TGWebhooks.Models
 		/// Construct a <see cref="Changelog"/>
 		/// </summary>
 		/// <param name="author">The value of <see cref="Author"/></param>
-		/// <param name="entries">The value of <see cref="Entries"/></param>
-		Changelog(string author, List<ChangelogEntry> entries)
+		/// <param name="changes">The value of <see cref="Changes"/></param>
+		Changelog(string author, List<ChangelogEntry> changes)
 		{
 			this.author = author;
-			this.entries = entries;
+			this.changes = changes;
 		}
     }
 }

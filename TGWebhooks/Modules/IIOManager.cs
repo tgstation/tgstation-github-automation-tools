@@ -89,6 +89,15 @@ namespace TGWebhooks.Modules
 		Task WriteAllBytes(string path, byte[] contents, CancellationToken cancellationToken);
 
 		/// <summary>
+		/// Writes some <paramref name="contents"/> to a file at <paramref name="path"/> overwriting previous content
+		/// </summary>
+		/// <param name="path">The path of the file to write</param>
+		/// <param name="contents">The contents of the file</param>
+		/// <param name="cancellationToken">A <see cref="CancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		Task WriteAllText(string path, string contents, CancellationToken cancellationToken);
+
+		/// <summary>
 		/// Deletes a file at <paramref name="path"/>
 		/// </summary>
 		/// <param name="path">The path of the file to delete</param>

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -60,12 +59,7 @@ namespace TGWebhooks.Core
 		}
 
 		/// <inheritdoc />
-		public string ConcatPath(params string[] paths)
-		{
-			if (paths == null)
-				throw new ArgumentNullException(nameof(paths));
-			return Path.Combine(paths);
-		}
+		public string ConcatPath(params string[] paths) => Path.Combine(paths ?? throw new ArgumentNullException(nameof(paths)));
 
 		/// <inheritdoc />
 		public async Task CopyFile(string src, string dest, CancellationToken cancellationToken)
@@ -91,10 +85,7 @@ namespace TGWebhooks.Core
 		}
 
 		/// <inheritdoc />
-		public Task CreateDirectory(string path, CancellationToken cancellationToken)
-		{
-			return Task.Factory.StartNew(() => Directory.CreateDirectory(ResolvePath(path)), cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Current);
-		}
+		public Task CreateDirectory(string path, CancellationToken cancellationToken) => Task.Factory.StartNew(() => Directory.CreateDirectory(ResolvePath(path)), cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Current);
 
 		/// <inheritdoc />
 		public async Task DeleteDirectory(string path, CancellationToken cancellationToken)
@@ -107,46 +98,22 @@ namespace TGWebhooks.Core
 		}
 
 		/// <inheritdoc />
-		public Task DeleteFile(string path, CancellationToken cancellationToken)
-		{
-			return Task.Factory.StartNew(() => File.Delete(ResolvePath(path)), cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Current);
-		}
+		public Task DeleteFile(string path, CancellationToken cancellationToken) => Task.Factory.StartNew(() => File.Delete(ResolvePath(path)), cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Current);
 
 		/// <inheritdoc />
-		public Task<bool> FileExists(string path, CancellationToken cancellationToken)
-		{
-			return Task.Factory.StartNew(() => File.Exists(ResolvePath(path)), cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Current);
-		}
+		public Task<bool> FileExists(string path, CancellationToken cancellationToken) => Task.Factory.StartNew(() => File.Exists(ResolvePath(path)), cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Current);
 
 		/// <inheritdoc />
-		public Task<bool> DirectoryExists(string path, CancellationToken cancellationToken)
-		{
-			return Task.Factory.StartNew(() => Directory.Exists(ResolvePath(path)), cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Current);
-		}
+		public Task<bool> DirectoryExists(string path, CancellationToken cancellationToken) => Task.Factory.StartNew(() => Directory.Exists(ResolvePath(path)), cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Current);
 
 		/// <inheritdoc />
-		public string GetDirectoryName(string path)
-		{
-			if (path == null)
-				throw new ArgumentNullException(nameof(path));
-			return Path.GetDirectoryName(path);
-		}
+		public string GetDirectoryName(string path) => Path.GetDirectoryName(path ?? throw new ArgumentNullException(nameof(path)));
 
 		/// <inheritdoc />
-		public string GetFileName(string path)
-		{
-			if (path == null)
-				throw new ArgumentNullException(nameof(path));
-			return Path.GetFileName(path);
-		}
+		public string GetFileName(string path) => Path.GetFileName(path ?? throw new ArgumentNullException(nameof(path)));
 
 		/// <inheritdoc />
-		public string GetFileNameWithoutExtension(string path)
-		{
-			if (path == null)
-				throw new ArgumentNullException(nameof(path));
-			return Path.GetFileNameWithoutExtension(path);
-		}
+		public string GetFileNameWithoutExtension(string path) =>  Path.GetFileNameWithoutExtension(path ?? throw new ArgumentNullException(nameof(path)));
 
 		/// <inheritdoc />
 		public async Task<byte[]> ReadAllBytes(string path, CancellationToken cancellationToken)
@@ -177,10 +144,7 @@ namespace TGWebhooks.Core
 		}
 
 		/// <inheritdoc />
-		public virtual string ResolvePath(string path)
-		{
-			return Path.GetFullPath(path ?? throw new ArgumentNullException(nameof(path)));
-		}
+		public virtual string ResolvePath(string path) => Path.GetFullPath(path ?? throw new ArgumentNullException(nameof(path)));
 
 		/// <inheritdoc />
 		public async Task WriteAllBytes(string path, byte[] contents, CancellationToken cancellationToken)
@@ -189,5 +153,8 @@ namespace TGWebhooks.Core
 			using (var file = File.Open(path, FileMode.Create, FileAccess.Write))
 				await file.WriteAsync(contents, 0, contents.Length, cancellationToken).ConfigureAwait(false);
 		}
+
+		/// <inheritdoc />
+		public Task WriteAllText(string path, string contents, CancellationToken cancellationToken) => WriteAllBytes(path, Encoding.UTF8.GetBytes(contents), cancellationToken);
 	}
 }
