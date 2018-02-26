@@ -35,7 +35,7 @@ namespace TGWebhooks.Modules.AutoDeleteBranch
 		/// <summary>
 		/// Construct an <see cref="AutoDeleteBranchModule"/>
 		/// </summary>
-		/// <param name="gitHubManager">The value of <see cref="IGitHubClient"/></param>
+		/// <param name="gitHubManager">The value of <see cref="gitHubManager"/></param>
 		public AutoDeleteBranchModule(IGitHubManager gitHubManager)
 		{
 			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
