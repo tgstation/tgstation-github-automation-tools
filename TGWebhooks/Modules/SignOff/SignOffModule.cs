@@ -15,6 +15,9 @@ namespace TGWebhooks.Modules.SignOff
 	/// </summary>
 	sealed class SignOffModule : IModule, IMergeRequirement, IPayloadHandler<PullRequestEventPayload>
 	{
+		/// <inheritdoc />
+		public bool Enabled { get; set; }
+
 		/// <summary>
 		/// The key in <see cref="dataStore"/> where <see cref="PullRequestSignOffs"/>s are stored
 		/// </summary>
@@ -88,6 +91,9 @@ namespace TGWebhooks.Modules.SignOff
 
 		/// <inheritdoc />
 		public Task Initialize(CancellationToken cancellationToken) => Task.CompletedTask;
+
+		/// <inheritdoc />
+		public Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken) => Task.CompletedTask;
 
 		/// <inheritdoc />
 		public async Task ProcessPayload(PullRequestEventPayload payload, CancellationToken cancellationToken)

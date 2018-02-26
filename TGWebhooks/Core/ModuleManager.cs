@@ -118,7 +118,10 @@ namespace TGWebhooks.Core
 				await Task.WhenAll(tasks2).ConfigureAwait(false);
 				await databaseContext.Save(cancellationToken).ConfigureAwait(false);
 				foreach (var I in tasks2.Select(x => x.Result))
+				{
 					modulesAndEnabledStatus.Add(I);
+					I.Key.Enabled = I.Value;
+				}
 			}
 		}
 
@@ -136,6 +139,7 @@ namespace TGWebhooks.Core
 			if (modulesAndEnabledStatus[module] == enabled)
 				return;
 			modulesAndEnabledStatus[module] = enabled;
+			module.Enabled = enabled;
 
 			var dbentry = await databaseContext.ModuleMetadatas.Where(x => x.Id == guid).ToAsyncEnumerable().First(cancellationToken).ConfigureAwait(false);
 			dbentry.Enabled = enabled;
@@ -143,5 +147,17 @@ namespace TGWebhooks.Core
 
 			logger.LogInformation("Modules {0} enabled status set to {1}", guid, enabled);
 		}
+
+		/// <inheritdoc />
+		public Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken)
+		{
+			var tasks = new List<Task>();
+			foreach (var I in modulesAndEnabledStatus.Where(x => x.Value).Select(x => x.Key))
+				//object cast to workaround a runtime binder bug
+				tasks.Add(I.AddViewVars(pullRequest, (object)viewBag, cancellationToken));
+			return Task.WhenAll(tasks);
+		}
+		/// <inheritdoc />
+		public bool ModuleEnabled<TModule>() where TModule : IModule => modulesAndEnabledStatus.Where(x => x.Key is TModule).Select(x => x.Value).First();
 	}
 }

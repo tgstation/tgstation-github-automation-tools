@@ -15,6 +15,9 @@ namespace TGWebhooks.Modules.Highlander
 	sealed class HighlanderModule : IModule, IPayloadHandler<PullRequestEventPayload>
 	{
 		/// <inheritdoc />
+		public bool Enabled { get; set; }
+
+		/// <inheritdoc />
 		public Guid Uid => new Guid("ec74d6d5-c0ac-46d2-bcec-f52494e2e8c6");
 
 		/// <inheritdoc />
@@ -58,6 +61,9 @@ namespace TGWebhooks.Modules.Highlander
 
 		/// <inheritdoc />
 		public Task Initialize(CancellationToken cancellationToken) => Task.CompletedTask;
+
+		/// <inheritdoc />
+		public Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken) => Task.CompletedTask;
 
 		/// <inheritdoc />
 		public async Task ProcessPayload(PullRequestEventPayload payload, CancellationToken cancellationToken)

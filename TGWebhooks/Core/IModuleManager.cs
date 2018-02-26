@@ -15,6 +15,7 @@ namespace TGWebhooks.Core
 		/// All <see cref="IModule"/>s and their enabled status
 		/// </summary>
 		IDictionary<IModule, bool> ModuleStatuses { get; }
+
 		/// <summary>
 		/// Enable or disable a <see cref="IModule"/>
 		/// </summary>

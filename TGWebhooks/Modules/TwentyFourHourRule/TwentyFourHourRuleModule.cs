@@ -20,6 +20,9 @@ namespace TGWebhooks.Modules.TwentyFourHourRule
 		const int HoursRequired = 24;
 
 		/// <inheritdoc />
+		public bool Enabled { get; set; }
+
+		/// <inheritdoc />
 		public Guid Uid => new Guid("78544889-5447-47f2-b300-3fb7b703c3cc");
 
 		/// <inheritdoc />
@@ -56,5 +59,8 @@ namespace TGWebhooks.Modules.TwentyFourHourRule
 
 		/// <inheritdoc />
 		public Task Initialize(CancellationToken cancellationToken) => Task.CompletedTask;
+
+		/// <inheritdoc />
+		public Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken) => Task.CompletedTask;
 	}
 }

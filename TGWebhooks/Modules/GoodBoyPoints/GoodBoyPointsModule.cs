@@ -15,6 +15,9 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 	public sealed class GoodBoyPointsModule : IModule, IPayloadHandler<PullRequestEventPayload>, IMergeRequirement
 	{
 		/// <inheritdoc />
+		public bool Enabled { get; set; }
+
+		/// <inheritdoc />
 		public Guid Uid => new Guid("a8875569-8807-4a58-adf6-ac5a408c7e16");
 
 		/// <inheritdoc />
@@ -65,9 +68,10 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 		/// Calculates the change to a <paramref name="goodBoyPointsEntry"/> given a set of <paramref name="labels"/>
 		/// </summary>
 		/// <param name="goodBoyPointsEntry">The <see cref="GoodBoyPointsEntry"/> to adjust</param>
+		/// <param name="offset">The <see cref="GoodBoyPointsOffset"/> to apply to the result</param>
 		/// <param name="labels">The <see cref="Label"/>s to make adjustments from</param>
 		/// <returns>A new <see cref="GoodBoyPointsEntry"/> based off changing <paramref name="goodBoyPointsEntry"/> with <paramref name="labels"/></returns>
-		static GoodBoyPointsEntry AdjustGBP(GoodBoyPointsEntry goodBoyPointsEntry, IEnumerable<Label> labels)
+		static GoodBoyPointsEntry AdjustGBP(GoodBoyPointsEntry goodBoyPointsEntry, GoodBoyPointsOffset offset, IEnumerable<Label> labels)
 		{
 			var result = new GoodBoyPointsEntry { Points = goodBoyPointsEntry.Points };
 			foreach (var L in labels)
@@ -82,8 +86,18 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 							result.Points += award;
 						break;
 				}
+			result.Points += offset?.Offset ?? 0;
 			return result;
 		}
+
+		/// <summary>
+		/// Set the <paramref name="offset"/> for a <paramref name="prNumber"/>
+		/// </summary>
+		/// <param name="prNumber">The <see cref="Octokit.PullRequest.Number"/></param>
+		/// <param name="offset">The <see cref="GoodBoyPointsOffset"/> for <paramref name="prNumber"/></param>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		public Task SetOffset(int prNumber, GoodBoyPointsOffset offset, CancellationToken cancellationToken) => dataStore.WriteData(prNumber.ToString(), offset ?? throw new ArgumentNullException(nameof(offset)), cancellationToken);
 
 		/// <summary>
 		/// Construct a <see cref="GoodBoyPointsModule"/>
@@ -102,18 +116,20 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 		public async Task<AutoMergeStatus> EvaluateFor(PullRequest pullRequest, CancellationToken cancellationToken)
 		{
 			var labelsTask = gitHubManager.GetIssueLabels(pullRequest.Number);
+			var offsetTask = dataStore.ReadData<GoodBoyPointsOffset>(pullRequest.Number.ToString(), cancellationToken);
 			var userGBP = await dataStore.ReadData<GoodBoyPointsEntry>(pullRequest.User.Login, cancellationToken).ConfigureAwait(false);
-			var passed = userGBP.Points >= 0;
+
+			var newGBP = AdjustGBP(userGBP, await offsetTask.ConfigureAwait(false), await labelsTask.ConfigureAwait(false));
+
+			var passed = newGBP.Points >= 0;
 			var result = new AutoMergeStatus
 			{
 				FailStatusReport = true,
-				Progress = userGBP.Points,
+				Progress = newGBP.Points,
 				RequiredProgress = 0
 			};
 			if (!passed)
 				result.Notes.Add(stringLocalizer["InsufficientGBP"]);
-
-			var newGBP = AdjustGBP(userGBP, await labelsTask.ConfigureAwait(false));
 
 			result.Notes.Add(stringLocalizer["GBPResult", newGBP.Points - userGBP.Points, newGBP.Points]);
 			return result;
@@ -138,9 +154,12 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 				throw new NotSupportedException();
 
 			var labelsTask = gitHubManager.GetIssueLabels(payload.PullRequest.Number);
-			var gbp = await dataStore.ReadData<GoodBoyPointsEntry>(payload.PullRequest.User.Login, cancellationToken).ConfigureAwait(false);
+			var gbpTask = dataStore.ReadData<GoodBoyPointsEntry>(payload.PullRequest.User.Login, cancellationToken);
+			var offset = await dataStore.ReadData<GoodBoyPointsOffset>(payload.PullRequest.Number.ToString(), cancellationToken).ConfigureAwait(false);
 
-			gbp = AdjustGBP(gbp, await labelsTask.ConfigureAwait(false));
+			var gbp = await gbpTask.ConfigureAwait(false);
+
+			gbp = AdjustGBP(gbp, offset, await labelsTask.ConfigureAwait(false));
 
 			await dataStore.WriteData(payload.PullRequest.User.Login, gbp, cancellationToken);
 		}
@@ -157,6 +176,30 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 			foreach (var I in rawDic)
 				realDic.Add(I.Key, ((JObject)I.Value).ToObject<GoodBoyPointsEntry>().Points);
 			return realDic;
+		}
+
+		/// <inheritdoc />
+		public async Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken)
+		{
+			if (pullRequest == null)
+				throw new ArgumentNullException(nameof(pullRequest));
+			if(viewBag == null)
+				throw new ArgumentNullException(nameof(viewBag));
+
+			((IList<string>)viewBag.ModuleViews).Add("/Modules/GoodBoyPoints/Views/GoodBoyPoints.cshtml");
+			viewBag.GBPStatuses = Enabled;
+			viewBag.GBPHeader = stringLocalizer["GBPHeader"];
+			viewBag.GBPBaseLabel = stringLocalizer["GBPBaseLabel"];
+			viewBag.GBPLabelsLabel = stringLocalizer["GBPLabelsLabel"];
+			viewBag.GBPOffsetLabel = stringLocalizer["GBPOffsetLabel"];
+
+			var gbpTask = dataStore.ReadData<GoodBoyPointsEntry>(pullRequest.User.Login, cancellationToken);
+			var offset = await dataStore.ReadData<GoodBoyPointsOffset>(pullRequest.Number.ToString(), cancellationToken).ConfigureAwait(false);
+			var gbp = await gbpTask.ConfigureAwait(false);
+
+			viewBag.GBPBase = gbp.Points;
+			viewBag.GBPLabels = AdjustGBP(gbp, null, await gitHubManager.GetIssueLabels(pullRequest.Number).ConfigureAwait(false)).Points - gbp.Points;
+			viewBag.GBPOffset = offset.Offset;
 		}
 	}
 }

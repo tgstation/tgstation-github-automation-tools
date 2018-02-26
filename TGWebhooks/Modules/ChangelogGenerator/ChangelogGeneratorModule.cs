@@ -20,6 +20,9 @@ namespace TGWebhooks.Modules.ChangelogGenerator
 	public sealed class ChangelogGeneratorModule : IModule, IMergeRequirement, IMergeHook
 	{
 		/// <inheritdoc />
+		public bool Enabled { get; set; }
+
+		/// <inheritdoc />
 		public Guid Uid => new Guid("eb442717-57a2-402f-bfd4-0d4dce80f16a");
 
 		/// <inheritdoc />
@@ -76,6 +79,9 @@ namespace TGWebhooks.Modules.ChangelogGenerator
 
 		/// <inheritdoc />
 		public Task Initialize(CancellationToken cancellationToken) => Task.CompletedTask;
+
+		/// <inheritdoc />
+		public Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken) => Task.CompletedTask;
 
 		/// <inheritdoc />
 		public async Task<AutoMergeStatus> EvaluateFor(PullRequest pullRequest, CancellationToken cancellationToken)

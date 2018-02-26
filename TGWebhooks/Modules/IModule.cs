@@ -1,6 +1,4 @@
 ﻿using System;
-using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
 
 namespace TGWebhooks.Modules
 {
@@ -9,6 +7,11 @@ namespace TGWebhooks.Modules
 	/// </summary>
 	public interface IModule : IComponentProvider
 	{
+		/// <summary>
+		/// If the <see cref="IModule"/> is enabled
+		/// </summary>
+		bool Enabled { set; }
+
 		/// <summary>
 		/// A unique <see cref="Uid"/> for the <see cref="IModule"/>
 		/// </summary>

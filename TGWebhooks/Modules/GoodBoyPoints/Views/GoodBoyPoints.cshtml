@@ -1,0 +1,7 @@
+﻿@if (ViewBag.GBPStatuses)
+{
+<div class="row">
+	<h4>@ViewBag.GBPHeader:</h4>
+	<p>@ViewBag.GBPBaseLabel : @ViewBag.GBPBase + @ViewBag.GBPLabelsLabel : @ViewBag.GBPLabels + @ViewBag.GBPOffsetLabel : @ViewBag.GBPOffset = <b>@(ViewBag.GBPBase + ViewBag.GBPLabels + ViewBag.GBPOffset)</b></p>
+</div>
+}

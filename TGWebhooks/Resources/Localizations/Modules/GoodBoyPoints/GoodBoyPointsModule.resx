@@ -117,6 +117,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="GBPBaseLabel" xml:space="preserve">
+    <value>Base</value>
+  </data>
+  <data name="GBPHeader" xml:space="preserve">
+    <value>Good Boy Points</value>
+  </data>
+  <data name="GBPLabelsLabel" xml:space="preserve">
+    <value>From PR</value>
+  </data>
+  <data name="GBPOffsetLabel" xml:space="preserve">
+    <value>From Maintainers</value>
+  </data>
   <data name="GBPResult" xml:space="preserve">
     <value>Merging this pull request will adjust the user's GBP by {0}, resulting in a new total of {1}</value>
   </data>

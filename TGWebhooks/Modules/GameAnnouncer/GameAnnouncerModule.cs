@@ -20,6 +20,9 @@ namespace TGWebhooks.Modules.GameAnnouncer
 	sealed class GameAnnouncerModule : IModule, IPayloadHandler<PullRequestEventPayload>
 	{
 		/// <inheritdoc />
+		public bool Enabled { get; set; }
+
+		/// <inheritdoc />
 		public Guid Uid => new Guid("a52b2545-94e3-4d74-bb8a-bb9ca94194c3");
 
 		/// <inheritdoc />
@@ -66,6 +69,9 @@ namespace TGWebhooks.Modules.GameAnnouncer
 
 		/// <inheritdoc />
 		public Task Initialize(CancellationToken cancellationToken) => Task.CompletedTask;
+
+		/// <inheritdoc />
+		public Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken) => Task.CompletedTask;
 
 		/// <inheritdoc />
 		public Task ProcessPayload(PullRequestEventPayload payload, CancellationToken cancellationToken)
