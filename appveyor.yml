@@ -18,7 +18,7 @@ install:
 build:
   project: tgstation-github-automation-tools.sln
 before_build:
-  - dotnet restore
+  - dotnet restore tgstation-github-automation-tools.sln
 after_build:
   - ps: if($env:CONFIGURATION -match "Release") { if($env:APPVEYOR_REPO_BRANCH -match "master"){ $env:NugetDeploy = "Do it." } }
 test_script:
