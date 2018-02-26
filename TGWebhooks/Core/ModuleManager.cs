@@ -20,6 +20,9 @@ namespace TGWebhooks.Core
 
 		/// <inheritdoc />
 		public IEnumerable<IMergeHook> MergeHooks => modulesAndEnabledStatus.Where(x => x.Value).SelectMany(x => x.Key.MergeHooks);
+
+		/// <inheritdoc />
+		public IDictionary<IModule, bool> ModuleStatuses => modulesAndEnabledStatus;
 		
 		/// <summary>
 		/// The <see cref="ILogger{TCategoryName}"/> for the <see cref="ModuleManager"/>
@@ -124,6 +127,21 @@ namespace TGWebhooks.Core
 		{
 			logger.LogTrace("Enumerating payload handlers.");
 			return modulesAndEnabledStatus.Where(x => x.Value).SelectMany(x => x.Key.GetPayloadHandlers<TPayload>());
+		}
+
+		/// <inheritdoc />
+		public async Task SetModuleEnabled(Guid guid, bool enabled, CancellationToken cancellationToken)
+		{
+			var module = modulesAndEnabledStatus.Keys.First(x => x.Uid == guid);
+			if (modulesAndEnabledStatus[module] == enabled)
+				return;
+			modulesAndEnabledStatus[module] = enabled;
+
+			var dbentry = await databaseContext.ModuleMetadatas.Where(x => x.Id == guid).ToAsyncEnumerable().First(cancellationToken).ConfigureAwait(false);
+			dbentry.Enabled = enabled;
+			await databaseContext.Save(cancellationToken);
+
+			logger.LogInformation("Modules {0} enabled status set to {1}", guid, enabled);
 		}
 	}
 }

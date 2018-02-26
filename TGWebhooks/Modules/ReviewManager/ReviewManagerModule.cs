@@ -21,7 +21,7 @@ namespace TGWebhooks.Modules.ReviewManager
 		public string Name => "Review Manager";
 
 		/// <inheritdoc />
-		public string Description => "Manages maintainer reviews";
+		public string Description => "Manages auto-dismissal and tagging of maintainer reviews";
 
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => new List<IMergeRequirement> { this };

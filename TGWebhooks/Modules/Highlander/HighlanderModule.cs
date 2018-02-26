@@ -18,10 +18,10 @@ namespace TGWebhooks.Modules.Highlander
 		public Guid Uid => new Guid("ec74d6d5-c0ac-46d2-bcec-f52494e2e8c6");
 
 		/// <inheritdoc />
-		public string Name => "One Per Person";
+		public string Name => "One Pull Per Person";
 
 		/// <inheritdoc />
-		public string Description => "Only allows one pull request to be open at a time per GitHub user";
+		public string Description => "Only allows one pull request to be open at a time per GitHub user. Maintainers exempt";
 
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => Enumerable.Empty<IMergeRequirement>();
@@ -66,6 +66,9 @@ namespace TGWebhooks.Modules.Highlander
 				throw new ArgumentNullException(nameof(payload));
 			if (payload.Action != "opened")
 				throw new NotSupportedException();
+
+			if (await gitHubManager.UserHasWriteAccess(payload.PullRequest.User).ConfigureAwait(false))
+				return;
 
 			var allPrs = await gitHubManager.GetOpenPullRequests().ConfigureAwait(false);
 			string result = null;

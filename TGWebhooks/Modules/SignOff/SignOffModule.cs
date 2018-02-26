@@ -27,7 +27,7 @@ namespace TGWebhooks.Modules.SignOff
 		public string Name => "Maintainer Sign Off";
 
 		/// <inheritdoc />
-		public string Description => "Merge requirement of having a maintainer approve the 'idea' of a Pull Request. Sign offs are automatically dissmissed if the pull request body or title changes";
+		public string Description => "Require maintainers approving the 'idea' of a Pull Request aside from code. Sign offs are automatically dissmissed if the pull request body or title changes";
 
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => new List<IMergeRequirement> { this };

@@ -26,7 +26,7 @@ namespace TGWebhooks.Modules.TwentyFourHourRule
 		public string Name => "24-Hour Rule";
 
 		/// <inheritdoc />
-		public string Description => "Merge requirement of having 24 hours pass since the pull request was originally opened";
+		public string Description => "Require 24 hours to pass since the pull request was originally opened";
 
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => new List<IMergeRequirement> { this };
