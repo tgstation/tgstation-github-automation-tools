@@ -1,0 +1,46 @@
+﻿<div class="row">
+    <div class="col-md-12 text-center"><h3>@ViewBag.Title</h3></div>
+    <div class="col-sm-12">
+        @{ IDictionary<IModule, bool> modulesMap = ViewBag.ModulesMap;
+            foreach (var I in modulesMap)
+            {
+        <a href="#" class="list-group-item">
+            <b>@I.Key.Name</b>
+            @String.Format(" - {0}", I.Key.Description)
+            @Html.CheckBox("CB" + I.Key.Uid.ToString(), I.Value, new { @class = "pull-right" })
+            <i class="fa fa-spinner" id="@("SP" + I.Key.Uid.ToString())" style="display: none"></i>
+        </a>
+            }
+        }
+    </div>
+</div>
+
+@section Scripts{
+<script type="text/javascript">
+        $(function () {
+        @{  foreach (var I in modulesMap)
+            {
+                @:$('#CB' + '@I.Key.Uid').change(function () {
+                    @:$('#SP' + '@I.Key.Uid').removeClass("fa-check");
+                    @:$('#SP' + '@I.Key.Uid').removeClass("fa-times");
+                    @:$('#SP' + '@I.Key.Uid').addClass("fa-spinner");
+                    @:$('#SP' + '@I.Key.Uid').css("color", "");
+                    @:$('#SP' + '@I.Key.Uid').show();
+                    @:$('#SP' + '@I.Key.Uid').addClass("fa-spin");
+                    @:$.ajax({ type: 'POST', url: '@Url.Action("Update", "Modules")', data: JSON.stringify({ Uid: '@I.Key.Uid.ToString()', Enabled: this.checked }), contentType: "application/json" , success : function () {
+                    @:$('#SP' + '@I.Key.Uid').removeClass("fa-spin");
+                    @:$('#SP' + '@I.Key.Uid').removeClass("fa-spinner");
+                    @:$('#SP' + '@I.Key.Uid').css("color", "green");
+                    @:$('#SP' + '@I.Key.Uid').addClass("fa-check");
+                    @:}, error: function () {
+                    @:$('#SP' + '@I.Key.Uid').removeClass("fa-spin");
+                    @:$('#SP' + '@I.Key.Uid').removeClass("fa-spinner");
+                    @:$('#SP' + '@I.Key.Uid').css("color", "red");
+                    @:$('#SP' + '@I.Key.Uid').addClass("fa-times");
+                    @:}});
+                @:});
+            }
+        }
+        });
+</script>
+}

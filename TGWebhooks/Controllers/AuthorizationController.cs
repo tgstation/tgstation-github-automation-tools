@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Modules;
@@ -71,12 +72,13 @@ namespace TGWebhooks.Controllers
 		/// <summary>
 		/// Signs out the user and closes their window
 		/// </summary>
-		/// <returns>An <see cref="OkResult"/></returns>
-		[HttpGet("SignOut/{prNumber}")]
-		public IActionResult SignOut(int prNumber)
+		/// <param name="prNumber">The <see cref="Octokit.PullRequest.Number"/> to redirect to, defaults to the first open pull request</param>
+		/// <returns>An <see cref="RedirectToActionResult"/></returns>
+		[HttpGet("SignOut/{prNumber = 0}")]
+		public async Task<IActionResult> SignOut(int prNumber = 0)
 		{
 			gitHubManager.ExpireAuthorization(Response.Cookies);
-			return RedirectToAction("ReviewPullRequest", "PullRequest", new{ number = prNumber });
+			return RedirectToAction("ReviewPullRequest", "PullRequest", new{ number = prNumber > 0 ? prNumber : (await gitHubManager.GetOpenPullRequests().ConfigureAwait(false)).First().Number });
 		}
 	}
 }

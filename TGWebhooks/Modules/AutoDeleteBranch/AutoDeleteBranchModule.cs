@@ -13,6 +13,9 @@ namespace TGWebhooks.Modules.AutoDeleteBranch
 	sealed class AutoDeleteBranchModule : IModule, IPayloadHandler<PullRequestEventPayload>
 	{
 		/// <inheritdoc />
+		public bool Enabled { get; set; }
+
+		/// <inheritdoc />
 		public Guid Uid => new Guid("d4235804-4cb8-4e81-bc7f-f08f8c2918d6");
 
 		/// <inheritdoc />
@@ -35,7 +38,7 @@ namespace TGWebhooks.Modules.AutoDeleteBranch
 		/// <summary>
 		/// Construct an <see cref="AutoDeleteBranchModule"/>
 		/// </summary>
-		/// <param name="gitHubManager">The value of <see cref="IGitHubClient"/></param>
+		/// <param name="gitHubManager">The value of <see cref="gitHubManager"/></param>
 		public AutoDeleteBranchModule(IGitHubManager gitHubManager)
 		{
 			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
@@ -65,5 +68,8 @@ namespace TGWebhooks.Modules.AutoDeleteBranch
 
 			await gitHubManager.DeleteBranch(payload.PullRequest.Head.Ref);
 		}
+
+		/// <inheritdoc />
+		public Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken) => Task.CompletedTask;
 	}
 }

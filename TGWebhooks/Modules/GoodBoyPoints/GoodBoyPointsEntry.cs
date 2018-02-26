@@ -3,7 +3,7 @@
 	/// <summary>
 	/// An entry of good boy points
 	/// </summary>
-    sealed class GoodBoyPointsEntry
+    public sealed class GoodBoyPointsEntry
     {
 		/// <summary>
 		/// The points value

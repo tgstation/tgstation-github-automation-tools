@@ -16,6 +16,9 @@ namespace TGWebhooks.Modules.PRTagger
 	public sealed class PullRequestLabellerModule : IModule, IPayloadHandler<PullRequestEventPayload>
 	{
 		/// <inheritdoc />
+		public bool Enabled { get; set; }
+
+		/// <inheritdoc />
 		public Guid Uid => new Guid("3a6dd37c-3dee-4a7a-a016-885a4a775968");
 
 		/// <inheritdoc />
@@ -265,5 +268,8 @@ namespace TGWebhooks.Modules.PRTagger
 			}
 			throw new NotSupportedException();
 		}
+
+		/// <inheritdoc />
+		public Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken) => Task.CompletedTask;
 	}
 }

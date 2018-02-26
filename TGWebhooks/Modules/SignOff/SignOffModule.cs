@@ -15,6 +15,9 @@ namespace TGWebhooks.Modules.SignOff
 	/// </summary>
 	sealed class SignOffModule : IModule, IMergeRequirement, IPayloadHandler<PullRequestEventPayload>
 	{
+		/// <inheritdoc />
+		public bool Enabled { get; set; }
+
 		/// <summary>
 		/// The key in <see cref="dataStore"/> where <see cref="PullRequestSignOffs"/>s are stored
 		/// </summary>
@@ -27,7 +30,7 @@ namespace TGWebhooks.Modules.SignOff
 		public string Name => "Maintainer Sign Off";
 
 		/// <inheritdoc />
-		public string Description => "Merge requirement of having a maintainer approve the 'idea' of a Pull Request. Sign offs are automatically dissmissed if the pull request body or title changes";
+		public string Description => "Require maintainers approving the 'idea' of a Pull Request aside from code. Sign offs are automatically dissmissed if the pull request body or title changes";
 
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => new List<IMergeRequirement> { this };
@@ -88,6 +91,9 @@ namespace TGWebhooks.Modules.SignOff
 
 		/// <inheritdoc />
 		public Task Initialize(CancellationToken cancellationToken) => Task.CompletedTask;
+
+		/// <inheritdoc />
+		public Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken) => Task.CompletedTask;
 
 		/// <inheritdoc />
 		public async Task ProcessPayload(PullRequestEventPayload payload, CancellationToken cancellationToken)

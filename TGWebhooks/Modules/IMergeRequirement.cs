@@ -10,16 +10,6 @@ namespace TGWebhooks.Modules
 	public interface IMergeRequirement
 	{
 		/// <summary>
-		/// The user friendly name of the <see cref="IMergeRequirement"/>
-		/// </summary>
-		string Name { get; }
-
-		/// <summary>
-		/// A description of the <see cref="Description"/>
-		/// </summary>
-		string Description { get; }
-
-		/// <summary>
 		/// Run the <see cref="IMergeRequirement"/> for a given <paramref name="pullRequest"/>
 		/// </summary>
 		/// <param name="pullRequest">The <see cref="PullRequest"/> to check</param>

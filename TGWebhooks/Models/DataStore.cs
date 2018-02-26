@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Modules;
@@ -53,6 +55,17 @@ namespace TGWebhooks.Models
 			}
 			result.Value = json;
 			await databaseContext.Save(cancellationToken).ConfigureAwait(false);
+		}
+
+		/// <inheritdoc />
+		public async Task<Dictionary<string, object>> ExportDictionary(CancellationToken cancellationToken)
+		{
+			var prefixString = prefix.ToString();
+			var results = await databaseContext.KeyValuePairs.Where(x => x.Key.StartsWith(prefixString)).ToAsyncEnumerable().ToList().ConfigureAwait(false);
+			var dic = new Dictionary<string, object>();
+			foreach(var I in results)
+				dic.Add(I.Key.Substring(prefixString.Length), JsonConvert.DeserializeObject(I.Value));
+			return dic;
 		}
 	}
 }

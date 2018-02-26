@@ -6,6 +6,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Modules;
 using TGWebhooks.Configuration;
+using TGWebhooks.Modules.GoodBoyPoints;
+using TGWebhooks.Core;
+using System.Collections.Generic;
 
 namespace TGWebhooks.Controllers
 {
@@ -36,6 +39,14 @@ namespace TGWebhooks.Controllers
 		/// The <see cref="GitHubConfiguration"/> for the <see cref="PullRequestController"/>
 		/// </summary>
 		readonly GitHubConfiguration gitHubConfiguration;
+		/// <summary>
+		/// The <see cref="IModuleManager"/> for the <see cref="PullRequestController"/>
+		/// </summary>
+		readonly IModuleManager moduleManager;
+		/// <summary>
+		/// The <see cref="IComponentProvider"/> for the <see cref="PullRequestController"/>
+		/// </summary>
+		readonly IComponentProvider componentProvider;
 
 		/// <summary>
 		/// Construct a <see cref="PullRequestController"/>
@@ -44,10 +55,14 @@ namespace TGWebhooks.Controllers
 		/// <param name="stringLocalizer">The value of <see cref="stringLocalizer"/></param>
 		/// <param name="generalConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing value of <see cref="generalConfiguration"/></param>
 		/// <param name="githubConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing value of <see cref="generalConfiguration"/></param>
-		public PullRequestController(IGitHubManager gitHubManager, IStringLocalizer<PullRequestController> stringLocalizer, IOptions<GeneralConfiguration> generalConfigurationOptions, IOptions<GitHubConfiguration> githubConfigurationOptions)
+		/// <param name="moduleManager">The value of <see cref="moduleManager"/></param>
+		/// <param name="componentProvider">The value of <see cref="componentProvider"/></param>
+		public PullRequestController(IGitHubManager gitHubManager, IStringLocalizer<PullRequestController> stringLocalizer, IOptions<GeneralConfiguration> generalConfigurationOptions, IOptions<GitHubConfiguration> githubConfigurationOptions, IModuleManager moduleManager, IComponentProvider componentProvider)
 		{
 			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
 			this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
+			this.moduleManager = moduleManager ?? throw new ArgumentNullException(nameof(moduleManager));
+			this.componentProvider = componentProvider ?? throw new ArgumentNullException(nameof(componentProvider));
 			generalConfiguration = generalConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(generalConfigurationOptions));
 			gitHubConfiguration = githubConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(githubConfigurationOptions));
 		}
@@ -64,6 +79,7 @@ namespace TGWebhooks.Controllers
 			var token = await gitHubManager.CheckAuthorization(Request.Cookies, cancellationToken).ConfigureAwait(false);
 
 			ViewBag.Title = stringLocalizer["PullRequest", number];
+			ViewBag.Modules = stringLocalizer["ManageModules"];
 			ViewBag.PRNumber = number;
 			ViewBag.RepoOwner = gitHubConfiguration.RepoOwner;
 			ViewBag.RepoName = gitHubConfiguration.RepoName;
@@ -72,19 +88,26 @@ namespace TGWebhooks.Controllers
 			ViewBag.PullRequestAuthor = pr.User.Login;
 			ViewBag.PullRequestAuthorID = pr.User.Id;
 			ViewBag.PullRequestTitle = pr.Title;
-
+			ViewBag.PullRequestNumber = pr.Number;
 
 			if (token == null)
 			{
 				ViewBag.AuthHref = String.Concat(generalConfiguration.RootURL.ToString(), "Authorize/Login/", number);
 				ViewBag.AuthTitle = stringLocalizer["SignIn"];
+				ViewBag.IsMaintainer = false;
 			}
 			else
 			{
 				var user = await gitHubManager.GetUserLogin(token, cancellationToken).ConfigureAwait(false);
+				ViewBag.IsMaintainer = await gitHubManager.UserHasWriteAccess(user).ConfigureAwait(false);
 				ViewBag.AuthHref = String.Concat(generalConfiguration.RootURL.ToString(), "Authorize/SignOut/", number);
 				ViewBag.AuthTitle = stringLocalizer["SignOut", user.Login];
 			}
+
+			ViewBag.ModuleViews = new List<string>();
+
+			await componentProvider.AddViewVars(pr, ViewBag, cancellationToken);
+
 			return View();
 		}
 	}
