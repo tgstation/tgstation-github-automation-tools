@@ -1,0 +1,14 @@
+var searchData=
+[
+  ['readallbytes',['ReadAllBytes',['../class_t_g_webhooks_1_1_core_1_1_default_i_o_manager.html#a4da65a24df9dde0712af1dd1ef69e007',1,'TGWebhooks.Core.DefaultIOManager.ReadAllBytes()'],['../interface_t_g_webhooks_1_1_modules_1_1_i_i_o_manager.html#a5a0a35927dfaf0944e638e35774fc34d',1,'TGWebhooks.Modules.IIOManager.ReadAllBytes()']]],
+  ['readdata_3c_20tdata_20_3e',['ReadData&lt; TData &gt;',['../class_t_g_webhooks_1_1_models_1_1_data_store.html#ae5f2c406aabf6645c633529f1037c3e6',1,'TGWebhooks.Models.DataStore.ReadData&lt; TData &gt;()'],['../interface_t_g_webhooks_1_1_modules_1_1_i_data_store.html#ad9336af700c7d62c043b3539b464e212',1,'TGWebhooks.Modules.IDataStore.ReadData&lt; TData &gt;()']]],
+  ['receive',['Receive',['../class_t_g_webhooks_1_1_controllers_1_1_payloads_controller.html#a66da0cd51cdfb64b1617b4a95a79a709',1,'TGWebhooks::Controllers::PayloadsController']]],
+  ['recheckpullrequest',['RecheckPullRequest',['../class_t_g_webhooks_1_1_core_1_1_auto_merge_handler.html#a5b0878ad35582d8d19945e2ce549ac6a',1,'TGWebhooks::Core::AutoMergeHandler']]],
+  ['repository',['Repository',['../class_t_g_webhooks_1_1_core_1_1_repository.html#ad8f915959a3241e496385744e8f4fdfa',1,'TGWebhooks::Core::Repository']]],
+  ['resolvepath',['ResolvePath',['../class_t_g_webhooks_1_1_core_1_1_default_i_o_manager.html#ac0fb805d8ae2cb35b5d2bfdd5672b185',1,'TGWebhooks.Core.DefaultIOManager.ResolvePath()'],['../class_t_g_webhooks_1_1_core_1_1_resolving_i_o_manager.html#a219fdbdca9f753eb908938fe7bceb98c',1,'TGWebhooks.Core.ResolvingIOManager.ResolvePath()'],['../interface_t_g_webhooks_1_1_modules_1_1_i_i_o_manager.html#a804f948ddc15487e9e4882159bc7d550',1,'TGWebhooks.Modules.IIOManager.ResolvePath()']]],
+  ['resolvingiomanager',['ResolvingIOManager',['../class_t_g_webhooks_1_1_core_1_1_resolving_i_o_manager.html#a31c030680d375c85d0fff0c4279f3fc1',1,'TGWebhooks::Core::ResolvingIOManager']]],
+  ['restartbuild',['RestartBuild',['../class_t_g_webhooks_1_1_core_1_1_travis_continuous_integration.html#af24d50941dd689fa1eb09ca0c558e44d',1,'TGWebhooks::Core::TravisContinuousIntegration']]],
+  ['reviewmanagermodule',['ReviewManagerModule',['../class_t_g_webhooks_1_1_modules_1_1_review_manager_1_1_review_manager_module.html#ad8fffa51f3c511587920be925bf607db',1,'TGWebhooks::Modules::ReviewManager::ReviewManagerModule']]],
+  ['reviewpullrequest',['ReviewPullRequest',['../class_t_g_webhooks_1_1_controllers_1_1_pull_request_controller.html#ac76bb9a74cd77d0e3b5fde49dcabe0c2',1,'TGWebhooks::Controllers::PullRequestController']]],
+  ['runrequest',['RunRequest',['../class_t_g_webhooks_1_1_core_1_1_web_request_manager.html#ae511751fe546fb5f8fdc01fec32f079d',1,'TGWebhooks.Core.WebRequestManager.RunRequest()'],['../interface_t_g_webhooks_1_1_modules_1_1_i_web_request_manager.html#a6789a04b7e8879d74ea6ff3db6ee4c7b',1,'TGWebhooks.Modules.IWebRequestManager.RunRequest()']]]
+];

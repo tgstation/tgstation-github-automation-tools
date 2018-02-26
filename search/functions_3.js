@@ -1,0 +1,11 @@
+var searchData=
+[
+  ['databasecontext',['DatabaseContext',['../class_t_g_webhooks_1_1_models_1_1_database_context.html#a3b5466511cc4eb055bee137269fa83e1',1,'TGWebhooks::Models::DatabaseContext']]],
+  ['datastore',['DataStore',['../class_t_g_webhooks_1_1_models_1_1_data_store.html#a219b21de6ed49cb57c51981f560794a3',1,'TGWebhooks::Models::DataStore']]],
+  ['datastorefactory',['DataStoreFactory',['../class_t_g_webhooks_1_1_core_1_1_data_store_factory.html#a38a94f222965506622b7b43f7c0dc2ec',1,'TGWebhooks::Core::DataStoreFactory']]],
+  ['deletedirectory',['DeleteDirectory',['../class_t_g_webhooks_1_1_core_1_1_default_i_o_manager.html#ada733586a819aea834e6bb42a193d558',1,'TGWebhooks.Core.DefaultIOManager.DeleteDirectory()'],['../interface_t_g_webhooks_1_1_modules_1_1_i_i_o_manager.html#a1ee492f465270fc385f839532a145258',1,'TGWebhooks.Modules.IIOManager.DeleteDirectory()']]],
+  ['deletefile',['DeleteFile',['../class_t_g_webhooks_1_1_core_1_1_default_i_o_manager.html#aabc337a497d68357e37524768f6d84be',1,'TGWebhooks.Core.DefaultIOManager.DeleteFile()'],['../interface_t_g_webhooks_1_1_modules_1_1_i_i_o_manager.html#adf666be213e08d872357d20c46540fbc',1,'TGWebhooks.Modules.IIOManager.DeleteFile()']]],
+  ['directoryexists',['DirectoryExists',['../class_t_g_webhooks_1_1_core_1_1_default_i_o_manager.html#a0b0c5fc3d5892659567fc7cf675d90ba',1,'TGWebhooks.Core.DefaultIOManager.DirectoryExists()'],['../interface_t_g_webhooks_1_1_modules_1_1_i_i_o_manager.html#ad256fb352c3190e857906c235e3ff5f6',1,'TGWebhooks.Modules.IIOManager.DirectoryExists()']]],
+  ['dismissreview',['DismissReview',['../class_t_g_webhooks_1_1_core_1_1_git_hub_manager.html#a977f81bca2f62859adab358e2014ec46',1,'TGWebhooks.Core.GitHubManager.DismissReview()'],['../interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a880f5ad5fcc4d869c59aa077aaf2cf43',1,'TGWebhooks.Modules.IGitHubManager.DismissReview()']]],
+  ['dispose',['Dispose',['../class_t_g_webhooks_1_1_core_1_1_git_hub_manager.html#a3f95a4fbb927424d3af2997231c1fa40',1,'TGWebhooks.Core.GitHubManager.Dispose()'],['../class_t_g_webhooks_1_1_core_1_1_repository.html#a87436eb607fc542dfa88d2f6136f574d',1,'TGWebhooks.Core.Repository.Dispose()'],['../class_t_g_webhooks_1_1_modules_1_1_semaphore_slim_context.html#aee56765cf808bb95d0d42892021e453e',1,'TGWebhooks.Modules.SemaphoreSlimContext.Dispose()']]]
+];
