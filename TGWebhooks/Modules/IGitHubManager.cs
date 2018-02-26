@@ -172,5 +172,12 @@ namespace TGWebhooks.Modules
 		/// <param name="description">A description of the <see cref="CommitStatus"/></param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
 		Task SetCommitStatus(PullRequest pullRequest, CommitState commitState, string description);
+
+		/// <summary>
+		/// Deletes a given <see cref="Branch"/> on the target repository
+		/// </summary>
+		/// <param name="branchName">The name of the <see cref="Branch"/> to delete</param>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		Task DeleteBranch(string branchName);
 	}
 }
