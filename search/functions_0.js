@@ -7,5 +7,6 @@ var searchData=
   ['application',['Application',['../class_t_g_webhooks_1_1_core_1_1_application.html#a798bc328b0e872b581456da9248a0404',1,'TGWebhooks::Core::Application']]],
   ['approvepullrequest',['ApprovePullRequest',['../class_t_g_webhooks_1_1_core_1_1_git_hub_manager.html#aea12abd6e6f14cbd60abe13992dd1eab',1,'TGWebhooks.Core.GitHubManager.ApprovePullRequest()'],['../interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#ac459a985e1a81b6365b33d52e34b54dc',1,'TGWebhooks.Modules.IGitHubManager.ApprovePullRequest()']]],
   ['authorizationcontroller',['AuthorizationController',['../class_t_g_webhooks_1_1_controllers_1_1_authorization_controller.html#ab12d8647840a6aa8311712dd55371715',1,'TGWebhooks::Controllers::AuthorizationController']]],
+  ['autodeletebranchmodule',['AutoDeleteBranchModule',['../class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#a8dda0f74c16cd057d0d1d6df80152898',1,'TGWebhooks::Modules::AutoDeleteBranch::AutoDeleteBranchModule']]],
   ['automergehandler',['AutoMergeHandler',['../class_t_g_webhooks_1_1_core_1_1_auto_merge_handler.html#a2783d79d968b143912bb86f797b57d6c',1,'TGWebhooks::Core::AutoMergeHandler']]]
 ];
