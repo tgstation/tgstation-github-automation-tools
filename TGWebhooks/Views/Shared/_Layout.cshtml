@@ -15,9 +15,18 @@
                 <a class="navbar-brand" href="#">/tg/station 13 GitHub Automation Tools</a>
             </div>
             <div class="navbar-collapse collapse">
+                @if (ViewBag.Title != ViewBag.Modules)
+                {
                 <ul class="nav navbar-nav">
                     <li><a href="https://github.com/@ViewBag.RepoOwner/@ViewBag.RepoName/pull/@ViewBag.PRNumber">@ViewBag.Title</a></li>
                 </ul>
+                }
+                @if (ViewBag.IsMaintainer)
+                {
+                    <ul class="nav navbar-nav">
+                        <li><a asp-controller="Modules" asp-action="Index">@ViewBag.Modules</a></li>
+                    </ul>
+                }
                 <ul class="nav navbar-nav">
                     <li><a href="@ViewBag.AuthHref">@ViewBag.AuthTitle</a></li>
                 </ul>

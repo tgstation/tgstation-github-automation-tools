@@ -74,11 +74,11 @@ namespace TGWebhooks.Controllers
 		/// </summary>
 		/// <param name="prNumber">The <see cref="Octokit.PullRequest.Number"/> to redirect to, defaults to the first open pull request</param>
 		/// <returns>An <see cref="RedirectToActionResult"/></returns>
-		[HttpGet("SignOut/{prNumber}")]
-		public async Task<IActionResult> SignOut(int? prNumber = null)
+		[HttpGet("SignOut/{prNumber = 0}")]
+		public async Task<IActionResult> SignOut(int prNumber = 0)
 		{
 			gitHubManager.ExpireAuthorization(Response.Cookies);
-			return RedirectToAction("ReviewPullRequest", "PullRequest", new{ number = prNumber ?? (await gitHubManager.GetOpenPullRequests().ConfigureAwait(false)).First().Number });
+			return RedirectToAction("ReviewPullRequest", "PullRequest", new{ number = prNumber > 0 ? prNumber : (await gitHubManager.GetOpenPullRequests().ConfigureAwait(false)).First().Number });
 		}
 	}
 }

@@ -64,6 +64,7 @@ namespace TGWebhooks.Controllers
 			var token = await gitHubManager.CheckAuthorization(Request.Cookies, cancellationToken).ConfigureAwait(false);
 
 			ViewBag.Title = stringLocalizer["PullRequest", number];
+			ViewBag.Modules = stringLocalizer["ManageModules"];
 			ViewBag.PRNumber = number;
 			ViewBag.RepoOwner = gitHubConfiguration.RepoOwner;
 			ViewBag.RepoName = gitHubConfiguration.RepoName;
@@ -78,10 +79,12 @@ namespace TGWebhooks.Controllers
 			{
 				ViewBag.AuthHref = String.Concat(generalConfiguration.RootURL.ToString(), "Authorize/Login/", number);
 				ViewBag.AuthTitle = stringLocalizer["SignIn"];
+				ViewBag.IsMaintainer = false;
 			}
 			else
 			{
 				var user = await gitHubManager.GetUserLogin(token, cancellationToken).ConfigureAwait(false);
+				ViewBag.IsMaintainer = await gitHubManager.UserHasWriteAccess(user).ConfigureAwait(false);
 				ViewBag.AuthHref = String.Concat(generalConfiguration.RootURL.ToString(), "Authorize/SignOut/", number);
 				ViewBag.AuthTitle = stringLocalizer["SignOut", user.Login];
 			}

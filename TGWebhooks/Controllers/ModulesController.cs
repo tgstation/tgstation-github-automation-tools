@@ -80,9 +80,11 @@ namespace TGWebhooks.Controllers
 				return Forbid();
 
 			ViewBag.Title = stringLocalizer["Title"];
+			ViewBag.Modules = ViewBag.Title;
 			ViewBag.AuthHref = String.Concat(generalConfiguration.RootURL.ToString(), "Authorize/SignOut");
 			ViewBag.AuthTitle = stringLocalizer["SignOut", user.Login];
 			ViewBag.ModulesMap = moduleManager.ModuleStatuses;
+			ViewBag.IsMaintainer = true;
 			return View();
 		}
 
