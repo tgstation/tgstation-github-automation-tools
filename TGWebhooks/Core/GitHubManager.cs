@@ -406,5 +406,8 @@ namespace TGWebhooks.Core
 			IssueArgumentCheck(number);
 			return gitHubClient.Issue.Update(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, number, new IssueUpdate { State = ItemState.Closed });
 		}
+
+		/// <inheritdoc />
+		public Task DeleteBranch(string branchName) => gitHubClient.Git.Reference.Delete(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, branchName);
 	}
 }
