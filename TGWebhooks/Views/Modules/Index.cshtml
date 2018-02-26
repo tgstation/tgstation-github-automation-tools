@@ -27,7 +27,7 @@
                     @:$('#SP' + '@I.Key.Uid').css("color", "");
                     @:$('#SP' + '@I.Key.Uid').show();
                     @:$('#SP' + '@I.Key.Uid').addClass("fa-spin");
-                    @:$.ajax({ type: 'POST', 'url': '@Url.Action("Update", "Modules")', data: JSON.stringify({ Uid: '@I.Key.Uid.ToString()', Enabled: this.checked }), contentType: "application/json" , success : function () {
+                    @:$.ajax({ type: 'POST', url: '@Url.Action("Update", "Modules")', data: JSON.stringify({ Uid: '@I.Key.Uid.ToString()', Enabled: this.checked }), contentType: "application/json" , success : function () {
                     @:$('#SP' + '@I.Key.Uid').removeClass("fa-spin");
                     @:$('#SP' + '@I.Key.Uid').removeClass("fa-spinner");
                     @:$('#SP' + '@I.Key.Uid').css("color", "green");

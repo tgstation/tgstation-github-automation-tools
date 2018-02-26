@@ -1,7 +1,47 @@
 ﻿@if (ViewBag.GBPStatuses)
 {
-<div class="row">
-	<h4>@ViewBag.GBPHeader:</h4>
-	<p>@ViewBag.GBPBaseLabel : @ViewBag.GBPBase + @ViewBag.GBPLabelsLabel : @ViewBag.GBPLabels + @ViewBag.GBPOffsetLabel : @ViewBag.GBPOffset = <b>@(ViewBag.GBPBase + ViewBag.GBPLabels + ViewBag.GBPOffset)</b></p>
-</div>
+    <div class="row">
+        <h3>@ViewBag.GBPHeader:</h3>
+        <p id="gbpParagraph">@ViewBag.GBPBaseLabel : @ViewBag.GBPBase + @ViewBag.GBPLabelsLabel : @ViewBag.GBPLabels + @ViewBag.GBPOffsetLabel : @ViewBag.GBPOffset = <b id="gbpTotalAmount">@(ViewBag.GBPBase + ViewBag.GBPLabels + ViewBag.GBPOffset)</b></p>
+    </div>
+    if (ViewBag.IsMaintainer)
+    {
+    <div class="row">
+        <p class="col-xs-3">Adjust GBP Reward:</p>
+        <input class="col-xs-3" id="gbpAdjuster" type="number" value="@ViewBag.GBPOffset" />
+        <i class="fa fa-spinner" id="gbpSpinner" style="display: none"></i>
+        <script type="text/javascript">
+            $(function () {
+                $('#gbpAdjuster').change(function () {
+                    $('#gbpSpinner').addClass("fa-spinner");
+                    $('#gbpSpinner').css("color", "");
+                    $('#gbpSpinner').removeClass("fa-check");
+                    $('#gbpSpinner').removeClass("fa-times");
+                    $('#gbpSpinner').show();
+                    var newVal = $('#gbpAdjuster').val();
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("SetOffset", "GoodBoyPoints", new { prNumber = ViewBag.PullRequestNumber})',
+                        data: JSON.stringify({
+                            Offset: newVal
+                        }),
+                        contentType: "application/json",
+                        success: function () {
+                            $('#gbpSpinner').removeClass("fa-spin");
+                            $('#gbpSpinner').removeClass("fa-spinner");
+                            $('#gbpSpinner').css("color", "green");
+                            $('#gbpSpinner').addClass("fa-check");
+                            $('#gbpParagraph').html("@ViewBag.GBPBaseLabel : @ViewBag.GBPBase + @ViewBag.GBPLabelsLabel : @ViewBag.GBPLabels + @ViewBag.GBPOffsetLabel : " + newVal + " = <b>" + (@(ViewBag.GBPBase + ViewBag.GBPLabels) + parseInt(newVal)) + "</b>");
+                        },
+                        error: function () {
+                            $('#gbpSpinner').removeClass("fa-spin");
+                            $('#gbpSpinner').removeClass("fa-spinner");
+                            $('#gbpSpinner').css("color", "red");
+                            $('#gbpSpinner').addClass("fa-times");
+                    }});
+                });
+            });
+        </script>
+    </div>
+    }
 }
