@@ -117,12 +117,42 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a2975e070679530795b4e715e25e6885a"><td class="memItemLeft" align="right" valign="top">Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_data_store.html#a2975e070679530795b4e715e25e6885a">WriteData&lt; TData &gt;</a> (string key, TData data, CancellationToken cancellationToken)</td></tr>
 <tr class="memdesc:a2975e070679530795b4e715e25e6885a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Save some <em>TData</em>  to the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_data_store.html" title="Simple key-value data store ">IDataStore</a>  <a href="#a2975e070679530795b4e715e25e6885a">More...</a><br /></td></tr>
 <tr class="separator:a2975e070679530795b4e715e25e6885a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a355d51c5b9fc52d36d30059568996a15"><td class="memItemLeft" align="right" valign="top">Task&lt; Dictionary&lt; string, object &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_data_store.html#a355d51c5b9fc52d36d30059568996a15">ExportDictionary</a> (CancellationToken cancellationToken)</td></tr>
+<tr class="memdesc:a355d51c5b9fc52d36d30059568996a15"><td class="mdescLeft">&#160;</td><td class="mdescRight">Exports the entire <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_data_store.html" title="Simple key-value data store ">IDataStore</a> as a json string  <a href="#a355d51c5b9fc52d36d30059568996a15">More...</a><br /></td></tr>
+<tr class="separator:a355d51c5b9fc52d36d30059568996a15"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Simple key-value data store </p>
 
-<p>Definition at line <a class="el" href="_i_data_store_8cs_source.html#l00009">9</a> of file <a class="el" href="_i_data_store_8cs_source.html">IDataStore.cs</a>.</p>
+<p>Definition at line <a class="el" href="_i_data_store_8cs_source.html#l00010">10</a> of file <a class="el" href="_i_data_store_8cs_source.html">IDataStore.cs</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a355d51c5b9fc52d36d30059568996a15"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Task&lt;Dictionary&lt;string, object&gt; &gt; TGWebhooks.Modules.IDataStore.ExportDictionary </td>
+          <td>(</td>
+          <td class="paramtype">CancellationToken&#160;</td>
+          <td class="paramname"><em>cancellationToken</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Exports the entire <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_data_store.html" title="Simple key-value data store ">IDataStore</a> as a json string </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cancellationToken</td><td>The CancellationToken for the operation</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A Task&lt;TResult&gt; resulting in the object tree of the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_data_store.html" title="Simple key-value data store ">IDataStore</a></dd></dl>
+
+<p>Implemented in <a class="el" href="class_t_g_webhooks_1_1_models_1_1_data_store.html#ab73eecec86a19650fa1594469775fb6a">TGWebhooks.Models.DataStore</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="ad9336af700c7d62c043b3539b464e212"></a>
 <div class="memitem">
 <div class="memproto">

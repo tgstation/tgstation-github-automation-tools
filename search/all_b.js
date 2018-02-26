@@ -15,11 +15,18 @@ var searchData=
   ['mockstringlocalizer',['MockStringLocalizer',['../class_t_g_webhooks_1_1_modules_1_1_tests_1_1_test_module.html#af1de77286d3743c01255368b688055cb',1,'TGWebhooks::Modules::Tests::TestModule']]],
   ['mockwebrequestmanager',['MockWebRequestManager',['../class_t_g_webhooks_1_1_modules_1_1_tests_1_1_test_module.html#a3aae7b9e683f3850dac2a88c98c3f04b',1,'TGWebhooks::Modules::Tests::TestModule']]],
   ['modifymerge',['ModifyMerge',['../class_t_g_webhooks_1_1_modules_1_1_changelog_generator_1_1_changelog_generator_module.html#a2ca2839a11e405c7615cdfc76ae566d2',1,'TGWebhooks.Modules.ChangelogGenerator.ChangelogGeneratorModule.ModifyMerge()'],['../interface_t_g_webhooks_1_1_modules_1_1_i_merge_hook.html#a3bc61f6bc89cda014cf91ff31e70a749',1,'TGWebhooks.Modules.IMergeHook.ModifyMerge()']]],
+  ['moduleenabled_3c_20tmodule_20_3e',['ModuleEnabled&lt; TModule &gt;',['../class_t_g_webhooks_1_1_core_1_1_module_manager.html#a59ec5352f7adff9c5d4e38e6b6ecc182',1,'TGWebhooks::Core::ModuleManager']]],
   ['modulemanager',['ModuleManager',['../class_t_g_webhooks_1_1_core_1_1_module_manager.html',1,'TGWebhooks::Core']]],
-  ['modulemanager',['ModuleManager',['../class_t_g_webhooks_1_1_core_1_1_module_manager.html#a7623b3ef48242f7332975b90c33d4663',1,'TGWebhooks::Core::ModuleManager']]],
+  ['modulemanager',['moduleManager',['../class_t_g_webhooks_1_1_controllers_1_1_modules_controller.html#a319adfaff3053d1e4635705a48ee57ec',1,'TGWebhooks.Controllers.ModulesController.moduleManager()'],['../class_t_g_webhooks_1_1_controllers_1_1_pull_request_controller.html#a4475a77efdc4924cf9e7d598e43e7c97',1,'TGWebhooks.Controllers.PullRequestController.moduleManager()'],['../class_t_g_webhooks_1_1_core_1_1_module_manager.html#a7623b3ef48242f7332975b90c33d4663',1,'TGWebhooks.Core.ModuleManager.ModuleManager()']]],
   ['modulemanager_2ecs',['ModuleManager.cs',['../_module_manager_8cs.html',1,'']]],
   ['modulemetadata',['ModuleMetadata',['../class_t_g_webhooks_1_1_models_1_1_module_metadata.html',1,'TGWebhooks::Models']]],
   ['modulemetadata_2ecs',['ModuleMetadata.cs',['../_module_metadata_8cs.html',1,'']]],
   ['modulemetadatas',['ModuleMetadatas',['../class_t_g_webhooks_1_1_models_1_1_database_context.html#ac4495a48bda06f90b3b9765b73f63a6c',1,'TGWebhooks.Models.DatabaseContext.ModuleMetadatas()'],['../interface_t_g_webhooks_1_1_models_1_1_i_database_context.html#a4544d9f2c650289610611440ff7b75df',1,'TGWebhooks.Models.IDatabaseContext.ModuleMetadatas()']]],
-  ['modulesandenabledstatus',['modulesAndEnabledStatus',['../class_t_g_webhooks_1_1_core_1_1_module_manager.html#aab9b6e70671465a83cecf62f0b6d0976',1,'TGWebhooks::Core::ModuleManager']]]
+  ['modulesandenabledstatus',['modulesAndEnabledStatus',['../class_t_g_webhooks_1_1_core_1_1_module_manager.html#aab9b6e70671465a83cecf62f0b6d0976',1,'TGWebhooks::Core::ModuleManager']]],
+  ['modulescontroller',['ModulesController',['../class_t_g_webhooks_1_1_controllers_1_1_modules_controller.html#a6acb9062cfc980831b67f700155c720c',1,'TGWebhooks::Controllers::ModulesController']]],
+  ['modulescontroller',['ModulesController',['../class_t_g_webhooks_1_1_controllers_1_1_modules_controller.html',1,'TGWebhooks::Controllers']]],
+  ['modulescontroller_2ecs',['ModulesController.cs',['../_modules_controller_8cs.html',1,'']]],
+  ['modulestatuses',['ModuleStatuses',['../interface_t_g_webhooks_1_1_core_1_1_i_module_manager.html#af702e884c0e191e4a42af261f9b67164',1,'TGWebhooks.Core.IModuleManager.ModuleStatuses()'],['../class_t_g_webhooks_1_1_core_1_1_module_manager.html#af157fb9cf881b0dbfaf25d96f2d92369',1,'TGWebhooks.Core.ModuleManager.ModuleStatuses()']]],
+  ['moduleupdate',['ModuleUpdate',['../class_t_g_webhooks_1_1_models_1_1_module_update.html',1,'TGWebhooks::Models']]],
+  ['moduleupdate_2ecs',['ModuleUpdate.cs',['../_module_update_8cs.html',1,'']]]
 ];

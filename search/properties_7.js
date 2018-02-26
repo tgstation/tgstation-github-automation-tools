@@ -12,5 +12,6 @@ var searchData=
   ['mockrepository',['MockRepository',['../class_t_g_webhooks_1_1_modules_1_1_tests_1_1_test_module.html#ae76b8079eabc387d355da9925ba5ad0d',1,'TGWebhooks::Modules::Tests::TestModule']]],
   ['mockstringlocalizer',['MockStringLocalizer',['../class_t_g_webhooks_1_1_modules_1_1_tests_1_1_test_module.html#af1de77286d3743c01255368b688055cb',1,'TGWebhooks::Modules::Tests::TestModule']]],
   ['mockwebrequestmanager',['MockWebRequestManager',['../class_t_g_webhooks_1_1_modules_1_1_tests_1_1_test_module.html#a3aae7b9e683f3850dac2a88c98c3f04b',1,'TGWebhooks::Modules::Tests::TestModule']]],
-  ['modulemetadatas',['ModuleMetadatas',['../class_t_g_webhooks_1_1_models_1_1_database_context.html#ac4495a48bda06f90b3b9765b73f63a6c',1,'TGWebhooks.Models.DatabaseContext.ModuleMetadatas()'],['../interface_t_g_webhooks_1_1_models_1_1_i_database_context.html#a4544d9f2c650289610611440ff7b75df',1,'TGWebhooks.Models.IDatabaseContext.ModuleMetadatas()']]]
+  ['modulemetadatas',['ModuleMetadatas',['../class_t_g_webhooks_1_1_models_1_1_database_context.html#ac4495a48bda06f90b3b9765b73f63a6c',1,'TGWebhooks.Models.DatabaseContext.ModuleMetadatas()'],['../interface_t_g_webhooks_1_1_models_1_1_i_database_context.html#a4544d9f2c650289610611440ff7b75df',1,'TGWebhooks.Models.IDatabaseContext.ModuleMetadatas()']]],
+  ['modulestatuses',['ModuleStatuses',['../interface_t_g_webhooks_1_1_core_1_1_i_module_manager.html#af702e884c0e191e4a42af261f9b67164',1,'TGWebhooks::Core::IModuleManager']]]
 ];

@@ -127,6 +127,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:afa191c6c95e62dd33703f9b825816b66"><td class="memItemLeft" align="right" valign="top">IEnumerable&lt; <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_payload_handler.html">IPayloadHandler</a>&lt; TPayload &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html#afa191c6c95e62dd33703f9b825816b66">GetPayloadHandlers&lt; TPayload &gt;</a> ()</td></tr>
 <tr class="memdesc:afa191c6c95e62dd33703f9b825816b66"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IPayloadHandler&lt;TPayload&gt;s the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components ">IComponentProvider</a> contains  <a href="#afa191c6c95e62dd33703f9b825816b66">More...</a><br /></td></tr>
 <tr class="separator:afa191c6c95e62dd33703f9b825816b66"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a234a12475747b9a361cf4e176a225ce5"><td class="memItemLeft" align="right" valign="top">Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html#a234a12475747b9a361cf4e176a225ce5">AddViewVars</a> (PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken)</td></tr>
+<tr class="memdesc:a234a12475747b9a361cf4e176a225ce5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds vars to the Microsoft.AspNetCore.Mvc.Controller.ViewBag of the <a class="el" href="class_t_g_webhooks_1_1_controllers_1_1_pull_request_controller.html" title="Main Octokit.PullRequest management interface ">Controllers.PullRequestController</a>  <a href="#a234a12475747b9a361cf4e176a225ce5">More...</a><br /></td></tr>
+<tr class="separator:a234a12475747b9a361cf4e176a225ce5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_initializable"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_initializable')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_initializable.html">TGWebhooks.Modules.IInitializable</a></td></tr>
 <tr class="memitem:abbb485b3b5f17fc2c6040e5a97586182 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_initializable"><td class="memItemLeft" align="right" valign="top">Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_initializable.html#abbb485b3b5f17fc2c6040e5a97586182">Initialize</a> (CancellationToken cancellationToken)</td></tr>
 <tr class="memdesc:abbb485b3b5f17fc2c6040e5a97586182 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_initializable"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load components in the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components ">IComponentProvider</a>. Will be called before any other function  <a href="#abbb485b3b5f17fc2c6040e5a97586182">More...</a><br /></td></tr>
@@ -144,8 +147,53 @@ Properties</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>for providing access to webhook components </p>
 
-<p>Definition at line <a class="el" href="_i_component_provider_8cs_source.html#l00009">9</a> of file <a class="el" href="_i_component_provider_8cs_source.html">IComponentProvider.cs</a>.</p>
+<p>Definition at line <a class="el" href="_i_component_provider_8cs_source.html#l00011">11</a> of file <a class="el" href="_i_component_provider_8cs_source.html">IComponentProvider.cs</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a234a12475747b9a361cf4e176a225ce5"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Task TGWebhooks.Modules.IComponentProvider.AddViewVars </td>
+          <td>(</td>
+          <td class="paramtype">PullRequest&#160;</td>
+          <td class="paramname"><em>pullRequest</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">dynamic&#160;</td>
+          <td class="paramname"><em>viewBag</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CancellationToken&#160;</td>
+          <td class="paramname"><em>cancellationToken</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Adds vars to the Microsoft.AspNetCore.Mvc.Controller.ViewBag of the <a class="el" href="class_t_g_webhooks_1_1_controllers_1_1_pull_request_controller.html" title="Main Octokit.PullRequest management interface ">Controllers.PullRequestController</a> </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">pullRequest</td><td>The PullRequest being reviewed</td></tr>
+    <tr><td class="paramname">viewBag</td><td>The Microsoft.AspNetCore.Mvc.Controller.ViewBag</td></tr>
+    <tr><td class="paramname">cancellationToken</td><td>The CancellationToken for the operation</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A Task representing the running operation</dd></dl>
+
+<p>Implemented in <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_p_r_tagger_1_1_pull_request_labeller_module.html#a053a34208614409cc6733897f08f9caa">TGWebhooks.Modules.PRTagger.PullRequestLabellerModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_good_boy_points_1_1_good_boy_points_module.html#a9985bb0a1d9dafe88128312aa99aa8d9">TGWebhooks.Modules.GoodBoyPoints.GoodBoyPointsModule</a>, <a class="el" href="class_t_g_webhooks_1_1_core_1_1_module_manager.html#a1cc860a5d76fa38ce9179fcb6c80a369">TGWebhooks.Core.ModuleManager</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_sign_off_1_1_sign_off_module.html#a2411a645a8e6747b05dc8b27380f10ee">TGWebhooks.Modules.SignOff.SignOffModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_changelog_generator_1_1_changelog_generator_module.html#aec1e0d0ccbdccfb277ba1ebfd61b0f34">TGWebhooks.Modules.ChangelogGenerator.ChangelogGeneratorModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_game_announcer_1_1_game_announcer_module.html#ac83a57861524bd04468d1fc4872d8de5">TGWebhooks.Modules.GameAnnouncer.GameAnnouncerModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#af6550a53a9fb9ff149c88a0e30982e27">TGWebhooks.Modules.AutoDeleteBranch.AutoDeleteBranchModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#a2eae4f9aad31d5f74e4b8e0799bbaad3">TGWebhooks.Modules.Highlander.HighlanderModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_review_manager_1_1_review_manager_module.html#a2e021556b87a3d53453995289df54118">TGWebhooks.Modules.ReviewManager.ReviewManagerModule</a>, and <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module.html#a3896c21399c55344bea9a3b212cec3ee">TGWebhooks.Modules.TwentyFourHourRule.TwentyFourHourRuleModule</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="afa191c6c95e62dd33703f9b825816b66"></a>
 <div class="memitem">
 <div class="memproto">
@@ -161,7 +209,7 @@ Properties</h2></td></tr>
 
 <p>The IPayloadHandler&lt;TPayload&gt;s the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components ">IComponentProvider</a> contains </p>
 
-<p>Implemented in <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_p_r_tagger_1_1_pull_request_labeller_module.html#a6bb5663c9bfa1bf386a67b9f221448ea">TGWebhooks.Modules.PRTagger.PullRequestLabellerModule</a>, <a class="el" href="class_t_g_webhooks_1_1_core_1_1_module_manager.html#a629e0ad37188b16016e01b8d313bb034">TGWebhooks.Core.ModuleManager</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_good_boy_points_1_1_good_boy_points_module.html#aaa7714021a8ef792f5f5090fbfcac2e5">TGWebhooks.Modules.GoodBoyPoints.GoodBoyPointsModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_sign_off_1_1_sign_off_module.html#abdb4a60a2be52d010d06d7430c96ea3f">TGWebhooks.Modules.SignOff.SignOffModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_game_announcer_1_1_game_announcer_module.html#a89472ce66bddd3b60bebadeb7041c275">TGWebhooks.Modules.GameAnnouncer.GameAnnouncerModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#aefa427cc9fb936de24b812eb90e0c9bc">TGWebhooks.Modules.Highlander.HighlanderModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_review_manager_1_1_review_manager_module.html#a84cafdc427cb41c58b9ff72e0912ad98">TGWebhooks.Modules.ReviewManager.ReviewManagerModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#a26e2eba6342dbc218d3e4e8972e98ea8">TGWebhooks.Modules.AutoDeleteBranch.AutoDeleteBranchModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module.html#aaab7702502edb69abf3ea314d849b077">TGWebhooks.Modules.TwentyFourHourRule.TwentyFourHourRuleModule</a>, and <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_changelog_generator_1_1_changelog_generator_module.html#a72c703b473041c17b2773f40e2be1a76">TGWebhooks.Modules.ChangelogGenerator.ChangelogGeneratorModule</a>.</p>
+<p>Implemented in <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_p_r_tagger_1_1_pull_request_labeller_module.html#a6bb5663c9bfa1bf386a67b9f221448ea">TGWebhooks.Modules.PRTagger.PullRequestLabellerModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_good_boy_points_1_1_good_boy_points_module.html#aaa7714021a8ef792f5f5090fbfcac2e5">TGWebhooks.Modules.GoodBoyPoints.GoodBoyPointsModule</a>, <a class="el" href="class_t_g_webhooks_1_1_core_1_1_module_manager.html#a629e0ad37188b16016e01b8d313bb034">TGWebhooks.Core.ModuleManager</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_sign_off_1_1_sign_off_module.html#abdb4a60a2be52d010d06d7430c96ea3f">TGWebhooks.Modules.SignOff.SignOffModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_game_announcer_1_1_game_announcer_module.html#a89472ce66bddd3b60bebadeb7041c275">TGWebhooks.Modules.GameAnnouncer.GameAnnouncerModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#aefa427cc9fb936de24b812eb90e0c9bc">TGWebhooks.Modules.Highlander.HighlanderModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_review_manager_1_1_review_manager_module.html#a84cafdc427cb41c58b9ff72e0912ad98">TGWebhooks.Modules.ReviewManager.ReviewManagerModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#a26e2eba6342dbc218d3e4e8972e98ea8">TGWebhooks.Modules.AutoDeleteBranch.AutoDeleteBranchModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module.html#aaab7702502edb69abf3ea314d849b077">TGWebhooks.Modules.TwentyFourHourRule.TwentyFourHourRuleModule</a>, and <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_changelog_generator_1_1_changelog_generator_module.html#a72c703b473041c17b2773f40e2be1a76">TGWebhooks.Modules.ChangelogGenerator.ChangelogGeneratorModule</a>.</p>
 <div class="typeconstraint">
 <dl><dt><b>Type Constraints</b></dt><dd>
 <table border="0" cellspacing="2" cellpadding="0">
@@ -194,7 +242,7 @@ Properties</h2></td></tr>
 
 <p>The <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_hook.html" title="Operations for modifying a PullRequest before it is merged ">IMergeHook</a>s the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components ">IComponentProvider</a> contains </p>
 
-<p>Definition at line <a class="el" href="_i_component_provider_8cs_source.html#l00019">19</a> of file <a class="el" href="_i_component_provider_8cs_source.html">IComponentProvider.cs</a>.</p>
+<p>Definition at line <a class="el" href="_i_component_provider_8cs_source.html#l00021">21</a> of file <a class="el" href="_i_component_provider_8cs_source.html">IComponentProvider.cs</a>.</p>
 
 </div>
 </div>
@@ -218,7 +266,7 @@ Properties</h2></td></tr>
 
 <p>The <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html" title="Represents a bar on automatic merging of a pull request ">IMergeRequirement</a>s the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components ">IComponentProvider</a> contains </p>
 
-<p>Definition at line <a class="el" href="_i_component_provider_8cs_source.html#l00014">14</a> of file <a class="el" href="_i_component_provider_8cs_source.html">IComponentProvider.cs</a>.</p>
+<p>Definition at line <a class="el" href="_i_component_provider_8cs_source.html#l00016">16</a> of file <a class="el" href="_i_component_provider_8cs_source.html">IComponentProvider.cs</a>.</p>
 
 </div>
 </div>

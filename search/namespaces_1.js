@@ -4,6 +4,7 @@ var searchData=
   ['changeloggenerator',['ChangelogGenerator',['../namespace_t_g_webhooks_1_1_modules_1_1_changelog_generator.html',1,'TGWebhooks::Modules']]],
   ['configuration',['Configuration',['../namespace_t_g_webhooks_1_1_configuration.html',1,'TGWebhooks']]],
   ['controllers',['Controllers',['../namespace_t_g_webhooks_1_1_controllers.html',1,'TGWebhooks']]],
+  ['controllers',['Controllers',['../namespace_t_g_webhooks_1_1_modules_1_1_good_boy_points_1_1_controllers.html',1,'TGWebhooks::Modules::GoodBoyPoints']]],
   ['core',['Core',['../namespace_t_g_webhooks_1_1_core.html',1,'TGWebhooks']]],
   ['gameannouncer',['GameAnnouncer',['../namespace_t_g_webhooks_1_1_modules_1_1_game_announcer.html',1,'TGWebhooks::Modules']]],
   ['goodboypoints',['GoodBoyPoints',['../namespace_t_g_webhooks_1_1_modules_1_1_good_boy_points.html',1,'TGWebhooks::Modules']]],
@@ -13,12 +14,12 @@ var searchData=
   ['prtagger',['PRTagger',['../namespace_t_g_webhooks_1_1_modules_1_1_p_r_tagger.html',1,'TGWebhooks::Modules']]],
   ['reviewmanager',['ReviewManager',['../namespace_t_g_webhooks_1_1_modules_1_1_review_manager.html',1,'TGWebhooks::Modules']]],
   ['signoff',['SignOff',['../namespace_t_g_webhooks_1_1_modules_1_1_sign_off.html',1,'TGWebhooks::Modules']]],
-  ['tests',['Tests',['../namespace_t_g_webhooks_1_1_tests.html',1,'TGWebhooks']]],
+  ['tests',['Tests',['../namespace_t_g_webhooks_1_1_modules_1_1_review_manager_1_1_tests.html',1,'TGWebhooks::Modules::ReviewManager']]],
   ['tests',['Tests',['../namespace_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_tests.html',1,'TGWebhooks::Modules::TwentyFourHourRule']]],
   ['tests',['Tests',['../namespace_t_g_webhooks_1_1_modules_1_1_changelog_generator_1_1_tests.html',1,'TGWebhooks::Modules::ChangelogGenerator']]],
-  ['tests',['Tests',['../namespace_t_g_webhooks_1_1_modules_1_1_review_manager_1_1_tests.html',1,'TGWebhooks::Modules::ReviewManager']]],
-  ['tests',['Tests',['../namespace_t_g_webhooks_1_1_modules_1_1_tests.html',1,'TGWebhooks::Modules']]],
   ['tests',['Tests',['../namespace_t_g_webhooks_1_1_core_1_1_tests.html',1,'TGWebhooks::Core']]],
+  ['tests',['Tests',['../namespace_t_g_webhooks_1_1_tests.html',1,'TGWebhooks']]],
+  ['tests',['Tests',['../namespace_t_g_webhooks_1_1_modules_1_1_tests.html',1,'TGWebhooks::Modules']]],
   ['tgwebhooks',['TGWebhooks',['../namespace_t_g_webhooks.html',1,'']]],
   ['twentyfourhourrule',['TwentyFourHourRule',['../namespace_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule.html',1,'TGWebhooks::Modules']]]
 ];

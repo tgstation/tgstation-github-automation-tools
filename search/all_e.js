@@ -19,7 +19,7 @@ var searchData=
   ['progress',['Progress',['../class_t_g_webhooks_1_1_modules_1_1_auto_merge_status.html#a4844d52514bdf827af4ace90b4b3601a',1,'TGWebhooks::Modules::AutoMergeStatus']]],
   ['pullrequest',['PullRequest',['../class_octokit_1_1_pull_request_review_event_payload.html#a01f22b00290fed88fc29179c564c96f0',1,'Octokit::PullRequestReviewEventPayload']]],
   ['pullrequestcontroller',['PullRequestController',['../class_t_g_webhooks_1_1_controllers_1_1_pull_request_controller.html',1,'TGWebhooks::Controllers']]],
-  ['pullrequestcontroller',['PullRequestController',['../class_t_g_webhooks_1_1_controllers_1_1_pull_request_controller.html#a2631a2d29a876d8b08ec5cf8a34341d4',1,'TGWebhooks::Controllers::PullRequestController']]],
+  ['pullrequestcontroller',['PullRequestController',['../class_t_g_webhooks_1_1_controllers_1_1_pull_request_controller.html#a4e467e03d6d35fd58fee442d2827f2eb',1,'TGWebhooks::Controllers::PullRequestController']]],
   ['pullrequestcontroller_2ecs',['PullRequestController.cs',['../_pull_request_controller_8cs.html',1,'']]],
   ['pullrequestlabellermodule',['PullRequestLabellerModule',['../class_t_g_webhooks_1_1_modules_1_1_p_r_tagger_1_1_pull_request_labeller_module.html',1,'TGWebhooks::Modules::PRTagger']]],
   ['pullrequestlabellermodule',['PullRequestLabellerModule',['../class_t_g_webhooks_1_1_modules_1_1_p_r_tagger_1_1_pull_request_labeller_module.html#ad17a8eb25012db15f90bc1b56925b63c',1,'TGWebhooks::Modules::PRTagger::PullRequestLabellerModule']]],

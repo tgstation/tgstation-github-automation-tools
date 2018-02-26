@@ -90,6 +90,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#properties">Properties</a> &#124;
 <a href="interface_t_g_webhooks_1_1_core_1_1_i_module_manager-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">TGWebhooks.Core.IModuleManager Interface Reference</div>  </div>
@@ -110,16 +112,28 @@ Inheritance diagram for TGWebhooks.Core.IModuleManager:</div>
 </map>
  </div></div>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
-Additional Inherited Members</h2></td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:afbf65807871debb477ee440d0fdbcce7"><td class="memItemLeft" align="right" valign="top">Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_core_1_1_i_module_manager.html#afbf65807871debb477ee440d0fdbcce7">SetModuleEnabled</a> (Guid guid, bool enabled, CancellationToken cancellationToken)</td></tr>
+<tr class="memdesc:afbf65807871debb477ee440d0fdbcce7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enable or disable a IModule  <a href="#afbf65807871debb477ee440d0fdbcce7">More...</a><br /></td></tr>
+<tr class="separator:afbf65807871debb477ee440d0fdbcce7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html">TGWebhooks.Modules.IComponentProvider</a></td></tr>
 <tr class="memitem:afa191c6c95e62dd33703f9b825816b66 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider"><td class="memItemLeft" align="right" valign="top">IEnumerable&lt; <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_payload_handler.html">IPayloadHandler</a>&lt; TPayload &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html#afa191c6c95e62dd33703f9b825816b66">GetPayloadHandlers&lt; TPayload &gt;</a> ()</td></tr>
 <tr class="memdesc:afa191c6c95e62dd33703f9b825816b66 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IPayloadHandler&lt;TPayload&gt;s the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components ">IComponentProvider</a> contains  <a href="#afa191c6c95e62dd33703f9b825816b66">More...</a><br /></td></tr>
 <tr class="separator:afa191c6c95e62dd33703f9b825816b66 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a234a12475747b9a361cf4e176a225ce5 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider"><td class="memItemLeft" align="right" valign="top">Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html#a234a12475747b9a361cf4e176a225ce5">AddViewVars</a> (PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken)</td></tr>
+<tr class="memdesc:a234a12475747b9a361cf4e176a225ce5 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds vars to the Microsoft.AspNetCore.Mvc.Controller.ViewBag of the <a class="el" href="class_t_g_webhooks_1_1_controllers_1_1_pull_request_controller.html" title="Main Octokit.PullRequest management interface ">Controllers.PullRequestController</a>  <a href="#a234a12475747b9a361cf4e176a225ce5">More...</a><br /></td></tr>
+<tr class="separator:a234a12475747b9a361cf4e176a225ce5 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_initializable"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_initializable')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_initializable.html">TGWebhooks.Modules.IInitializable</a></td></tr>
 <tr class="memitem:abbb485b3b5f17fc2c6040e5a97586182 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_initializable"><td class="memItemLeft" align="right" valign="top">Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_initializable.html#abbb485b3b5f17fc2c6040e5a97586182">Initialize</a> (CancellationToken cancellationToken)</td></tr>
 <tr class="memdesc:abbb485b3b5f17fc2c6040e5a97586182 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_initializable"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load components in the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components ">IComponentProvider</a>. Will be called before any other function  <a href="#abbb485b3b5f17fc2c6040e5a97586182">More...</a><br /></td></tr>
 <tr class="separator:abbb485b3b5f17fc2c6040e5a97586182 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_initializable"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="properties"></a>
+Properties</h2></td></tr>
+<tr class="memitem:af702e884c0e191e4a42af261f9b67164"><td class="memItemLeft" align="right" valign="top">IDictionary&lt; <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html">IModule</a>, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_core_1_1_i_module_manager.html#af702e884c0e191e4a42af261f9b67164">ModuleStatuses</a><code> [get]</code></td></tr>
+<tr class="memdesc:af702e884c0e191e4a42af261f9b67164"><td class="mdescLeft">&#160;</td><td class="mdescRight">All IModules and their enabled status  <a href="#af702e884c0e191e4a42af261f9b67164">More...</a><br /></td></tr>
+<tr class="separator:af702e884c0e191e4a42af261f9b67164"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider"><td colspan="2" onclick="javascript:toggleInherit('properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider')"><img src="closed.png" alt="-"/>&#160;Properties inherited from <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html">TGWebhooks.Modules.IComponentProvider</a></td></tr>
 <tr class="memitem:a5cd008e931b342b7eda63f28fc11d1fe inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider"><td class="memItemLeft" align="right" valign="top">IEnumerable&lt; <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html">IMergeRequirement</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html#a5cd008e931b342b7eda63f28fc11d1fe">MergeRequirements</a><code> [get]</code></td></tr>
 <tr class="memdesc:a5cd008e931b342b7eda63f28fc11d1fe inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html" title="Represents a bar on automatic merging of a pull request ">IMergeRequirement</a>s the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components ">IComponentProvider</a> contains  <a href="#a5cd008e931b342b7eda63f28fc11d1fe">More...</a><br /></td></tr>
@@ -131,8 +145,79 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Manages webhook plugins </p>
 
-<p>Definition at line <a class="el" href="_i_module_manager_8cs_source.html#l00008">8</a> of file <a class="el" href="_i_module_manager_8cs_source.html">IModuleManager.cs</a>.</p>
-</div><hr/>The documentation for this interface was generated from the following file:<ul>
+<p>Definition at line <a class="el" href="_i_module_manager_8cs_source.html#l00012">12</a> of file <a class="el" href="_i_module_manager_8cs_source.html">IModuleManager.cs</a>.</p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="afbf65807871debb477ee440d0fdbcce7"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Task TGWebhooks.Core.IModuleManager.SetModuleEnabled </td>
+          <td>(</td>
+          <td class="paramtype">Guid&#160;</td>
+          <td class="paramname"><em>guid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>enabled</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CancellationToken&#160;</td>
+          <td class="paramname"><em>cancellationToken</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Enable or disable a IModule </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">guid</td><td>The IModule.Uid</td></tr>
+    <tr><td class="paramname">enabled</td><td>The new enabled status for the IModule</td></tr>
+    <tr><td class="paramname">cancellationToken</td><td>The CancellationToken for the operation</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A Task representing the running operation</dd></dl>
+
+<p>Implemented in <a class="el" href="class_t_g_webhooks_1_1_core_1_1_module_manager.html#a2214a337effe743a794cd0a638276190">TGWebhooks.Core.ModuleManager</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Property Documentation</h2>
+<a class="anchor" id="af702e884c0e191e4a42af261f9b67164"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">IDictionary&lt;<a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html">IModule</a>, bool&gt; TGWebhooks.Core.IModuleManager.ModuleStatuses</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">get</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>All IModules and their enabled status </p>
+
+<p>Definition at line <a class="el" href="_i_module_manager_8cs_source.html#l00017">17</a> of file <a class="el" href="_i_module_manager_8cs_source.html">IModuleManager.cs</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this interface was generated from the following file:<ul>
 <li>TGWebhooks/Core/<a class="el" href="_i_module_manager_8cs_source.html">IModuleManager.cs</a></li>
 </ul>
 </div><!-- contents -->

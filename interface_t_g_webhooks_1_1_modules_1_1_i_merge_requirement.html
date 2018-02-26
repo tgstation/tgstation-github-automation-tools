@@ -91,7 +91,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#properties">Properties</a> &#124;
 <a href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">TGWebhooks.Modules.IMergeRequirement Interface Reference</div>  </div>
@@ -119,15 +118,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a7d7b948be2e0e378bbb7296e5057fd6c"><td class="memItemLeft" align="right" valign="top">Task&lt; <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_auto_merge_status.html">AutoMergeStatus</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html#a7d7b948be2e0e378bbb7296e5057fd6c">EvaluateFor</a> (PullRequest pullRequest, CancellationToken cancellationToken)</td></tr>
 <tr class="memdesc:a7d7b948be2e0e378bbb7296e5057fd6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html" title="Represents a bar on automatic merging of a pull request ">IMergeRequirement</a> for a given <em>pullRequest</em>   <a href="#a7d7b948be2e0e378bbb7296e5057fd6c">More...</a><br /></td></tr>
 <tr class="separator:a7d7b948be2e0e378bbb7296e5057fd6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="properties"></a>
-Properties</h2></td></tr>
-<tr class="memitem:ade53ba7332eabb5e3fee772247ec32d7"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html#ade53ba7332eabb5e3fee772247ec32d7">Name</a><code> [get]</code></td></tr>
-<tr class="memdesc:ade53ba7332eabb5e3fee772247ec32d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The user friendly name of the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html" title="Represents a bar on automatic merging of a pull request ">IMergeRequirement</a>  <a href="#ade53ba7332eabb5e3fee772247ec32d7">More...</a><br /></td></tr>
-<tr class="separator:ade53ba7332eabb5e3fee772247ec32d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6dfdaa7abe81e6c39c707a64b3bbbba9"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html#a6dfdaa7abe81e6c39c707a64b3bbbba9">Description</a><code> [get]</code></td></tr>
-<tr class="memdesc:a6dfdaa7abe81e6c39c707a64b3bbbba9"><td class="mdescLeft">&#160;</td><td class="mdescRight">A description of the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html#a6dfdaa7abe81e6c39c707a64b3bbbba9" title="A description of the Description ">Description</a>  <a href="#a6dfdaa7abe81e6c39c707a64b3bbbba9">More...</a><br /></td></tr>
-<tr class="separator:a6dfdaa7abe81e6c39c707a64b3bbbba9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Represents a bar on automatic merging of a pull request </p>
@@ -169,55 +159,6 @@ Properties</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>A Task&lt;TResult&gt; resulting in the <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_auto_merge_status.html" title="Represents the requirements for auto merging a Octokit.PullRequest ">AutoMergeStatus</a> of <em>pullRequest</em> </dd></dl>
 
 <p>Implemented in <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_good_boy_points_1_1_good_boy_points_module.html#a2fe5972023ae16f638319d05c3b1d8f6">TGWebhooks.Modules.GoodBoyPoints.GoodBoyPointsModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_changelog_generator_1_1_changelog_generator_module.html#a3847635689420852077215a65acc6558">TGWebhooks.Modules.ChangelogGenerator.ChangelogGeneratorModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_sign_off_1_1_sign_off_module.html#a480383d88d7b345506ec2ec4107c09a6">TGWebhooks.Modules.SignOff.SignOffModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_review_manager_1_1_review_manager_module.html#a1c602a8d32d4c6db2cd1d407c0e6c19a">TGWebhooks.Modules.ReviewManager.ReviewManagerModule</a>, and <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module.html#a7f87256e1bd2a102d93e8816d35636e0">TGWebhooks.Modules.TwentyFourHourRule.TwentyFourHourRuleModule</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Property Documentation</h2>
-<a class="anchor" id="a6dfdaa7abe81e6c39c707a64b3bbbba9"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">string TGWebhooks.Modules.IMergeRequirement.Description</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">get</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>A description of the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html#a6dfdaa7abe81e6c39c707a64b3bbbba9" title="A description of the Description ">Description</a> </p>
-
-<p>Definition at line <a class="el" href="_i_merge_requirement_8cs_source.html#l00020">20</a> of file <a class="el" href="_i_merge_requirement_8cs_source.html">IMergeRequirement.cs</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="ade53ba7332eabb5e3fee772247ec32d7"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">string TGWebhooks.Modules.IMergeRequirement.Name</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">get</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>The user friendly name of the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html" title="Represents a bar on automatic merging of a pull request ">IMergeRequirement</a> </p>
-
-<p>Definition at line <a class="el" href="_i_merge_requirement_8cs_source.html#l00015">15</a> of file <a class="el" href="_i_merge_requirement_8cs_source.html">IMergeRequirement.cs</a>.</p>
 
 </div>
 </div>

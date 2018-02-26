@@ -18,5 +18,7 @@ var searchData=
   ['getrequestheaders',['GetRequestHeaders',['../class_t_g_webhooks_1_1_core_1_1_travis_continuous_integration.html#a715546b68b54f04a1343e025b91b9337',1,'TGWebhooks::Core::TravisContinuousIntegration']]],
   ['getuserlogin',['GetUserLogin',['../class_t_g_webhooks_1_1_core_1_1_git_hub_manager.html#a927f5d5670dda537efcadbb6bfa0d455',1,'TGWebhooks.Core.GitHubManager.GetUserLogin()'],['../interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a514fe36c41412e9315f63abaab219496',1,'TGWebhooks.Modules.IGitHubManager.GetUserLogin()']]],
   ['githubmanager',['GitHubManager',['../class_t_g_webhooks_1_1_core_1_1_git_hub_manager.html#a6887ba11213bf07ac084f628e2e97944',1,'TGWebhooks::Core::GitHubManager']]],
+  ['goodboypointscontroller',['GoodBoyPointsController',['../class_t_g_webhooks_1_1_modules_1_1_good_boy_points_1_1_controllers_1_1_good_boy_points_controller.html#a9f03654f6da4b31427bf137aa91c5f9b',1,'TGWebhooks::Modules::GoodBoyPoints::Controllers::GoodBoyPointsController']]],
+  ['goodboypointsentries',['GoodBoyPointsEntries',['../class_t_g_webhooks_1_1_modules_1_1_good_boy_points_1_1_good_boy_points_module.html#a3e8f5e353b8fc5a60201db4b8118ce09',1,'TGWebhooks::Modules::GoodBoyPoints::GoodBoyPointsModule']]],
   ['goodboypointsmodule',['GoodBoyPointsModule',['../class_t_g_webhooks_1_1_modules_1_1_good_boy_points_1_1_good_boy_points_module.html#a4b207c049a217caf2a6b330f459c40bd',1,'TGWebhooks::Modules::GoodBoyPoints::GoodBoyPointsModule']]]
 ];

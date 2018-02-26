@@ -92,6 +92,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#properties">Properties</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -127,6 +128,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ae173bd8d9d0798fc3585b0e9cb45fee3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abb08674b3276d53421672a108a14b6e7"><td class="memItemLeft" align="right" valign="top">async Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#abb08674b3276d53421672a108a14b6e7">ProcessPayload</a> (PullRequestEventPayload payload, CancellationToken cancellationToken)</td></tr>
 <tr class="separator:abb08674b3276d53421672a108a14b6e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af6550a53a9fb9ff149c88a0e30982e27"><td class="memItemLeft" align="right" valign="top">Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#af6550a53a9fb9ff149c88a0e30982e27">AddViewVars</a> (PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken)</td></tr>
+<tr class="memdesc:af6550a53a9fb9ff149c88a0e30982e27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds vars to the Microsoft.AspNetCore.Mvc.Controller.ViewBag of the <a class="el" href="class_t_g_webhooks_1_1_controllers_1_1_pull_request_controller.html" title="Main Octokit.PullRequest management interface ">Controllers.PullRequestController</a>   <a href="#af6550a53a9fb9ff149c88a0e30982e27">More...</a><br /></td></tr>
+<tr class="separator:af6550a53a9fb9ff149c88a0e30982e27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_payload_handler"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_payload_handler')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_payload_handler.html">TGWebhooks.Modules.IPayloadHandler&lt; PullRequestEventPayload &gt;</a></td></tr>
 <tr class="memitem:a034739e9cfca6c61ae75bf5843ac68a4 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_payload_handler"><td class="memItemLeft" align="right" valign="top">Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_payload_handler.html#a034739e9cfca6c61ae75bf5843ac68a4">ProcessPayload</a> (TPayload payload, CancellationToken cancellationToken)</td></tr>
 <tr class="memdesc:a034739e9cfca6c61ae75bf5843ac68a4 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_payload_handler"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process a <em>TPayload</em>   <a href="#a034739e9cfca6c61ae75bf5843ac68a4">More...</a><br /></td></tr>
@@ -145,15 +149,14 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a7fbe0b3b06e9eac70ecde3b02cfe11c2"><td class="memItemLeft" align="right" valign="top">IEnumerable&lt; <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_hook.html">IMergeHook</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#a7fbe0b3b06e9eac70ecde3b02cfe11c2">MergeHooks</a> =&gt; Enumerable.Empty&lt;<a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_hook.html">IMergeHook</a>&gt;()</td></tr>
 <tr class="separator:a7fbe0b3b06e9eac70ecde3b02cfe11c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
-Private Attributes</h2></td></tr>
-<tr class="memitem:affff3a2ba3910440c925bb8a08bf74d3"><td class="memItemLeft" align="right" valign="top">readonly <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html">IGitHubManager</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#affff3a2ba3910440c925bb8a08bf74d3">gitHubManager</a></td></tr>
-<tr class="memdesc:affff3a2ba3910440c925bb8a08bf74d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IGitHubClient for the <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html" title="Contains the IPayloadHandler&lt;TPayload&gt; to delete merged branches ">AutoDeleteBranchModule</a>  <a href="#affff3a2ba3910440c925bb8a08bf74d3">More...</a><br /></td></tr>
-<tr class="separator:affff3a2ba3910440c925bb8a08bf74d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
-Additional Inherited Members</h2></td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="properties"></a>
+Properties</h2></td></tr>
+<tr class="memitem:a2be7fc66bc51c06777b2c4e57c6157d0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#a2be7fc66bc51c06777b2c4e57c6157d0">Enabled</a><code> [get, set]</code></td></tr>
+<tr class="separator:a2be7fc66bc51c06777b2c4e57c6157d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td colspan="2" onclick="javascript:toggleInherit('properties_interface_t_g_webhooks_1_1_modules_1_1_i_module')"><img src="closed.png" alt="-"/>&#160;Properties inherited from <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html">TGWebhooks.Modules.IModule</a></td></tr>
+<tr class="memitem:ad4622560f54759765016d7d26c6ea8ad inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html#ad4622560f54759765016d7d26c6ea8ad">Enabled</a><code> [set]</code></td></tr>
+<tr class="memdesc:ad4622560f54759765016d7d26c6ea8ad inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="mdescLeft">&#160;</td><td class="mdescRight">If the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html" title="Representation of a plugin for TGWebhooks ">IModule</a> is enabled  <a href="#ad4622560f54759765016d7d26c6ea8ad">More...</a><br /></td></tr>
+<tr class="separator:ad4622560f54759765016d7d26c6ea8ad inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e34caef91316be44f7030b96449a05a inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="memItemLeft" align="right" valign="top">Guid&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html#a3e34caef91316be44f7030b96449a05a">Uid</a><code> [get]</code></td></tr>
 <tr class="memdesc:a3e34caef91316be44f7030b96449a05a inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="mdescLeft">&#160;</td><td class="mdescRight">A unique <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html#a3e34caef91316be44f7030b96449a05a" title="A unique Uid for the IModule ">Uid</a> for the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html" title="Representation of a plugin for TGWebhooks ">IModule</a>  <a href="#a3e34caef91316be44f7030b96449a05a">More...</a><br /></td></tr>
 <tr class="separator:a3e34caef91316be44f7030b96449a05a inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -170,6 +173,12 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memitem:aef489d80950b8fdd97663f6f5b484b53 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider"><td class="memItemLeft" align="right" valign="top">IEnumerable&lt; <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_hook.html">IMergeHook</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html#aef489d80950b8fdd97663f6f5b484b53">MergeHooks</a><code> [get]</code></td></tr>
 <tr class="memdesc:aef489d80950b8fdd97663f6f5b484b53 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_hook.html" title="Operations for modifying a PullRequest before it is merged ">IMergeHook</a>s the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components ">IComponentProvider</a> contains  <a href="#aef489d80950b8fdd97663f6f5b484b53">More...</a><br /></td></tr>
 <tr class="separator:aef489d80950b8fdd97663f6f5b484b53 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
+Private Attributes</h2></td></tr>
+<tr class="memitem:affff3a2ba3910440c925bb8a08bf74d3"><td class="memItemLeft" align="right" valign="top">readonly <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html">IGitHubManager</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#affff3a2ba3910440c925bb8a08bf74d3">gitHubManager</a></td></tr>
+<tr class="memdesc:affff3a2ba3910440c925bb8a08bf74d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IGitHubClient for the <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html" title="Contains the IPayloadHandler&lt;TPayload&gt; to delete merged branches ">AutoDeleteBranchModule</a>  <a href="#affff3a2ba3910440c925bb8a08bf74d3">More...</a><br /></td></tr>
+<tr class="separator:affff3a2ba3910440c925bb8a08bf74d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Contains the IPayloadHandler&lt;TPayload&gt; to delete merged branches </p>
@@ -193,17 +202,53 @@ Additional Inherited Members</h2></td></tr>
 <p>Construct an <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html" title="Contains the IPayloadHandler&lt;TPayload&gt; to delete merged branches ">AutoDeleteBranchModule</a> </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">gitHubManager</td><td>The value of IGitHubClient</td></tr>
+    <tr><td class="paramname">gitHubManager</td><td>The value of <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#affff3a2ba3910440c925bb8a08bf74d3" title="The IGitHubClient for the AutoDeleteBranchModule ">gitHubManager</a></td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_auto_delete_branch_module_8cs_source.html#l00039">39</a> of file <a class="el" href="_auto_delete_branch_module_8cs_source.html">AutoDeleteBranchModule.cs</a>.</p>
-<div class="fragment"><div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        {</div><div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            this.<a class="code" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#affff3a2ba3910440c925bb8a08bf74d3">gitHubManager</a> = <a class="code" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#affff3a2ba3910440c925bb8a08bf74d3">gitHubManager</a> ?? <span class="keywordflow">throw</span> <span class="keyword">new</span> ArgumentNullException(nameof(<a class="code" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#affff3a2ba3910440c925bb8a08bf74d3">gitHubManager</a>));</div><div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        }</div><div class="ttc" id="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module_html_affff3a2ba3910440c925bb8a08bf74d3"><div class="ttname"><a href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#affff3a2ba3910440c925bb8a08bf74d3">TGWebhooks.Modules.AutoDeleteBranch.AutoDeleteBranchModule.gitHubManager</a></div><div class="ttdeci">readonly IGitHubManager gitHubManager</div><div class="ttdoc">The IGitHubClient for the AutoDeleteBranchModule </div><div class="ttdef"><b>Definition:</b> <a href="_auto_delete_branch_module_8cs_source.html#l00033">AutoDeleteBranchModule.cs:33</a></div></div>
+<p>Definition at line <a class="el" href="_auto_delete_branch_module_8cs_source.html#l00042">42</a> of file <a class="el" href="_auto_delete_branch_module_8cs_source.html">AutoDeleteBranchModule.cs</a>.</p>
+<div class="fragment"><div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        {</div><div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;            this.<a class="code" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#affff3a2ba3910440c925bb8a08bf74d3">gitHubManager</a> = <a class="code" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#affff3a2ba3910440c925bb8a08bf74d3">gitHubManager</a> ?? <span class="keywordflow">throw</span> <span class="keyword">new</span> ArgumentNullException(nameof(<a class="code" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#affff3a2ba3910440c925bb8a08bf74d3">gitHubManager</a>));</div><div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        }</div><div class="ttc" id="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module_html_affff3a2ba3910440c925bb8a08bf74d3"><div class="ttname"><a href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#affff3a2ba3910440c925bb8a08bf74d3">TGWebhooks.Modules.AutoDeleteBranch.AutoDeleteBranchModule.gitHubManager</a></div><div class="ttdeci">readonly IGitHubManager gitHubManager</div><div class="ttdoc">The IGitHubClient for the AutoDeleteBranchModule </div><div class="ttdef"><b>Definition:</b> <a href="_auto_delete_branch_module_8cs_source.html#l00036">AutoDeleteBranchModule.cs:36</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="af6550a53a9fb9ff149c88a0e30982e27"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Task TGWebhooks.Modules.AutoDeleteBranch.AutoDeleteBranchModule.AddViewVars </td>
+          <td>(</td>
+          <td class="paramtype">PullRequest&#160;</td>
+          <td class="paramname"><em>pullRequest</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">dynamic&#160;</td>
+          <td class="paramname"><em>viewBag</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CancellationToken&#160;</td>
+          <td class="paramname"><em>cancellationToken</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Adds vars to the Microsoft.AspNetCore.Mvc.Controller.ViewBag of the <a class="el" href="class_t_g_webhooks_1_1_controllers_1_1_pull_request_controller.html" title="Main Octokit.PullRequest management interface ">Controllers.PullRequestController</a>  </p>
+
+<p>Implements <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html#a234a12475747b9a361cf4e176a225ce5">TGWebhooks.Modules.IComponentProvider</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="a26e2eba6342dbc218d3e4e8972e98ea8"></a>
 <div class="memitem">
 <div class="memproto">
@@ -229,8 +274,8 @@ Additional Inherited Members</h2></td></tr>
 </dl>
 </div>
 
-<p>Definition at line <a class="el" href="_auto_delete_branch_module_8cs_source.html#l00045">45</a> of file <a class="el" href="_auto_delete_branch_module_8cs_source.html">AutoDeleteBranchModule.cs</a>.</p>
-<div class="fragment"><div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;                                                                                                    : <a class="code" href="class_activity_payload.html">ActivityPayload</a></div><div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        {</div><div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            <span class="keywordflow">if</span> (typeof(TPayload) == typeof(PullRequestEventPayload))</div><div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;                yield <span class="keywordflow">return</span> (IPayloadHandler&lt;TPayload&gt;)(object)<span class="keyword">this</span>;</div><div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        }</div><div class="ttc" id="class_activity_payload_html"><div class="ttname"><a href="class_activity_payload.html">ActivityPayload</a></div></div>
+<p>Definition at line <a class="el" href="_auto_delete_branch_module_8cs_source.html#l00048">48</a> of file <a class="el" href="_auto_delete_branch_module_8cs_source.html">AutoDeleteBranchModule.cs</a>.</p>
+<div class="fragment"><div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;                                                                                                    : <a class="code" href="class_activity_payload.html">ActivityPayload</a></div><div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        {</div><div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;            <span class="keywordflow">if</span> (typeof(TPayload) == typeof(PullRequestEventPayload))</div><div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;                yield <span class="keywordflow">return</span> (IPayloadHandler&lt;TPayload&gt;)(object)<span class="keyword">this</span>;</div><div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        }</div><div class="ttc" id="class_activity_payload_html"><div class="ttname"><a href="class_activity_payload.html">ActivityPayload</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -280,8 +325,8 @@ Additional Inherited Members</h2></td></tr>
 
 <p></p>
 
-<p>Definition at line <a class="el" href="_auto_delete_branch_module_8cs_source.html#l00055">55</a> of file <a class="el" href="_auto_delete_branch_module_8cs_source.html">AutoDeleteBranchModule.cs</a>.</p>
-<div class="fragment"><div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        {</div><div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;            <span class="keywordflow">if</span> (payload == null)</div><div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;                <span class="keywordflow">throw</span> <span class="keyword">new</span> ArgumentNullException(nameof(payload));</div><div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div><div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;            <span class="keywordflow">if</span> (payload.Action != <span class="stringliteral">&quot;closed&quot;</span> || !payload.PullRequest.Merged)</div><div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;                <span class="keywordflow">throw</span> <span class="keyword">new</span> NotSupportedException();</div><div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div><div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            <span class="keywordflow">if</span> (payload.PullRequest.Base.Repository.Id != payload.PullRequest.Head.Repository.Id)</div><div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;                <span class="keywordflow">return</span>;</div><div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div><div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;            await <a class="code" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#affff3a2ba3910440c925bb8a08bf74d3">gitHubManager</a>.<a class="code" href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a90d2f5b26a180079562922482c004f51">DeleteBranch</a>(payload.PullRequest.Head.Ref);</div><div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        }</div><div class="ttc" id="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module_html_affff3a2ba3910440c925bb8a08bf74d3"><div class="ttname"><a href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#affff3a2ba3910440c925bb8a08bf74d3">TGWebhooks.Modules.AutoDeleteBranch.AutoDeleteBranchModule.gitHubManager</a></div><div class="ttdeci">readonly IGitHubManager gitHubManager</div><div class="ttdoc">The IGitHubClient for the AutoDeleteBranchModule </div><div class="ttdef"><b>Definition:</b> <a href="_auto_delete_branch_module_8cs_source.html#l00033">AutoDeleteBranchModule.cs:33</a></div></div>
+<p>Definition at line <a class="el" href="_auto_delete_branch_module_8cs_source.html#l00058">58</a> of file <a class="el" href="_auto_delete_branch_module_8cs_source.html">AutoDeleteBranchModule.cs</a>.</p>
+<div class="fragment"><div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        {</div><div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;            <span class="keywordflow">if</span> (payload == null)</div><div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;                <span class="keywordflow">throw</span> <span class="keyword">new</span> ArgumentNullException(nameof(payload));</div><div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div><div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            <span class="keywordflow">if</span> (payload.Action != <span class="stringliteral">&quot;closed&quot;</span> || !payload.PullRequest.Merged)</div><div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;                <span class="keywordflow">throw</span> <span class="keyword">new</span> NotSupportedException();</div><div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div><div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;            <span class="keywordflow">if</span> (payload.PullRequest.Base.Repository.Id != payload.PullRequest.Head.Repository.Id)</div><div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;                <span class="keywordflow">return</span>;</div><div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div><div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;            await <a class="code" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#affff3a2ba3910440c925bb8a08bf74d3">gitHubManager</a>.<a class="code" href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a90d2f5b26a180079562922482c004f51">DeleteBranch</a>(payload.PullRequest.Head.Ref);</div><div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        }</div><div class="ttc" id="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module_html_affff3a2ba3910440c925bb8a08bf74d3"><div class="ttname"><a href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#affff3a2ba3910440c925bb8a08bf74d3">TGWebhooks.Modules.AutoDeleteBranch.AutoDeleteBranchModule.gitHubManager</a></div><div class="ttdeci">readonly IGitHubManager gitHubManager</div><div class="ttdoc">The IGitHubClient for the AutoDeleteBranchModule </div><div class="ttdef"><b>Definition:</b> <a href="_auto_delete_branch_module_8cs_source.html#l00036">AutoDeleteBranchModule.cs:36</a></div></div>
 <div class="ttc" id="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager_html_a90d2f5b26a180079562922482c004f51"><div class="ttname"><a href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a90d2f5b26a180079562922482c004f51">TGWebhooks.Modules.IGitHubManager.DeleteBranch</a></div><div class="ttdeci">Task DeleteBranch(string branchName)</div><div class="ttdoc">Deletes a given Branch on the target repository </div></div>
 </div><!-- fragment -->
 </div>
@@ -299,7 +344,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p></p>
 
-<p>Definition at line <a class="el" href="_auto_delete_branch_module_8cs_source.html#l00022">22</a> of file <a class="el" href="_auto_delete_branch_module_8cs_source.html">AutoDeleteBranchModule.cs</a>.</p>
+<p>Definition at line <a class="el" href="_auto_delete_branch_module_8cs_source.html#l00025">25</a> of file <a class="el" href="_auto_delete_branch_module_8cs_source.html">AutoDeleteBranchModule.cs</a>.</p>
 
 </div>
 </div>
@@ -323,7 +368,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>The IGitHubClient for the <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html" title="Contains the IPayloadHandler&lt;TPayload&gt; to delete merged branches ">AutoDeleteBranchModule</a> </p>
 
-<p>Definition at line <a class="el" href="_auto_delete_branch_module_8cs_source.html#l00033">33</a> of file <a class="el" href="_auto_delete_branch_module_8cs_source.html">AutoDeleteBranchModule.cs</a>.</p>
+<p>Definition at line <a class="el" href="_auto_delete_branch_module_8cs_source.html#l00036">36</a> of file <a class="el" href="_auto_delete_branch_module_8cs_source.html">AutoDeleteBranchModule.cs</a>.</p>
 
 </div>
 </div>
@@ -339,7 +384,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p></p>
 
-<p>Definition at line <a class="el" href="_auto_delete_branch_module_8cs_source.html#l00028">28</a> of file <a class="el" href="_auto_delete_branch_module_8cs_source.html">AutoDeleteBranchModule.cs</a>.</p>
+<p>Definition at line <a class="el" href="_auto_delete_branch_module_8cs_source.html#l00031">31</a> of file <a class="el" href="_auto_delete_branch_module_8cs_source.html">AutoDeleteBranchModule.cs</a>.</p>
 
 </div>
 </div>
@@ -355,7 +400,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p></p>
 
-<p>Definition at line <a class="el" href="_auto_delete_branch_module_8cs_source.html#l00025">25</a> of file <a class="el" href="_auto_delete_branch_module_8cs_source.html">AutoDeleteBranchModule.cs</a>.</p>
+<p>Definition at line <a class="el" href="_auto_delete_branch_module_8cs_source.html#l00028">28</a> of file <a class="el" href="_auto_delete_branch_module_8cs_source.html">AutoDeleteBranchModule.cs</a>.</p>
 
 </div>
 </div>
@@ -371,7 +416,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p></p>
 
-<p>Definition at line <a class="el" href="_auto_delete_branch_module_8cs_source.html#l00019">19</a> of file <a class="el" href="_auto_delete_branch_module_8cs_source.html">AutoDeleteBranchModule.cs</a>.</p>
+<p>Definition at line <a class="el" href="_auto_delete_branch_module_8cs_source.html#l00022">22</a> of file <a class="el" href="_auto_delete_branch_module_8cs_source.html">AutoDeleteBranchModule.cs</a>.</p>
 
 </div>
 </div>
@@ -383,6 +428,31 @@ Additional Inherited Members</h2></td></tr>
           <td class="memname">Guid TGWebhooks.Modules.AutoDeleteBranch.AutoDeleteBranchModule.Uid =&gt; new Guid(&quot;d4235804-4cb8-4e81-bc7f-f08f8c2918d6&quot;)</td>
         </tr>
       </table>
+</div><div class="memdoc">
+
+<p></p>
+
+<p>Definition at line <a class="el" href="_auto_delete_branch_module_8cs_source.html#l00019">19</a> of file <a class="el" href="_auto_delete_branch_module_8cs_source.html">AutoDeleteBranchModule.cs</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Property Documentation</h2>
+<a class="anchor" id="a2be7fc66bc51c06777b2c4e57c6157d0"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool TGWebhooks.Modules.AutoDeleteBranch.AutoDeleteBranchModule.Enabled</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">get</span><span class="mlabel">set</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p></p>

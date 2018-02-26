@@ -92,6 +92,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#properties">Properties</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -125,6 +126,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a9b740b01263e35998c8809746b0c1199"><td class="memItemLeft" align="right" valign="top">Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module.html#a9b740b01263e35998c8809746b0c1199">Initialize</a> (CancellationToken cancellationToken)</td></tr>
 <tr class="memdesc:a9b740b01263e35998c8809746b0c1199"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load components in the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components ">IComponentProvider</a>. Will be called before any other function   <a href="#a9b740b01263e35998c8809746b0c1199">More...</a><br /></td></tr>
 <tr class="separator:a9b740b01263e35998c8809746b0c1199"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3896c21399c55344bea9a3b212cec3ee"><td class="memItemLeft" align="right" valign="top">Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module.html#a3896c21399c55344bea9a3b212cec3ee">AddViewVars</a> (PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken)</td></tr>
+<tr class="memdesc:a3896c21399c55344bea9a3b212cec3ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds vars to the Microsoft.AspNetCore.Mvc.Controller.ViewBag of the <a class="el" href="class_t_g_webhooks_1_1_controllers_1_1_pull_request_controller.html" title="Main Octokit.PullRequest management interface ">Controllers.PullRequestController</a>   <a href="#a3896c21399c55344bea9a3b212cec3ee">More...</a><br /></td></tr>
+<tr class="separator:a3896c21399c55344bea9a3b212cec3ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -132,22 +136,21 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a8f647875e8141c846d0695e3642e3dec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a258b8fdd9e92a1a0a5719bc61d5df03e"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module.html#a258b8fdd9e92a1a0a5719bc61d5df03e">Name</a> =&gt; &quot;24-Hour Rule&quot;</td></tr>
 <tr class="separator:a258b8fdd9e92a1a0a5719bc61d5df03e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6157ce9f46e275ce331e62de427e3677"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module.html#a6157ce9f46e275ce331e62de427e3677">Description</a> =&gt; &quot;Merge requirement of having 24 hours pass since the pull request was originally opened&quot;</td></tr>
+<tr class="memitem:a6157ce9f46e275ce331e62de427e3677"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module.html#a6157ce9f46e275ce331e62de427e3677">Description</a> =&gt; &quot;Require 24 hours to pass since the pull request was originally opened&quot;</td></tr>
 <tr class="separator:a6157ce9f46e275ce331e62de427e3677"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac5730a45dd88b890b3d187ef671ba6a6"><td class="memItemLeft" align="right" valign="top">IEnumerable&lt; <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html">IMergeRequirement</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module.html#ac5730a45dd88b890b3d187ef671ba6a6">MergeRequirements</a> =&gt; new List&lt;<a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html">IMergeRequirement</a>&gt; { this }</td></tr>
 <tr class="separator:ac5730a45dd88b890b3d187ef671ba6a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a48619708573f775b16dccf41d4f8a76a"><td class="memItemLeft" align="right" valign="top">IEnumerable&lt; <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_hook.html">IMergeHook</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module.html#a48619708573f775b16dccf41d4f8a76a">MergeHooks</a> =&gt; Enumerable.Empty&lt;<a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_hook.html">IMergeHook</a>&gt;()</td></tr>
 <tr class="separator:a48619708573f775b16dccf41d4f8a76a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
-Private Attributes</h2></td></tr>
-<tr class="memitem:a8a29ec112a133311f808ab543229d235"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module.html#a8a29ec112a133311f808ab543229d235">HoursRequired</a> = 24</td></tr>
-<tr class="memdesc:a8a29ec112a133311f808ab543229d235"><td class="mdescLeft">&#160;</td><td class="mdescRight">Twenty. Four. Hour. Rule.  <a href="#a8a29ec112a133311f808ab543229d235">More...</a><br /></td></tr>
-<tr class="separator:a8a29ec112a133311f808ab543229d235"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
-Additional Inherited Members</h2></td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="properties"></a>
+Properties</h2></td></tr>
+<tr class="memitem:a13522282e07f68e16d1ba63200c92627"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module.html#a13522282e07f68e16d1ba63200c92627">Enabled</a><code> [get, set]</code></td></tr>
+<tr class="separator:a13522282e07f68e16d1ba63200c92627"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td colspan="2" onclick="javascript:toggleInherit('properties_interface_t_g_webhooks_1_1_modules_1_1_i_module')"><img src="closed.png" alt="-"/>&#160;Properties inherited from <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html">TGWebhooks.Modules.IModule</a></td></tr>
+<tr class="memitem:ad4622560f54759765016d7d26c6ea8ad inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html#ad4622560f54759765016d7d26c6ea8ad">Enabled</a><code> [set]</code></td></tr>
+<tr class="memdesc:ad4622560f54759765016d7d26c6ea8ad inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="mdescLeft">&#160;</td><td class="mdescRight">If the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html" title="Representation of a plugin for TGWebhooks ">IModule</a> is enabled  <a href="#ad4622560f54759765016d7d26c6ea8ad">More...</a><br /></td></tr>
+<tr class="separator:ad4622560f54759765016d7d26c6ea8ad inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3e34caef91316be44f7030b96449a05a inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="memItemLeft" align="right" valign="top">Guid&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html#a3e34caef91316be44f7030b96449a05a">Uid</a><code> [get]</code></td></tr>
 <tr class="memdesc:a3e34caef91316be44f7030b96449a05a inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="mdescLeft">&#160;</td><td class="mdescRight">A unique <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html#a3e34caef91316be44f7030b96449a05a" title="A unique Uid for the IModule ">Uid</a> for the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html" title="Representation of a plugin for TGWebhooks ">IModule</a>  <a href="#a3e34caef91316be44f7030b96449a05a">More...</a><br /></td></tr>
 <tr class="separator:a3e34caef91316be44f7030b96449a05a inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -164,19 +167,54 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memitem:aef489d80950b8fdd97663f6f5b484b53 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider"><td class="memItemLeft" align="right" valign="top">IEnumerable&lt; <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_hook.html">IMergeHook</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html#aef489d80950b8fdd97663f6f5b484b53">MergeHooks</a><code> [get]</code></td></tr>
 <tr class="memdesc:aef489d80950b8fdd97663f6f5b484b53 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_hook.html" title="Operations for modifying a PullRequest before it is merged ">IMergeHook</a>s the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components ">IComponentProvider</a> contains  <a href="#aef489d80950b8fdd97663f6f5b484b53">More...</a><br /></td></tr>
 <tr class="separator:aef489d80950b8fdd97663f6f5b484b53 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header properties_interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement"><td colspan="2" onclick="javascript:toggleInherit('properties_interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement')"><img src="closed.png" alt="-"/>&#160;Properties inherited from <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html">TGWebhooks.Modules.IMergeRequirement</a></td></tr>
-<tr class="memitem:ade53ba7332eabb5e3fee772247ec32d7 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html#ade53ba7332eabb5e3fee772247ec32d7">Name</a><code> [get]</code></td></tr>
-<tr class="memdesc:ade53ba7332eabb5e3fee772247ec32d7 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement"><td class="mdescLeft">&#160;</td><td class="mdescRight">The user friendly name of the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html" title="Represents a bar on automatic merging of a pull request ">IMergeRequirement</a>  <a href="#ade53ba7332eabb5e3fee772247ec32d7">More...</a><br /></td></tr>
-<tr class="separator:ade53ba7332eabb5e3fee772247ec32d7 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6dfdaa7abe81e6c39c707a64b3bbbba9 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html#a6dfdaa7abe81e6c39c707a64b3bbbba9">Description</a><code> [get]</code></td></tr>
-<tr class="memdesc:a6dfdaa7abe81e6c39c707a64b3bbbba9 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement"><td class="mdescLeft">&#160;</td><td class="mdescRight">A description of the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html#a6dfdaa7abe81e6c39c707a64b3bbbba9" title="A description of the Description ">Description</a>  <a href="#a6dfdaa7abe81e6c39c707a64b3bbbba9">More...</a><br /></td></tr>
-<tr class="separator:a6dfdaa7abe81e6c39c707a64b3bbbba9 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
+Private Attributes</h2></td></tr>
+<tr class="memitem:a8a29ec112a133311f808ab543229d235"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module.html#a8a29ec112a133311f808ab543229d235">HoursRequired</a> = 24</td></tr>
+<tr class="memdesc:a8a29ec112a133311f808ab543229d235"><td class="mdescLeft">&#160;</td><td class="mdescRight">Twenty. Four. Hour. Rule.  <a href="#a8a29ec112a133311f808ab543229d235">More...</a><br /></td></tr>
+<tr class="separator:a8a29ec112a133311f808ab543229d235"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html" title="Representation of a plugin for TGWebhooks ">IModule</a> for the 24-Hour Rule <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html" title="Represents a bar on automatic merging of a pull request ">IMergeRequirement</a> </p>
 
 <p>Definition at line <a class="el" href="_twenty_four_hour_rule_module_8cs_source.html#l00015">15</a> of file <a class="el" href="_twenty_four_hour_rule_module_8cs_source.html">TwentyFourHourRuleModule.cs</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a3896c21399c55344bea9a3b212cec3ee"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Task TGWebhooks.Modules.TwentyFourHourRule.TwentyFourHourRuleModule.AddViewVars </td>
+          <td>(</td>
+          <td class="paramtype">PullRequest&#160;</td>
+          <td class="paramname"><em>pullRequest</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">dynamic&#160;</td>
+          <td class="paramname"><em>viewBag</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">CancellationToken&#160;</td>
+          <td class="paramname"><em>cancellationToken</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Adds vars to the Microsoft.AspNetCore.Mvc.Controller.ViewBag of the <a class="el" href="class_t_g_webhooks_1_1_controllers_1_1_pull_request_controller.html" title="Main Octokit.PullRequest management interface ">Controllers.PullRequestController</a>  </p>
+
+<p>Implements <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html#a234a12475747b9a361cf4e176a225ce5">TGWebhooks.Modules.IComponentProvider</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="a7f87256e1bd2a102d93e8816d35636e0"></a>
 <div class="memitem">
 <div class="memproto">
@@ -205,8 +243,8 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html#a7d7b948be2e0e378bbb7296e5057fd6c">TGWebhooks.Modules.IMergeRequirement</a>.</p>
 
-<p>Definition at line <a class="el" href="_twenty_four_hour_rule_module_8cs_source.html#l00041">41</a> of file <a class="el" href="_twenty_four_hour_rule_module_8cs_source.html">TwentyFourHourRuleModule.cs</a>.</p>
-<div class="fragment"><div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        {</div><div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;            <span class="keywordflow">if</span> (pullRequest == null)</div><div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;                <span class="keywordflow">throw</span> <span class="keyword">new</span> ArgumentNullException(nameof(pullRequest));</div><div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;            var hoursSinceOpened = (int)Math.Floor((<span class="keyword">new</span> DateTimeOffset(DateTime.UtcNow) - pullRequest.CreatedAt).TotalHours);</div><div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div><div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            var good = hoursSinceOpened &gt; <a class="code" href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module.html#a8a29ec112a133311f808ab543229d235">HoursRequired</a>;</div><div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div><div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            <span class="keywordflow">return</span> Task.FromResult(<span class="keyword">new</span> AutoMergeStatus</div><div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;            {</div><div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;                Progress = hoursSinceOpened,</div><div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;                RequiredProgress = <a class="code" href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module.html#a8a29ec112a133311f808ab543229d235">HoursRequired</a>,</div><div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;                ReevaluateIn = good ? 0 : (HoursRequired - hoursSinceOpened) * 60 * 60,</div><div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;            });</div><div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        }</div><div class="ttc" id="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module_html_a8a29ec112a133311f808ab543229d235"><div class="ttname"><a href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module.html#a8a29ec112a133311f808ab543229d235">TGWebhooks.Modules.TwentyFourHourRule.TwentyFourHourRuleModule.HoursRequired</a></div><div class="ttdeci">const int HoursRequired</div><div class="ttdoc">Twenty. Four. Hour. Rule. </div><div class="ttdef"><b>Definition:</b> <a href="_twenty_four_hour_rule_module_8cs_source.html#l00020">TwentyFourHourRuleModule.cs:20</a></div></div>
+<p>Definition at line <a class="el" href="_twenty_four_hour_rule_module_8cs_source.html#l00044">44</a> of file <a class="el" href="_twenty_four_hour_rule_module_8cs_source.html">TwentyFourHourRuleModule.cs</a>.</p>
+<div class="fragment"><div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        {</div><div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;            <span class="keywordflow">if</span> (pullRequest == null)</div><div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;                <span class="keywordflow">throw</span> <span class="keyword">new</span> ArgumentNullException(nameof(pullRequest));</div><div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;            var hoursSinceOpened = (int)Math.Floor((<span class="keyword">new</span> DateTimeOffset(DateTime.UtcNow) - pullRequest.CreatedAt).TotalHours);</div><div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div><div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;            var good = hoursSinceOpened &gt; <a class="code" href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module.html#a8a29ec112a133311f808ab543229d235">HoursRequired</a>;</div><div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div><div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            <span class="keywordflow">return</span> Task.FromResult(<span class="keyword">new</span> AutoMergeStatus</div><div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;            {</div><div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;                Progress = hoursSinceOpened,</div><div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;                RequiredProgress = <a class="code" href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module.html#a8a29ec112a133311f808ab543229d235">HoursRequired</a>,</div><div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                ReevaluateIn = good ? 0 : (HoursRequired - hoursSinceOpened) * 60 * 60,</div><div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;            });</div><div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        }</div><div class="ttc" id="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module_html_a8a29ec112a133311f808ab543229d235"><div class="ttname"><a href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module.html#a8a29ec112a133311f808ab543229d235">TGWebhooks.Modules.TwentyFourHourRule.TwentyFourHourRuleModule.HoursRequired</a></div><div class="ttdeci">const int HoursRequired</div><div class="ttdoc">Twenty. Four. Hour. Rule. </div><div class="ttdef"><b>Definition:</b> <a href="_twenty_four_hour_rule_module_8cs_source.html#l00020">TwentyFourHourRuleModule.cs:20</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -265,14 +303,14 @@ Additional Inherited Members</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">string TGWebhooks.Modules.TwentyFourHourRule.TwentyFourHourRuleModule.Description =&gt; &quot;Merge requirement of having 24 hours pass since the pull request was originally opened&quot;</td>
+          <td class="memname">string TGWebhooks.Modules.TwentyFourHourRule.TwentyFourHourRuleModule.Description =&gt; &quot;Require 24 hours to pass since the pull request was originally opened&quot;</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p></p>
 
-<p>Definition at line <a class="el" href="_twenty_four_hour_rule_module_8cs_source.html#l00029">29</a> of file <a class="el" href="_twenty_four_hour_rule_module_8cs_source.html">TwentyFourHourRuleModule.cs</a>.</p>
+<p>Definition at line <a class="el" href="_twenty_four_hour_rule_module_8cs_source.html#l00032">32</a> of file <a class="el" href="_twenty_four_hour_rule_module_8cs_source.html">TwentyFourHourRuleModule.cs</a>.</p>
 
 </div>
 </div>
@@ -312,7 +350,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p></p>
 
-<p>Definition at line <a class="el" href="_twenty_four_hour_rule_module_8cs_source.html#l00035">35</a> of file <a class="el" href="_twenty_four_hour_rule_module_8cs_source.html">TwentyFourHourRuleModule.cs</a>.</p>
+<p>Definition at line <a class="el" href="_twenty_four_hour_rule_module_8cs_source.html#l00038">38</a> of file <a class="el" href="_twenty_four_hour_rule_module_8cs_source.html">TwentyFourHourRuleModule.cs</a>.</p>
 
 </div>
 </div>
@@ -328,7 +366,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p></p>
 
-<p>Definition at line <a class="el" href="_twenty_four_hour_rule_module_8cs_source.html#l00032">32</a> of file <a class="el" href="_twenty_four_hour_rule_module_8cs_source.html">TwentyFourHourRuleModule.cs</a>.</p>
+<p>Definition at line <a class="el" href="_twenty_four_hour_rule_module_8cs_source.html#l00035">35</a> of file <a class="el" href="_twenty_four_hour_rule_module_8cs_source.html">TwentyFourHourRuleModule.cs</a>.</p>
 
 </div>
 </div>
@@ -344,7 +382,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p></p>
 
-<p>Definition at line <a class="el" href="_twenty_four_hour_rule_module_8cs_source.html#l00026">26</a> of file <a class="el" href="_twenty_four_hour_rule_module_8cs_source.html">TwentyFourHourRuleModule.cs</a>.</p>
+<p>Definition at line <a class="el" href="_twenty_four_hour_rule_module_8cs_source.html#l00029">29</a> of file <a class="el" href="_twenty_four_hour_rule_module_8cs_source.html">TwentyFourHourRuleModule.cs</a>.</p>
 
 </div>
 </div>
@@ -356,6 +394,31 @@ Additional Inherited Members</h2></td></tr>
           <td class="memname">Guid TGWebhooks.Modules.TwentyFourHourRule.TwentyFourHourRuleModule.Uid =&gt; new Guid(&quot;78544889-5447-47f2-b300-3fb7b703c3cc&quot;)</td>
         </tr>
       </table>
+</div><div class="memdoc">
+
+<p></p>
+
+<p>Definition at line <a class="el" href="_twenty_four_hour_rule_module_8cs_source.html#l00026">26</a> of file <a class="el" href="_twenty_four_hour_rule_module_8cs_source.html">TwentyFourHourRuleModule.cs</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Property Documentation</h2>
+<a class="anchor" id="a13522282e07f68e16d1ba63200c92627"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool TGWebhooks.Modules.TwentyFourHourRule.TwentyFourHourRuleModule.Enabled</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">get</span><span class="mlabel">set</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p></p>
