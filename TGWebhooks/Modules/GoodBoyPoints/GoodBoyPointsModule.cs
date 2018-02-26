@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 using Octokit;
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 	/// <summary>
 	/// Implements the Good Boy Points tracking
 	/// </summary>
-	sealed class GoodBoyPointsModule : IModule, IPayloadHandler<PullRequestEventPayload>, IMergeRequirement
+	public sealed class GoodBoyPointsModule : IModule, IPayloadHandler<PullRequestEventPayload>, IMergeRequirement
 	{
 		/// <inheritdoc />
 		public Guid Uid => new Guid("a8875569-8807-4a58-adf6-ac5a408c7e16");
@@ -143,6 +143,20 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 			gbp = AdjustGBP(gbp, await labelsTask.ConfigureAwait(false));
 
 			await dataStore.WriteData(payload.PullRequest.User.Login, gbp, cancellationToken);
+		}
+
+		/// <summary>
+		/// List all <see cref="GoodBoyPointsEntry"/>s
+		/// </summary>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
+		/// A <see cref="Task{TResult}"/> resulting in the <see cref="Dictionary{TKey, TValue}"/> of good boy points
+		public async Task<Dictionary<string, int>> GoodBoyPointsEntries(CancellationToken cancellationToken)
+		{
+			var rawDic = await dataStore.ExportDictionary(cancellationToken).ConfigureAwait(false);
+			var realDic = new Dictionary<string, int>();
+			foreach (var I in rawDic)
+				realDic.Add(I.Key, ((JObject)I.Value).ToObject<GoodBoyPointsEntry>().Points);
+			return realDic;
 		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace TGWebhooks.Modules
@@ -26,5 +27,12 @@ namespace TGWebhooks.Modules
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
 		Task WriteData<TData>(string key, TData data, CancellationToken cancellationToken) where TData : class, new();
+
+		/// <summary>
+		/// Exports the entire <see cref="IDataStore"/> as a json <see cref="string"/>
+		/// </summary>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task{TResult}"/> resulting in the object tree of the <see cref="IDataStore"/></returns>
+		Task<Dictionary<string, object>> ExportDictionary(CancellationToken cancellationToken);
 	}
 }
