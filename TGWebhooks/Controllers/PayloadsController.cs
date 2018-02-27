@@ -141,10 +141,9 @@ namespace TGWebhooks.Controllers
 
 			await Task.WhenAll(tasks).ConfigureAwait(false);
 
-			if (typeof(IPayloadHandler<TPayload>).IsAssignableFrom(autoMergeHandler.GetType()))
+			if (autoMergeHandler is IPayloadHandler<TPayload> asHandler)
 			{
 				logger.LogTrace("Running auto merge payload handler.");
-				var asHandler = (IPayloadHandler<TPayload>)autoMergeHandler;
 				try
 				{
 					await asHandler.ProcessPayload(payload, cancellationToken).ConfigureAwait(false);
