@@ -137,7 +137,10 @@ namespace TGWebhooks.Core
 		{
 			var module = modulesAndEnabledStatus.Keys.First(x => x.Uid == guid);
 			if (modulesAndEnabledStatus[module] == enabled)
+			{
+				logger.LogInformation("Module {0} already enabled/disabled ({1})", module.Name, enabled);
 				return;
+			}
 			modulesAndEnabledStatus[module] = enabled;
 			module.Enabled = enabled;
 
@@ -145,7 +148,7 @@ namespace TGWebhooks.Core
 			dbentry.Enabled = enabled;
 			await databaseContext.Save(cancellationToken);
 
-			logger.LogInformation("Modules {0} enabled status set to {1}", guid, enabled);
+			logger.LogInformation("Module {0} enabled status set to {1}", module.Name, enabled);
 		}
 
 		/// <inheritdoc />

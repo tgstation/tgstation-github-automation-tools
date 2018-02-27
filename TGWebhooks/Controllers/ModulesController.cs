@@ -100,18 +100,26 @@ namespace TGWebhooks.Controllers
 			if (moduleUpdate == null)
 				throw new ArgumentNullException(nameof(moduleUpdate));
 
+			logger.LogTrace("Begin module update operation: {0} => {1}", moduleUpdate.Uid, moduleUpdate.Enabled);
 			var token = await gitHubManager.CheckAuthorization(Request.Cookies, cancellationToken).ConfigureAwait(false);
 
 			if (token == null)
+			{
+				logger.LogDebug("Module update aborted, user unauthorized!");
 				return Unauthorized();
+			}
 
 			var user = await gitHubManager.GetUserLogin(token, cancellationToken).ConfigureAwait(false);
 
 			if (!await gitHubManager.UserHasWriteAccess(user).ConfigureAwait(false))
+			{
+				logger.LogDebug("Module update aborted, user is not maintainer!");
 				return Forbid();
+			}
 
 			try
 			{
+				logger.LogInformation("User {0} setting enabled status of module {1} to {2}", user.Login, moduleUpdate.Uid, moduleUpdate.Enabled);
 				await moduleManager.SetModuleEnabled(new Guid(moduleUpdate.Uid), moduleUpdate.Enabled, cancellationToken).ConfigureAwait(false);
 			}
 			catch (Exception e)
