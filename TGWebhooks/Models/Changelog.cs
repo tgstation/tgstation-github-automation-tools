@@ -36,10 +36,10 @@ namespace TGWebhooks.Models
 			{
 				if (String.IsNullOrWhiteSpace(line))
 					continue;
-				var foundTag = line.StartsWith(":cl:") || line.StartsWith("🆑");
 				if (author == null)
 				{
-					if (foundTag)
+					var foundStartTag = line.StartsWith(":cl:") || line.StartsWith("🆑");
+					if (foundStartTag)
 					{
 						author = line.Replace(":cl:", String.Empty).Replace("🆑", String.Empty).Trim();
 						if (String.IsNullOrWhiteSpace(author) || author == "optional name here")
@@ -48,7 +48,8 @@ namespace TGWebhooks.Models
 					}
 					continue;
 				}
-				if (foundTag)
+				var foundEndTag = line.StartsWith("/:cl:") || line.StartsWith("/🆑");
+				if (foundEndTag)
 				{
 					if (entries.Count == 0)
 					{
