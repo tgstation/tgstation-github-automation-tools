@@ -69,9 +69,7 @@ namespace TGWebhooks.Controllers
 		/// <param name="backgroundJobClient">The value of <see cref="backgroundJobClient"/></param>
 		public PayloadsController(IOptions<GitHubConfiguration> gitHubConfigurationOptions, ILogger<PayloadsController> logger, IComponentProvider componentProvider, IAutoMergeHandler autoMergeHandler, IBackgroundJobClient backgroundJobClient)
 		{
-			if (gitHubConfigurationOptions == null)
-				throw new ArgumentNullException(nameof(gitHubConfigurationOptions));
-			gitHubConfiguration = gitHubConfigurationOptions.Value;
+			gitHubConfiguration = gitHubConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(gitHubConfigurationOptions));
 			this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 			this.componentProvider = componentProvider ?? throw new ArgumentNullException(nameof(componentProvider));
 			this.autoMergeHandler = autoMergeHandler ?? throw new ArgumentNullException(nameof(autoMergeHandler));
