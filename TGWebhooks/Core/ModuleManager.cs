@@ -61,8 +61,6 @@ namespace TGWebhooks.Core
 		/// <inheritdoc />
 		public async Task Initialize(CancellationToken cancellationToken)
 		{
-			await databaseContext.Initialize(cancellationToken).ConfigureAwait(false);
-
 			modulesAndEnabledStatus = new Dictionary<IModule, bool>();
 
 			var tasks = new List<Task<IModule>>();

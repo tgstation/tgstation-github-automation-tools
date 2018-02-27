@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ using System.Threading;
 using TGWebhooks.Configuration;
 using TGWebhooks.Modules;
 using TGWebhooks.Models;
+using ZNetCS.AspNetCore.Logging.EntityFrameworkCore;
 
 namespace TGWebhooks.Core
 {
@@ -109,14 +111,19 @@ namespace TGWebhooks.Core
 		/// </summary>
 		/// <param name="app">The <see cref="IApplicationBuilder"/> to configure</param>
 		/// <param name="env">The <see cref="IHostingEnvironment"/> of the <see cref="Application"/></param>
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+		/// <param name="loggerFactory">The <see cref="ILoggerFactory"/> to configure</param>
+		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
 #pragma warning restore CA1822 // Mark members as static
 		{
 			if (app == null)
 				throw new ArgumentNullException(nameof(app));
 			if (env == null)
 				throw new ArgumentNullException(nameof(env));
+
 			app.ApplicationServices.GetRequiredService<IIOManager>().CreateDirectory(DataDirectory, CancellationToken.None).GetAwaiter().GetResult();
+			app.ApplicationServices.GetRequiredService<IDatabaseContext>().Initialize(CancellationToken.None).GetAwaiter().GetResult();
+
+			loggerFactory.AddEntityFramework<DatabaseContext>(app.ApplicationServices);
 
 			if (env.IsDevelopment())
 				app.UseDeveloperExceptionPage();
@@ -146,8 +153,8 @@ namespace TGWebhooks.Core
 				SupportedUICultures = supportedCultures,
 			};
 			app.UseRequestLocalization(options);
-			
-			app.UseAsyncInitialization<IModuleManager>((pluginManager, cancellationToken) => pluginManager.Initialize(cancellationToken));
+
+			app.UseAsyncInitialization<IModuleManager>((moduleManager, cancellationToken) => moduleManager.Initialize(cancellationToken));
 			app.UseAsyncInitialization<IRepository>((repository, cancellationToken) => repository.Initialize(cancellationToken));
 
 			app.UseHangfireServer();
