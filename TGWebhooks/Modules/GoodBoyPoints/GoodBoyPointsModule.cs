@@ -21,10 +21,13 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 		public Guid Uid => new Guid("a8875569-8807-4a58-adf6-ac5a408c7e16");
 
 		/// <inheritdoc />
-		public string Name => "Good Boy Points";
+		public string Name => stringLocalizer["Name"];
 
 		/// <inheritdoc />
-		public string Description => "Tracks user code improvement ratios";
+		public string Description => stringLocalizer["Description"];
+
+		/// <inheritdoc />
+		public string RequirementDescription => stringLocalizer["RequirementDescription"];
 
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => new List<IMergeRequirement> { this };

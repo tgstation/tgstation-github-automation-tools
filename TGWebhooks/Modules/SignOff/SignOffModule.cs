@@ -27,10 +27,13 @@ namespace TGWebhooks.Modules.SignOff
 		public Guid Uid => new Guid("bde81200-a275-4e93-b855-13865f3629fe");
 
 		/// <inheritdoc />
-		public string Name => "Maintainer Sign Off";
+		public string Name => stringLocalizer["Name"];
 
 		/// <inheritdoc />
-		public string Description => "Require maintainers approving the 'idea' of a Pull Request aside from code. Sign offs are automatically dissmissed if the pull request body or title changes";
+		public string Description => stringLocalizer["Description"];
+
+		/// <inheritdoc />
+		public string RequirementDescription => stringLocalizer["RequirementDescription"];
 
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => new List<IMergeRequirement> { this };

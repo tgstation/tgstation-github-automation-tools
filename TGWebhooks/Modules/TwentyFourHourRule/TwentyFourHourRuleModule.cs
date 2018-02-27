@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
 using Octokit;
 using System;
 using System.Collections.Generic;
@@ -26,10 +25,13 @@ namespace TGWebhooks.Modules.TwentyFourHourRule
 		public Guid Uid => new Guid("78544889-5447-47f2-b300-3fb7b703c3cc");
 
 		/// <inheritdoc />
-		public string Name => "24-Hour Rule";
+		public string Name => stringLocalizer["Name"];
 
 		/// <inheritdoc />
-		public string Description => "Require 24 hours to pass since the pull request was originally opened";
+		public string Description => stringLocalizer["Description"];
+
+		/// <inheritdoc />
+		public string RequirementDescription => stringLocalizer["RequirementDescription"];
 
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => new List<IMergeRequirement> { this };
@@ -39,6 +41,20 @@ namespace TGWebhooks.Modules.TwentyFourHourRule
 
 		/// <inheritdoc />
 		public IEnumerable<IPayloadHandler<TPayload>> GetPayloadHandlers<TPayload>() where TPayload : ActivityPayload => Enumerable.Empty<IPayloadHandler<TPayload>>();
+
+		/// <summary>
+		/// The <see cref="IStringLocalizer"/> for the <see cref="TwentyFourHourRuleModule"/>
+		/// </summary>
+		readonly IStringLocalizer<TwentyFourHourRuleModule> stringLocalizer;
+
+		/// <summary>
+		/// Construct a <see cref="TwentyFourHourRuleModule"/>
+		/// </summary>
+		/// <param name="stringLocalizer">The value of <see cref="stringLocalizer"/></param>
+		public TwentyFourHourRuleModule(IStringLocalizer<TwentyFourHourRuleModule> stringLocalizer)
+		{
+			this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
+		}
 
 		/// <inheritdoc />
 		public Task<AutoMergeStatus> EvaluateFor(PullRequest pullRequest, CancellationToken cancellationToken)

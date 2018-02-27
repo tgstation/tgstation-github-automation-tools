@@ -20,10 +20,13 @@ namespace TGWebhooks.Modules.ReviewManager
 		public Guid Uid => new Guid("8d8122d0-ad0d-4a91-977f-204d617efd04");
 
 		/// <inheritdoc />
-		public string Name => "Review Manager";
+		public string Name => stringLocalizer["Name"];
 
 		/// <inheritdoc />
-		public string Description => "Manages auto-dismissal and tagging of maintainer reviews";
+		public string Description => stringLocalizer["Description"];
+
+		/// <inheritdoc />
+		public string RequirementDescription => stringLocalizer["RequirementDescription"];
 
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => new List<IMergeRequirement> { this };

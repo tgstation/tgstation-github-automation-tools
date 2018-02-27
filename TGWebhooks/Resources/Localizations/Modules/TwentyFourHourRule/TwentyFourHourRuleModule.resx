@@ -118,30 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Description" xml:space="preserve">
-    <value>Tracks user code improvement ratios</value>
-  </data>
-  <data name="GBPBaseLabel" xml:space="preserve">
-    <value>Base</value>
-  </data>
-  <data name="GBPHeader" xml:space="preserve">
-    <value>Good Boy Points</value>
-  </data>
-  <data name="GBPLabelsLabel" xml:space="preserve">
-    <value>From PR</value>
-  </data>
-  <data name="GBPOffsetLabel" xml:space="preserve">
-    <value>From Maintainers</value>
-  </data>
-  <data name="GBPResult" xml:space="preserve">
-    <value>Merging this pull request will adjust the user's GBP by {0}, resulting in a new total of {1}</value>
-  </data>
-  <data name="InsufficientGBP" xml:space="preserve">
-    <value>User does not have enough #coderbus Good Boy Points for this pull request</value>
+    <value>Require 24 hours to pass since the pull request was originally opened</value>
   </data>
   <data name="Name" xml:space="preserve">
-    <value>Good Boy Points</value>
+    <value>24-Hour Rule</value>
   </data>
   <data name="RequirementDescription" xml:space="preserve">
-    <value>Maintain a positive GBP balance</value>
+    <value>24 hours must pass since the pull request was opened</value>
   </data>
 </root>

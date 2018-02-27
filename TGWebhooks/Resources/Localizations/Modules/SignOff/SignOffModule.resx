@@ -126,4 +126,13 @@
   <data name="SignOffNulled" xml:space="preserve">
     <value>Sign off nullified due to edit of original post</value>
   </data>
+  <data name="Description" xml:space="preserve">
+    <value>Require maintainers approving the 'idea' of a Pull Request aside from code. Sign offs are automatically dismissed if the pull request body or title changes</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Sign Off</value>
+  </data>
+  <data name="RequirementDescription" xml:space="preserve">
+    <value>Have a maintainer sign off on the pull request</value>
+  </data>
 </root>

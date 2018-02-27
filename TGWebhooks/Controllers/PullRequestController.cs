@@ -89,6 +89,11 @@ namespace TGWebhooks.Controllers
 			ViewBag.PullRequestAuthorID = pr.User.Id;
 			ViewBag.PullRequestTitle = pr.Title;
 			ViewBag.PullRequestNumber = pr.Number;
+			ViewBag.PullRequestClosed = pr.State.Value == Octokit.ItemState.Closed;
+			ViewBag.PullRequestHref = pr.HtmlUrl;
+
+			ViewBag.CloseMessage = stringLocalizer["CloseMessage"];
+			ViewBag.MergeRequirements = stringLocalizer["MergeRequirements"];
 
 			if (token == null)
 			{

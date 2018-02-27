@@ -26,10 +26,13 @@ namespace TGWebhooks.Modules.ChangelogGenerator
 		public Guid Uid => new Guid("eb442717-57a2-402f-bfd4-0d4dce80f16a");
 
 		/// <inheritdoc />
-		public string Name => "Changelog Generator";
+		public string Name => stringLocalizer["Name"];
 
 		/// <inheritdoc />
-		public string Description => "Generates .yaml changelog files";
+		public string Description => stringLocalizer["Description"];
+
+		/// <inheritdoc />
+		public string RequirementDescription => stringLocalizer["RequirementDescription"];
 
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => Enumerable.Empty<IMergeRequirement>();
@@ -80,6 +83,20 @@ namespace TGWebhooks.Modules.ChangelogGenerator
 		/// <inheritdoc />
 		public Task Initialize(CancellationToken cancellationToken) => Task.CompletedTask;
 
+		/// <summary>
+		/// Gets the <see cref="RequireChangelogEntry"/> for a <paramref name="pullRequest"/>
+		/// </summary>
+		/// <param name="pullRequest">The <see cref="PullRequest"/> to check</param>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task{TResult}"/> resulting in the <see cref="RequireChangelogEntry"/> for the <paramref name="pullRequest"/></returns>
+		async Task<RequireChangelogEntry> GetRequired(PullRequest pullRequest, CancellationToken cancellationToken)
+		{
+			var setRequired = await dataStore.ReadData<RequireChangelogEntry>(pullRequest.Number.ToString(), cancellationToken).ConfigureAwait(false);
+			if (!setRequired.Required.HasValue)
+				setRequired.Required = generalConfiguration.DefaultChangelogRequired;
+			return setRequired;
+		}
+
 		/// <inheritdoc />
 		public Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken) => Task.CompletedTask;
 
@@ -89,18 +106,15 @@ namespace TGWebhooks.Modules.ChangelogGenerator
 			if (pullRequest == null)
 				throw new ArgumentNullException(nameof(pullRequest));
 
-			var setRequired = await dataStore.ReadData<RequireChangelogEntry>(pullRequest.Number.ToString(), cancellationToken).ConfigureAwait(false);
-			
-			if (!setRequired.Required.HasValue)
-				setRequired.Required = generalConfiguration.DefaultChangelogRequired;
+			var required = await GetRequired(pullRequest, cancellationToken).ConfigureAwait(false);
 
 			var changelog = Changelog.GetChangelog(pullRequest, out bool malformed);
 
 			var result = new AutoMergeStatus
 			{
 				FailStatusReport = true,
-				RequiredProgress = 2, //setRequired.Required.Value || malformed ? 1 : 0, //TODO:maintainer_can_modify field
-				Progress = (changelog != null ? 1 : 0)
+				RequiredProgress = required.Required.Value || malformed ? 1 : 0, //TODO:maintainer_can_modify field
+				Progress = changelog != null ? 1 : 0
 			};
 			if (result.Progress < result.RequiredProgress || malformed)
 				result.Notes.Add(stringLocalizer[malformed ? "ChangelogMalformed" : "NeedsChangelog"]);
