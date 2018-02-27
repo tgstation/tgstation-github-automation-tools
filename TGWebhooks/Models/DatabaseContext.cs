@@ -82,15 +82,9 @@ namespace TGWebhooks.Models
 		}
 
 		/// <inheridoc />
-		public Task Save(CancellationToken cancellationToken)
-		{
-			return SaveChangesAsync(cancellationToken);
-		}
+		public Task Save(CancellationToken cancellationToken) => SaveChangesAsync(cancellationToken);
 
 		/// <inheridoc />
-		public Task Initialize(CancellationToken cancellationToken)
-		{
-			return Database.EnsureCreatedAsync(cancellationToken);
-		}
+		public Task Initialize(CancellationToken cancellationToken) => Database.EnsureCreatedAsync(cancellationToken);
 	}
 }
