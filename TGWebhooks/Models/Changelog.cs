@@ -36,19 +36,34 @@ namespace TGWebhooks.Models
 			{
 				if (String.IsNullOrWhiteSpace(line))
 					continue;
+				var foundStartTag = line.StartsWith(":cl:") || line.StartsWith("🆑");
+				var foundEndTag = line.StartsWith("/:cl:") || line.StartsWith("/🆑");
 				if (author == null)
 				{
-					var foundStartTag = line.StartsWith(":cl:") || line.StartsWith("🆑");
+					if (foundEndTag)
+					{
+						malformed = true;
+						return null;
+					}
 					if (foundStartTag)
 					{
 						author = line.Replace(":cl:", String.Empty).Replace("🆑", String.Empty).Trim();
-						if (String.IsNullOrWhiteSpace(author) || author == "optional name here")
+						if (String.IsNullOrWhiteSpace(author))
 							author = pullRequest.User.Login;
+						else if (author == "optional name here")
+						{
+							malformed = true;
+							return null;
+						}
 						entries = new List<ChangelogEntry>();
 					}
 					continue;
 				}
-				var foundEndTag = line.StartsWith("/:cl:") || line.StartsWith("/🆑");
+				if (foundStartTag)
+				{
+					malformed = true;
+					return null;
+				}
 				if (foundEndTag)
 				{
 					if (entries.Count == 0)
