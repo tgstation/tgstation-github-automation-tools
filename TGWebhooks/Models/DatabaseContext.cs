@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Threading;
@@ -23,6 +24,10 @@ namespace TGWebhooks.Models
 		/// The <see cref="DatabaseConfiguration"/> for the <see cref="DatabaseContext"/>
 		/// </summary>
 		readonly DatabaseConfiguration databaseConfiguration;
+		/// <summary>
+		/// The <see cref="ILoggerFactory"/> for the <see cref="DatabaseContext"/>
+		/// </summary>
+		readonly ILoggerFactory loggerFactory;
 
 		/// <summary>
 		/// Helper for calling different <see cref="Action{T}"/>s with <see cref="DatabaseConfiguration.ConnectionString"/> based on <see cref="DatabaseConfiguration.DatabaseType"/>
@@ -62,15 +67,18 @@ namespace TGWebhooks.Models
 		/// </summary>
 		/// <param name="options">The <see cref="DbContextOptions{TContext}"/> for the <see cref="DatabaseContext"/></param>
 		/// <param name="databaseConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the value of <see cref="databaseConfiguration"/></param>
-		public DatabaseContext(DbContextOptions<DatabaseContext> options, IOptions<DatabaseConfiguration> databaseConfigurationOptions) : base(options)
+		/// <param name="loggerFactory">The value of <see cref="loggerFactory"/></param>
+		public DatabaseContext(DbContextOptions<DatabaseContext> options, IOptions<DatabaseConfiguration> databaseConfigurationOptions, ILoggerFactory loggerFactory) : base(options)
 		{
 			databaseConfiguration = databaseConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(databaseConfigurationOptions));
+			this.loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
 		}
 
 		/// <inheridoc />
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
 			SelectDatabaseType(databaseConfiguration, x => optionsBuilder.UseSqlServer(x), x => optionsBuilder.UseMySQL(x), x => optionsBuilder.UseSqlite(x));
+			optionsBuilder.UseLoggerFactory(loggerFactory);
 		}
 
 		/// <inheridoc />
