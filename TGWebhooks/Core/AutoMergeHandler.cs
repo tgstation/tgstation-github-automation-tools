@@ -152,7 +152,7 @@ namespace TGWebhooks.Core
 
 					if (!pullRequest.Mergeable.HasValue || !pullRequest.Mergeable.Value)
 					{
-						logger.LogDebug("Aborted due to lack of mergeablility: {0}", pullRequest.Mergeable);
+						logger.LogDebug("Aborted due to lack of mergeablility!");
 						return;
 					}
 
