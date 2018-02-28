@@ -33,10 +33,6 @@ namespace TGWebhooks.Models
 		/// The <see cref="ILoggerFactory"/> for the <see cref="DatabaseContext"/>
 		/// </summary>
 		readonly ILoggerFactory loggerFactory;
-		/// <summary>
-		/// The <see cref="IServiceProvider"/> for the <see cref="DatabaseContext"/>
-		/// </summary>
-		readonly IServiceProvider serviceProvider;
 
 		/// <summary>
 		/// Helper for calling different <see cref="Action{T}"/>s with <see cref="DatabaseConfiguration.ConnectionString"/> based on <see cref="DatabaseConfiguration.DatabaseType"/>
@@ -77,12 +73,10 @@ namespace TGWebhooks.Models
 		/// <param name="options">The <see cref="DbContextOptions{TContext}"/> for the <see cref="DatabaseContext"/></param>
 		/// <param name="databaseConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the value of <see cref="databaseConfiguration"/></param>
 		/// <param name="loggerFactory">The value of <see cref="loggerFactory"/></param>
-		/// <param name="serviceProvider">The value of <see cref="serviceProvider"/></param>
-		public DatabaseContext(DbContextOptions<DatabaseContext> options, IOptions<DatabaseConfiguration> databaseConfigurationOptions, ILoggerFactory loggerFactory, IServiceProvider serviceProvider) : base(options)
+		public DatabaseContext(DbContextOptions<DatabaseContext> options, IOptions<DatabaseConfiguration> databaseConfigurationOptions, ILoggerFactory loggerFactory) : base(options)
 		{
 			databaseConfiguration = databaseConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(databaseConfigurationOptions));
 			this.loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
-			this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 		}
 
 		/// <inheridoc />
