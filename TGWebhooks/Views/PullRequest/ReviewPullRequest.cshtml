@@ -22,12 +22,12 @@ else
             @foreach (var I in (IDictionary<IMergeRequirement, AutoMergeStatus>)ViewBag.Statuses)
         {
             <div class="container col-sm-4">
-                <div id="PB-@((++i).ToString())" class="progress-button loading@(I.Value.Progress >= I.Value.RequiredProgress ? " success" : I.Value.FailStatusReport ? " error": null)" data-result="true" style="display: block; margin: auto">
-                    <svg id="PBC-@(i.ToString())" class="progress-circle" width="70" height="70">
+                <div id="PB-@(++i)" class="progress-button loading@(I.Value.Progress >= I.Value.RequiredProgress ? " success" : I.Value.FailStatusReport ? " error": null)" data-result="true" style="display: block; margin: auto">
+                    <svg id="PBC-@i" class="progress-circle" width="70" height="70">
                         <path d="m35,2.5c17.955803,0 32.5,14.544199 32.5,32.5c0,17.955803 -14.544197,32.5 -32.5,32.5c-17.955803,0 -32.5,-14.544197 -32.5,-32.5c0,-17.955801 14.544197,-32.5 32.5,-32.5z" />
                     </svg>
 
-                    <svg class="checkmark" width="70" height="70">
+                    <svg id="PBCH-@i" class="checkmark" width="70" height="70">
                         <path d="m31.5,46.5l15.3,-23.2" />
                         <path d="m31.5,46.5l-8.5,-7.1" />
                     </svg>
@@ -50,7 +50,7 @@ else
                 <ul>
                     @foreach (var J in I.Value.Notes)
                     {
-                    <li>
+                    <li id="NT-@i">
                         @J
                     </li>
                     }
@@ -92,8 +92,11 @@ else
             }
             @foreach (var I in (IDictionary<IMergeRequirement, AutoMergeStatus>)ViewBag.Statuses)
             {
-                @:$('#PBC-@((++i).ToString())').svgDraw(0);
-                @:$('#PBC-@(i.ToString())').svgDraw(@((double)I.Value.Progress / I.Value.RequiredProgress));
+                @:var pbc = $('#PBC-@(i.ToString())');
+                @:pbc.svgDraw(0);
+                @:setTimeout(function () {
+                    @:pbc.svgDraw(@((double)I.Value.Progress / I.Value.RequiredProgress));
+                @:}, 1000);
             }
 
         });

@@ -49,7 +49,15 @@ namespace TGWebhooks.Modules.SignOff.Controllers
 			if (!await gitHubManager.UserHasWriteAccess(user).ConfigureAwait(false))
 				return Forbid();
 
-			await signOffModule.SignOff(prNumber, token, cancellationToken).ConfigureAwait(false);
+			var pr = await gitHubManager.GetPullRequest(prNumber).ConfigureAwait(false);
+
+#if !ENABLE_SELF_SIGN
+			//no self signing
+			if (pr.User.Id == user.Id)
+				return Forbid();
+#endif
+
+			await signOffModule.SignOff(pr, user, token, cancellationToken).ConfigureAwait(false);
 
 			return Json(new object());
 		}
@@ -73,7 +81,8 @@ namespace TGWebhooks.Modules.SignOff.Controllers
 			if (!await gitHubManager.UserHasWriteAccess(user).ConfigureAwait(false))
 				return Forbid();
 
-			await signOffModule.VetoSignOff(prNumber, cancellationToken).ConfigureAwait(false);
+			var pr = await gitHubManager.GetPullRequest(prNumber).ConfigureAwait(false);
+			await signOffModule.VetoSignOff(pr, cancellationToken).ConfigureAwait(false);
 
 			return Json(new object());
 		}

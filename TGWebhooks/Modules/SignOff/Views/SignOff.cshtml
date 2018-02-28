@@ -29,17 +29,28 @@
                         $('#signOffSpinner').css("color", "green");
                         $('#signOffSpinner').addClass("fa-check");
                         $('#signOffButton').prop('disabled', false);
+                        //HACK ALERT, these indexes should NOT be hardcoded
+                        var circle = $('#PBC-2');
+                        var check = $('#PBCH-2');
+                        var notes = $('#NT-2');
                         if (isVeto) {
                             label.hide();
                             $('#signOffButton').removeClass('btn-danger');
                             $('#signOffButton').addClass('btn-primary');
                             $('#signOffButton').text('@ViewBag.SignOffLabel');
+                            circle.svgDraw(.5);
+                            notes.hide();
+                            check.hide();
                         } else {
                             label.show();
                             label.text('@ViewBag.SignedBy: @ViewBag.UserLogin');
                             $('#signOffButton').addClass('btn-danger');
                             $('#signOffButton').removeClass('btn-primary');
                             $('#signOffButton').text('@ViewBag.VetoLabel');
+                            circle.svgDraw(1);
+                            notes.text('@ViewBag.SignedBy: @ViewBag.UserLogin');
+                            notes.show();
+                            check.show();
                         }
                     },
                     error: function () {
