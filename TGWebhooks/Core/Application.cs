@@ -21,6 +21,7 @@ using TGWebhooks.Configuration;
 using TGWebhooks.Modules;
 using TGWebhooks.Models;
 using ZNetCS.AspNetCore.Logging.EntityFrameworkCore;
+using Microsoft.ApplicationInsights.Extensibility;
 
 namespace TGWebhooks.Core
 {
@@ -120,7 +121,10 @@ namespace TGWebhooks.Core
 				throw new ArgumentNullException(nameof(app));
 			if (env == null)
 				throw new ArgumentNullException(nameof(env));
-
+#if DEBUG
+			//prevent telemetry from polluting the debug log
+			TelemetryConfiguration.Active.DisableTelemetry = true;
+#endif
 			databaseContext.Initialize(applicationLifetime.ApplicationStopping).GetAwaiter().GetResult();
 
 			loggerFactory.AddEntityFramework<DatabaseContext>(app.ApplicationServices);
