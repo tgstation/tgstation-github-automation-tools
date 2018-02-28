@@ -1,0 +1,81 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace TGWebhooks.Modules.SignOff.Controllers
+{
+	/// <summary>
+	/// Handles <see cref="PullRequestSignOff"/>s and vetos
+	/// </summary>
+    public sealed class SignOffController : Controller
+	{
+		/// <summary>
+		/// The <see cref="SignOffModule"/> for the <see cref="SignOffController"/>
+		/// </summary>
+		readonly SignOffModule signOffModule;
+		/// <summary>
+		/// The <see cref="IGitHubManager"/> for the <see cref="SignOffController"/>
+		/// </summary>
+		readonly IGitHubManager gitHubManager;
+
+		/// <summary>
+		/// Construct a <see cref="SignOffController"/>
+		/// </summary>
+		/// <param name="signOffModule">The value of <see cref="signOffModule"/></param>
+		/// <param name="gitHubManager">The value of <see cref="gitHubManager"/></param>
+		public SignOffController(SignOffModule signOffModule, IGitHubManager gitHubManager)
+		{
+			this.signOffModule = signOffModule ?? throw new ArgumentNullException(nameof(signOffModule));
+			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
+		}
+
+		/// <summary>
+		/// Set the <see cref="PullRequestSignOff"/> for a <paramref name="prNumber"/>
+		/// </summary>
+		/// <param name="prNumber">The <see cref="Octokit.PullRequest.Number"/></param>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task{TResult}"/> resulting in an <see cref="IActionResult"/></returns>
+		[HttpPost("SignOff/{prNumber}")]
+		public async Task<IActionResult> SignOff(int prNumber, CancellationToken cancellationToken)
+		{
+			var token = await gitHubManager.CheckAuthorization(Request.Cookies, cancellationToken).ConfigureAwait(false);
+
+			if (token == null)
+				return Unauthorized();
+
+			var user = await gitHubManager.GetUserLogin(token, cancellationToken).ConfigureAwait(false);
+
+			if (!await gitHubManager.UserHasWriteAccess(user).ConfigureAwait(false))
+				return Forbid();
+
+			await signOffModule.SignOff(prNumber, token, cancellationToken).ConfigureAwait(false);
+
+			return Json(new object());
+		}
+
+		/// <summary>
+		/// Veto the <see cref="PullRequestSignOff"/> for a <paramref name="prNumber"/>
+		/// </summary>
+		/// <param name="prNumber">The <see cref="Octokit.PullRequest.Number"/></param>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task{TResult}"/> resulting in an <see cref="IActionResult"/></returns>
+		[HttpPost("SignOff/Veto/{prNumber}")]
+		public async Task<IActionResult> Veto(int prNumber, CancellationToken cancellationToken)
+		{
+			var token = await gitHubManager.CheckAuthorization(Request.Cookies, cancellationToken).ConfigureAwait(false);
+
+			if (token == null)
+				return Unauthorized();
+
+			var user = await gitHubManager.GetUserLogin(token, cancellationToken).ConfigureAwait(false);
+
+			if (!await gitHubManager.UserHasWriteAccess(user).ConfigureAwait(false))
+				return Forbid();
+
+			await signOffModule.VetoSignOff(prNumber, cancellationToken).ConfigureAwait(false);
+
+			return Json(new object());
+		}
+	}
+}

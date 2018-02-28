@@ -190,11 +190,11 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 				throw new ArgumentNullException(nameof(viewBag));
 
 			((IList<string>)viewBag.ModuleViews).Add("/Modules/GoodBoyPoints/Views/GoodBoyPoints.cshtml");
-			viewBag.GBPStatuses = Enabled;
 			viewBag.GBPHeader = stringLocalizer["GBPHeader"];
 			viewBag.GBPBaseLabel = stringLocalizer["GBPBaseLabel"];
 			viewBag.GBPLabelsLabel = stringLocalizer["GBPLabelsLabel"];
 			viewBag.GBPOffsetLabel = stringLocalizer["GBPOffsetLabel"];
+			viewBag.AdjustGBPHeader = stringLocalizer["AdjustGBPHeader"];
 
 			var gbpTask = dataStore.ReadData<GoodBoyPointsEntry>(pullRequest.User.Login, cancellationToken);
 			var offset = await dataStore.ReadData<GoodBoyPointsOffset>(pullRequest.Number.ToString(), cancellationToken).ConfigureAwait(false);

@@ -144,7 +144,7 @@ namespace TGWebhooks.Core
 
 			var dbentry = await databaseContext.ModuleMetadatas.Where(x => x.Id == guid).ToAsyncEnumerable().First(cancellationToken).ConfigureAwait(false);
 			dbentry.Enabled = enabled;
-			await databaseContext.Save(cancellationToken);
+			await databaseContext.Save(cancellationToken).ConfigureAwait(false);
 
 			logger.LogInformation("Module {0} enabled status set to {1}", module.Name, enabled);
 		}

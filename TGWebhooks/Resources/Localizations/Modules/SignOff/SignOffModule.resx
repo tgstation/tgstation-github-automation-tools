@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NoSignOffs" xml:space="preserve">
-    <value>No maintainers have signed off on this pull request</value>
-  </data>
   <data name="Signer" xml:space="preserve">
     <value>Signed off by: {0}</value>
   </data>
@@ -134,5 +131,17 @@
   </data>
   <data name="RequirementDescription" xml:space="preserve">
     <value>A maintainer must sign off on the pull request</value>
+  </data>
+  <data name="SignedBy" xml:space="preserve">
+    <value>Signed off by</value>
+  </data>
+  <data name="SignOffHeader" xml:space="preserve">
+    <value>Sign Off On Pull Request</value>
+  </data>
+  <data name="SignOffLabel" xml:space="preserve">
+    <value>Sign Off</value>
+  </data>
+  <data name="VetoLabel" xml:space="preserve">
+    <value>Veto</value>
   </data>
 </root>
