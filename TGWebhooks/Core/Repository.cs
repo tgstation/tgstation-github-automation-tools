@@ -172,12 +172,19 @@ namespace TGWebhooks.Core
 
 			cancellationToken.ThrowIfCancellationRequested();
 
-			Commands.Fetch(repositoryObject, origin, refspecs, new FetchOptions()
+			try
 			{
-				OnProgress = (a) => !cancellationToken.IsCancellationRequested,
-				OnTransferProgress = (a) => !cancellationToken.IsCancellationRequested,
-				RepositoryOperationStarting = (a) => !cancellationToken.IsCancellationRequested
-			}, stringLocalizer["FetchLogMessage", pullRequest.Number]);
+				Commands.Fetch(repositoryObject, origin, refspecs, new FetchOptions()
+				{
+					OnProgress = (a) => !cancellationToken.IsCancellationRequested,
+					OnTransferProgress = (a) => !cancellationToken.IsCancellationRequested,
+					RepositoryOperationStarting = (a) => !cancellationToken.IsCancellationRequested
+				}, stringLocalizer["FetchLogMessage", pullRequest.Number]);
+			}
+			catch (UserCancelledException)
+			{
+				cancellationToken.ThrowIfCancellationRequested();
+			}
 
 			cancellationToken.ThrowIfCancellationRequested();
 			Commands.Checkout(repositoryObject, pullRequest.Base.Sha);
@@ -215,10 +222,7 @@ namespace TGWebhooks.Core
 		}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Current);
 
 		/// <inheritdoc />
-		public Task<SemaphoreSlimContext> LockToCallStack(CancellationToken cancellationToken)
-		{
-			return SemaphoreSlimContext.Lock(semaphore, cancellationToken);
-		}
+		public Task<SemaphoreSlimContext> LockToCallStack(CancellationToken cancellationToken) => SemaphoreSlimContext.Lock(semaphore, cancellationToken);
 
 		/// <inheritdoc />
 		public Task<string> CommitChanges(IEnumerable<string> pathsToStage, string message, User author, User committer, CancellationToken cancellationToken) => Task.Factory.StartNew(() =>
