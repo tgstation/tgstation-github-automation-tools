@@ -144,4 +144,10 @@
   <data name="VetoLabel" xml:space="preserve">
     <value>Veto</value>
   </data>
+  <data name="SignerTag" xml:space="preserve">
+    <value>Signed off by: @{0}</value>
+  </data>
+  <data name="SignOfVetod" xml:space="preserve">
+    <value>Sign off vetoed by @{0}</value>
+  </data>
 </root>

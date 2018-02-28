@@ -146,7 +146,7 @@ namespace TGWebhooks.Modules.SignOff
 			if (token == null)
 				throw new ArgumentNullException(nameof(token));
 			await dataStore.WriteData(pullRequest.Number.ToString(CultureInfo.InvariantCulture), new PullRequestSignOff { AccessToken = token }, cancellationToken).ConfigureAwait(false);
-			await gitHubManager.ApprovePullRequest(pullRequest, stringLocalizer["Signer", user.Login]).ConfigureAwait(false);
+			await gitHubManager.ApprovePullRequest(pullRequest, stringLocalizer["SignerTag", user.Login]).ConfigureAwait(false);
 		}
 
 		/// <summary>

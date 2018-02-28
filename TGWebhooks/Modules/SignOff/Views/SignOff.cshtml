@@ -31,7 +31,7 @@
                         $('#signOffButton').prop('disabled', false);
                         //HACK ALERT, these indexes should NOT be hardcoded
                         var circle = $('#PBC-2');
-                        var check = $('#PBCH-2');
+                        var check = $('#PB-2');
                         var notes = $('#NT-2');
                         if (isVeto) {
                             label.hide();
@@ -40,7 +40,7 @@
                             $('#signOffButton').text('@ViewBag.SignOffLabel');
                             circle.svgDraw(.5);
                             notes.hide();
-                            check.hide();
+                            check.removeClass('success');
                         } else {
                             label.show();
                             label.text('@ViewBag.SignedBy: @ViewBag.UserLogin');
@@ -50,7 +50,7 @@
                             circle.svgDraw(1);
                             notes.text('@ViewBag.SignedBy: @ViewBag.UserLogin');
                             notes.show();
-                            check.show();
+                            check.addClass('success');
                         }
                     },
                     error: function () {
