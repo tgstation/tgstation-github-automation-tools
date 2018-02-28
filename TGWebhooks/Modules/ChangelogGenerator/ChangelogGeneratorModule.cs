@@ -80,9 +80,6 @@ namespace TGWebhooks.Modules.ChangelogGenerator
 			dataStore = dataStoreFactory?.CreateDataStore(this) ?? throw new ArgumentNullException(nameof(dataStoreFactory));
 		}
 
-		/// <inheritdoc />
-		public Task Initialize(CancellationToken cancellationToken) => Task.CompletedTask;
-
 		/// <summary>
 		/// Gets the <see cref="RequireChangelogEntry"/> for a <paramref name="pullRequest"/>
 		/// </summary>

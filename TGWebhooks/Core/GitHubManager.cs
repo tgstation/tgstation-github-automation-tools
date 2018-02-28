@@ -85,7 +85,7 @@ namespace TGWebhooks.Core
 		/// <param name="_databaseContext">The value of <see cref="databaseContext"/></param>
 		/// <param name="_logger">The value of <see cref="logger"/></param>
 		/// <param name="_gitHubClientFactory">The value of <see cref="gitHubClientFactory"/></param>
-		public GitHubManager(IOptions<GeneralConfiguration> generalConfigurationOptions, IOptions<GitHubConfiguration> gitHubConfigurationOptions, DatabaseContext _databaseContext, ILogger<GitHubManager> _logger, IGitHubClientFactory _gitHubClientFactory)
+		public GitHubManager(IOptions<GeneralConfiguration> generalConfigurationOptions, IOptions<GitHubConfiguration> gitHubConfigurationOptions, IDatabaseContext _databaseContext, ILogger<GitHubManager> _logger, IGitHubClientFactory _gitHubClientFactory)
 		{
 			gitHubConfiguration = gitHubConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(gitHubConfigurationOptions));
 			generalConfiguration = generalConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(generalConfigurationOptions));

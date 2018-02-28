@@ -75,6 +75,7 @@ namespace TGWebhooks.Core
 			var startoffCommit = await repository.CreatePullRequestWorkingCommit(pullRequest, cancellationToken).ConfigureAwait(false);
 			//run any merge handlers
 			var workingCommit = startoffCommit;
+			//component provider already checked by CheckMergePullRequest
 			foreach (var I in componentProvider.MergeHooks)
 				workingCommit = await I.ModifyMerge(pullRequest, workingCommit, cancellationToken).ConfigureAwait(false);
 
@@ -155,6 +156,7 @@ namespace TGWebhooks.Core
 						logger.LogDebug("Aborted due to lack of mergeablility!");
 						return;
 					}
+					await componentProvider.Initialize(cancellationToken).ConfigureAwait(false);
 
 					var tasks = new List<Task<AutoMergeStatus>>();
 					foreach (var I in componentProvider.MergeRequirements)

@@ -79,9 +79,10 @@ namespace TGWebhooks.Controllers
 		{
 			var prTask = gitHubManager.GetPullRequest(number);
 			var tokenTask = gitHubManager.CheckAuthorization(Request.Cookies, cancellationToken);
-
+			var componentInitializeTask = componentProvider.Initialize(cancellationToken);
 			var pr = await prTask.ConfigureAwait(false);
 
+			await componentInitializeTask.ConfigureAwait(false);
 			if (pr.State.Value == ItemState.Open)
 			{
 				var tasks = componentProvider.MergeRequirements.Select(x => x.EvaluateFor(pr, cancellationToken));
@@ -136,7 +137,7 @@ namespace TGWebhooks.Controllers
 
 			ViewBag.ModuleViews = new List<string>();
 
-			await componentProvider.AddViewVars(pr, ViewBag, cancellationToken);
+			await componentProvider.AddViewVars(pr, (object)ViewBag, cancellationToken);
 
 			return View();
 		}

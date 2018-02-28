@@ -5,7 +5,7 @@ namespace TGWebhooks.Modules
 	/// <summary>
 	/// Representation of a plugin for <see cref="TGWebhooks"/>
 	/// </summary>
-	public interface IModule : IComponentProvider
+	public interface IModule : IComponentProviderBase
 	{
 		/// <summary>
 		/// If the <see cref="IModule"/> is enabled

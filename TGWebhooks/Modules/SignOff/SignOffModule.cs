@@ -88,9 +88,6 @@ namespace TGWebhooks.Modules.SignOff
 		}
 
 		/// <inheritdoc />
-		public Task Initialize(CancellationToken cancellationToken) => Task.CompletedTask;
-
-		/// <inheritdoc />
 		public async Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken)
 		{
 			if (pullRequest == null)

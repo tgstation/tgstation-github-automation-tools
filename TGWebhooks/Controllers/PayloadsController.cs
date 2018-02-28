@@ -30,7 +30,7 @@ namespace TGWebhooks.Controllers
 		/// </summary>
 		readonly GitHubConfiguration gitHubConfiguration;
 		/// <summary>
-		/// The <see cref="IModuleManager"/> for the <see cref="PayloadsController"/>
+		/// The <see cref="IComponentProvider"/> for the <see cref="PayloadsController"/>
 		/// </summary>
 		readonly IComponentProvider componentProvider;
 		/// <summary>
@@ -136,6 +136,7 @@ namespace TGWebhooks.Controllers
 				}
 			};
 
+			await componentProvider.Initialize(cancellationToken).ConfigureAwait(false);
 			foreach (var handler in componentProvider.GetPayloadHandlers<TPayload>())
 				tasks.Add(RunHandler(handler));
 

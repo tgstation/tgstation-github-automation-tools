@@ -17,7 +17,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using TGWebhooks.Configuration;
 using TGWebhooks.Modules;
 using TGWebhooks.Models;
@@ -86,14 +85,17 @@ namespace TGWebhooks.Core
 			services.AddMvc();
 			services.AddOptions();
 
-			services.AddDbContext<DatabaseContext>(ServiceLifetime.Singleton);
+			services.AddDbContext<DatabaseContext>();
 
-			services.AddSingleton<IDatabaseContext>(x => x.GetRequiredService<DatabaseContext>());
-			services.AddSingleton(typeof(IDataStoreFactory<>), typeof(DataStoreFactory<>));
-			services.AddSingleton<IModuleManager, ModuleManager>();
-			services.AddSingleton<IComponentProvider>(x => x.GetRequiredService<IModuleManager>());
-			services.AddSingleton<IGitHubClientFactory, GitHubClientFactory>();
-			services.AddSingleton<IGitHubManager, GitHubManager>();
+			services.AddScoped<IDatabaseContext>(x => x.GetRequiredService<DatabaseContext>());
+			services.AddScoped(typeof(IDataStoreFactory<>), typeof(DataStoreFactory<>));
+			services.AddScoped<IGitHubClientFactory, GitHubClientFactory>();
+			services.AddScoped<IGitHubManager, GitHubManager>();
+
+			services.AddScoped<IModuleManager, ModuleManager>();
+			services.AddScoped<IComponentProvider>(x => x.GetRequiredService<IModuleManager>());
+			services.AddModules();
+
 			services.AddSingleton<IRepository, Repository>();
 			services.AddSingleton<IIOManager, DefaultIOManager>();
 			services.AddSingleton<IWebRequestManager, WebRequestManager>();
@@ -101,8 +103,6 @@ namespace TGWebhooks.Core
 			services.AddSingleton<IAutoMergeHandler, AutoMergeHandler>();
 			services.AddSingleton<IByondTopicSender, ByondTopicSender>();	//note the send/recieve timeouts are configured by the GameAnnouncerModule
 			//I'll probably hate myself for that later
-
-			services.AddModules();
 		}
 
 #pragma warning disable CA1822 // Mark members as static
@@ -112,7 +112,8 @@ namespace TGWebhooks.Core
 		/// <param name="app">The <see cref="IApplicationBuilder"/> to configure</param>
 		/// <param name="env">The <see cref="IHostingEnvironment"/> of the <see cref="Application"/></param>
 		/// <param name="loggerFactory">The <see cref="ILoggerFactory"/> to configure</param>
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+		/// <param name="databaseContext">The <see cref="IDatabaseContext"/> to configure</param>
+		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime applicationLifetime, IDatabaseContext databaseContext)
 #pragma warning restore CA1822 // Mark members as static
 		{
 			if (app == null)
@@ -120,8 +121,7 @@ namespace TGWebhooks.Core
 			if (env == null)
 				throw new ArgumentNullException(nameof(env));
 
-			app.ApplicationServices.GetRequiredService<IIOManager>().CreateDirectory(DataDirectory, CancellationToken.None).GetAwaiter().GetResult();
-			app.ApplicationServices.GetRequiredService<IDatabaseContext>().Initialize(CancellationToken.None).GetAwaiter().GetResult();
+			databaseContext.Initialize(applicationLifetime.ApplicationStopping).GetAwaiter().GetResult();
 
 			loggerFactory.AddEntityFramework<DatabaseContext>(app.ApplicationServices);
 
@@ -154,7 +154,6 @@ namespace TGWebhooks.Core
 			};
 			app.UseRequestLocalization(options);
 
-			app.UseAsyncInitialization<IModuleManager>((moduleManager, cancellationToken) => moduleManager.Initialize(cancellationToken));
 			app.UseAsyncInitialization<IRepository>((repository, cancellationToken) => repository.Initialize(cancellationToken));
 
 			app.UseHangfireServer();

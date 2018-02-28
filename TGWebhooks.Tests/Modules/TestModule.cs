@@ -42,15 +42,13 @@ namespace TGWebhooks.Modules.Tests
 		protected abstract TModule Instantiate();
 
 		[TestMethod]
-		public async Task TestModuleBasics()
+		public void TestModuleBasics()
 		{
 			var module = Instantiate();
 			Assert.IsFalse(String.IsNullOrWhiteSpace(module.Name));
 			Assert.IsFalse(String.IsNullOrWhiteSpace(module.Description));
 			Assert.IsNotNull(module.Uid);
 			Assert.AreEqual(module.Uid, module.Uid);
-			await module.Initialize(CancellationToken.None).ConfigureAwait(false);
-
 			Assert.IsNotNull(module.MergeRequirements);
 			Assert.IsNotNull(module.GetPayloadHandlers<ActivityPayload>());
 		}

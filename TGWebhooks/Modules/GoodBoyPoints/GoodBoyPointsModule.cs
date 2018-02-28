@@ -146,9 +146,6 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 		}
 
 		/// <inheritdoc />
-		public Task Initialize(CancellationToken cancellationToken) => Task.CompletedTask;
-
-		/// <inheritdoc />
 		public async Task ProcessPayload(PullRequestEventPayload payload, CancellationToken cancellationToken)
 		{
 			if (payload == null)
