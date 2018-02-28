@@ -128,22 +128,10 @@ namespace TGWebhooks.Core
 		/// <param name="pullRequestNumber">The <see cref="PullRequest.Number"/> <see cref="PullRequest"/> to check</param>
 		/// <param name="jobCancellationToken">The <see cref="IJobCancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
-		async Task RecheckPullRequest(int pullRequestNumber, IJobCancellationToken jobCancellationToken)
+		Task RecheckPullRequest(int pullRequestNumber, IJobCancellationToken jobCancellationToken)
 		{
 			logger.LogDebug("Running scheduled recheck of pull request #{0}.", pullRequestNumber);
-			try
-			{
-				var pullRequest = await gitHubManager.GetPullRequest(pullRequestNumber).ConfigureAwait(false);
-				await CheckMergePullRequest(pullRequest, jobCancellationToken.ShutdownToken).ConfigureAwait(false);
-			}
-			catch (OperationCanceledException e)
-			{
-				logger.LogDebug(e, "Pull request recheck cancelled!");
-			}
-			catch (Exception e)
-			{
-				logger.LogError(e, "Pull request recheck failed!");
-			}
+			return CheckMergePullRequest(pullRequestNumber, jobCancellationToken.ShutdownToken);
 		}
 
 		/// <summary>
@@ -152,13 +140,12 @@ namespace TGWebhooks.Core
 		/// <param name="pullRequest">The <see cref="PullRequest"/> to check</param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
-		public async Task CheckMergePullRequest(PullRequest pullRequest, CancellationToken cancellationToken)
+		async Task CheckMergePullRequest(int prNumber, CancellationToken cancellationToken)
 		{
-			if (pullRequest == null)
-				throw new ArgumentNullException(nameof(pullRequest));
 			using (await SemaphoreSlimContext.Lock(semaphore, cancellationToken).ConfigureAwait(false))
-			using (logger.BeginScope("Checking mergability of pull request #{0}.", pullRequest.Number))
+			using (logger.BeginScope("Checking mergability of pull request #{0}.", prNumber))
 			{
+				var pullRequest = await gitHubManager.GetPullRequest(prNumber).ConfigureAwait(false);
 				if (pullRequest.State.Value == ItemState.Closed)
 				{
 					logger.LogDebug("Pull request is closed!");
@@ -171,7 +158,7 @@ namespace TGWebhooks.Core
 				try
 				{
 					pendingStatusTask = gitHubManager.SetCommitStatus(pullRequest, CommitState.Pending, stringLocalizer["CommitStatusPending"]);
-					for (var I = 0; I < 4 && !pullRequest.Mergeable.HasValue; ++I)
+					for (var I = 1; I < 4 && !pullRequest.Mergeable.HasValue; ++I)
 					{
 						await Task.Delay(I * 1000, cancellationToken).ConfigureAwait(false);
 						logger.LogTrace("Rechecking git mergeablility.");
@@ -267,12 +254,12 @@ namespace TGWebhooks.Core
 		}
 
 		/// <inheritdoc />
-		public async Task ProcessPayload(PullRequestEventPayload payload, CancellationToken cancellationToken)
+		public Task ProcessPayload(PullRequestEventPayload payload, CancellationToken cancellationToken)
 		{
 			if (payload == null)
 				throw new ArgumentNullException(nameof(payload));
-			
-			await CheckMergePullRequest(payload.PullRequest, cancellationToken).ConfigureAwait(false);
+
+			return CheckMergePullRequest(payload.PullRequest.Number, cancellationToken);
 		}
 	}
 }
