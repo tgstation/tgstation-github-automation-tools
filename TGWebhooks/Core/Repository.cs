@@ -243,8 +243,9 @@ namespace TGWebhooks.Core
 					var remoteObject = repositoryObject.Network.Remotes.Where(x => x.Url == remote).FirstOrDefault();
 					if (remoteObject == default(Remote))
 					{
-						repositoryObject.Network.Remotes.Remove("tempRemote");
-						remoteObject = repositoryObject.Network.Remotes.Add("tempRemote", remote);
+						const string tempRemoteName = "tempRemote";
+						repositoryObject.Network.Remotes.Remove(tempRemoteName);
+						remoteObject = repositoryObject.Network.Remotes.Add(tempRemoteName, remote);
 					}
 #if DEBUG
 					System.Diagnostics.Debugger.Break();
