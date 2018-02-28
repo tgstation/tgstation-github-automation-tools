@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Hangfire;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using TGWebhooks.Core;
 
 namespace TGWebhooks.Modules.SignOff.Controllers
 {
@@ -18,16 +20,22 @@ namespace TGWebhooks.Modules.SignOff.Controllers
 		/// The <see cref="IGitHubManager"/> for the <see cref="SignOffController"/>
 		/// </summary>
 		readonly IGitHubManager gitHubManager;
+		/// <summary>
+		/// The <see cref="IAutoMergeHandler"/> for the <see cref="SignOffController"/>
+		/// </summary>
+		readonly IAutoMergeHandler autoMergeHandler;
 
 		/// <summary>
 		/// Construct a <see cref="SignOffController"/>
 		/// </summary>
 		/// <param name="signOffModule">The value of <see cref="signOffModule"/></param>
 		/// <param name="gitHubManager">The value of <see cref="gitHubManager"/></param>
-		public SignOffController(SignOffModule signOffModule, IGitHubManager gitHubManager)
+		/// <param name="autoMergeHandler">The value of <see cref="autoMergeHandler"/></param>
+		public SignOffController(SignOffModule signOffModule, IGitHubManager gitHubManager, IAutoMergeHandler autoMergeHandler)
 		{
 			this.signOffModule = signOffModule ?? throw new ArgumentNullException(nameof(signOffModule));
 			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
+			this.autoMergeHandler = autoMergeHandler ?? throw new ArgumentNullException(nameof(autoMergeHandler));
 		}
 
 		/// <summary>
@@ -58,6 +66,8 @@ namespace TGWebhooks.Modules.SignOff.Controllers
 #endif
 
 			await signOffModule.SignOff(pr, user, token, cancellationToken).ConfigureAwait(false);
+
+			autoMergeHandler.RecheckPullRequest(prNumber);
 
 			return Json(new object());
 		}

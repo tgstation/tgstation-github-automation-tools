@@ -161,7 +161,7 @@ namespace TGWebhooks.Modules.ChangelogGenerator
 			var pathToWrite = ioManager.ConcatPath(repository.Path, "html", "changelogs", title);
 			await ioManager.WriteAllText(pathToWrite, yaml, cancellationToken).ConfigureAwait(false);
 
-			return await repository.CommitChanges(new List<string> { pathToWrite }, cancellationToken).ConfigureAwait(false);
+			return await repository.CommitChanges(new List<string> { pathToWrite }, stringLocalizer["ChangelogCommitMessage", pullRequest.Number], null, null, cancellationToken).ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />

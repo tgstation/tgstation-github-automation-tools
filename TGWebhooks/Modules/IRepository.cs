@@ -26,17 +26,21 @@ namespace TGWebhooks.Modules
 		/// Fetches the given <paramref name="pullRequest"/> into the <see cref="IRepository"/> and returns the proper HEAD commit. If the <see cref="PullRequest.Commits"/> count is more than one it will be squashed. Must be done in the returned <see cref="SemaphoreSlimContext"/> of <see cref="LockToCallStack(CancellationToken)"/>
 		/// </summary>
 		/// <param name="pullRequest">The <see cref="PullRequest"/> to fetch</param>
+		/// <param name="committer">The <see cref="User"/> who is merging the <paramref name="pullRequest"/></param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in the see SHA to base further work off of</returns>
-		Task<string> CreatePullRequestWorkingCommit(PullRequest pullRequest, CancellationToken cancellationToken);
+		Task<string> CreatePullRequestWorkingCommit(PullRequest pullRequest, User committer, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Commits changes to the current working directory. Must be done in the returned <see cref="SemaphoreSlimContext"/> of <see cref="LockToCallStack(CancellationToken)"/>
 		/// </summary>
 		/// <param name="pathsToStage">The paths in the <see cref="IRepository"/> to stage</param>
+		/// <param name="message">The <see cref="Commit.Message"/></param>
+		/// <param name="author">The author <see cref="User"/></param>
+		/// <param name="committer">The commiter <see cref="User"/></param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in the created commit SHA</returns>
-		Task<string> CommitChanges( IEnumerable<string> pathsToStage, CancellationToken cancellationToken);
+		Task<string> CommitChanges(IEnumerable<string> pathsToStage, string message, User author, User committer, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Pushes a <paramref name="commit"/> to a specified <paramref name="remote"/> <paramref name="branch"/>, optionally <paramref name="force"/>ing it. Must be done in the returned <see cref="SemaphoreSlimContext"/> of <see cref="LockToCallStack(CancellationToken)"/>

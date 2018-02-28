@@ -1,4 +1,5 @@
 ﻿using LibGit2Sharp;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Octokit;
@@ -38,6 +39,10 @@ namespace TGWebhooks.Core
 		/// The <see cref="GitHubConfiguration"/> for the <see cref="Repository"/>
 		/// </summary>
 		readonly GitHubConfiguration gitHubConfiguration;
+		/// <summary>
+		/// The <see cref="IStringLocalizer"/> for the <see cref="Repository"/>
+		/// </summary>
+		readonly IStringLocalizer<Repository> stringLocalizer;
 
 		/// <summary>
 		/// The <see cref="LibGit2Sharp.Repository"/> for the <see cref="Repository"/>
@@ -50,14 +55,22 @@ namespace TGWebhooks.Core
 		SemaphoreSlim semaphore;
 
 		/// <summary>
+		/// Create an <see cref="Identity"/> given a <see cref="User"/>
+		/// </summary>
+		/// <param name="user">The <see cref="User"/> to derive the <see cref="Identity"/> from</param>
+		/// <returns>A new <see cref="Identity"/></returns>
+		static Identity CreateIdentity(User user) => user == null ? new Identity(Application.UserAgent, String.Concat(Application.UserAgent, "@users.noreply.github.com")) : new Identity(user.Name, user.Email);
+
+		/// <summary>
 		/// Construct a <see cref="Repository"/>
 		/// </summary>
 		/// <param name="gitHubConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the <see cref="GitHubConfiguration"/> to use for determining the <see cref="repositoryObject"/>'s path</param>
 		/// <param name="_logger">The <see cref="ILogger"/> to use for setting up the <see cref="Repository"/></param>
 		/// <param name="_ioManager">The value of <see cref="ioManager"/></param>
-		public Repository(IOptions<GitHubConfiguration> gitHubConfigurationOptions, ILogger<Repository> _logger, IIOManager _ioManager)
+		public Repository(IOptions<GitHubConfiguration> gitHubConfigurationOptions, ILogger<Repository> _logger, IIOManager _ioManager, IStringLocalizer<Repository> _stringLocalizer)
 		{
 			logger = _logger ?? throw new ArgumentNullException(nameof(_logger));
+			stringLocalizer = _stringLocalizer ?? throw new ArgumentNullException(nameof(_stringLocalizer));
 			gitHubConfiguration = gitHubConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(gitHubConfigurationOptions));
 			ioManager = new ResolvingIOManager(_ioManager ?? throw new ArgumentNullException(nameof(_ioManager)), _ioManager.ConcatPath(Application.DataDirectory, RepositoriesDirectory));
 			semaphore = new SemaphoreSlim(1);
@@ -73,9 +86,7 @@ namespace TGWebhooks.Core
 		}
 
 		/// <inheritdoc />
-		public Task Initialize(CancellationToken cancellationToken)
-		{
-			return Task.Factory.StartNew(async () =>
+		public Task Initialize(CancellationToken cancellationToken) => Task.Factory.StartNew(async () =>
 			{
 				using (logger.BeginScope("Initializing repository..."))
 				{
@@ -145,13 +156,63 @@ namespace TGWebhooks.Core
 					}
 				}
 			}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Current);
-		}
 
 		/// <inheritdoc />
-		public Task<string> CreatePullRequestWorkingCommit(PullRequest pullRequest, CancellationToken cancellationToken)
+		public Task<string> CreatePullRequestWorkingCommit(PullRequest pullRequest, User committer, CancellationToken cancellationToken) => Task.Factory.StartNew(() =>
 		{
-			throw new NotImplementedException();
-		}
+			var refspecs = new List<string>();
+			var prBranchName = String.Format(CultureInfo.InvariantCulture, "pr-{0}", pullRequest.Number);
+			refspecs.Add(String.Format(CultureInfo.InvariantCulture, "pull/{0}/head:{1}", pullRequest.Number, prBranchName));
+			const string origin = "origin";
+			var originRemote = repositoryObject.Network.Remotes[origin];
+			refspecs.AddRange(originRemote.FetchRefSpecs.Select(X => X.Specification));
+
+			//standard cleanup
+			repositoryObject.RemoveUntrackedFiles();
+
+			cancellationToken.ThrowIfCancellationRequested();
+
+			Commands.Fetch(repositoryObject, origin, refspecs, new FetchOptions()
+			{
+				OnProgress = (a) => !cancellationToken.IsCancellationRequested,
+				OnTransferProgress = (a) => !cancellationToken.IsCancellationRequested,
+				RepositoryOperationStarting = (a) => !cancellationToken.IsCancellationRequested
+			}, stringLocalizer["FetchLogMessage", pullRequest.Number]);
+
+			cancellationToken.ThrowIfCancellationRequested();
+			Commands.Checkout(repositoryObject, pullRequest.Base.Sha);
+
+			cancellationToken.ThrowIfCancellationRequested();
+			var result = repositoryObject.Merge(pullRequest.Head.Sha, new LibGit2Sharp.Signature(CreateIdentity(null), DateTimeOffset.UtcNow), new MergeOptions
+			{
+				CommitOnSuccess = true,
+				FailOnConflict = true,
+				FastForwardStrategy = FastForwardStrategy.NoFastForward
+			});
+
+			//safe to delete that branch now
+			repositoryObject.Branches.Remove(prBranchName);
+
+			if (result.Status != MergeStatus.NonFastForward)
+				return null;    //abork, abork
+
+			cancellationToken.ThrowIfCancellationRequested();
+			var headCommit = repositoryObject.Head.Tip;
+			//now soft reset and prepare to squash
+			repositoryObject.Reset(ResetMode.Mixed, headCommit.Parents.First());
+
+			cancellationToken.ThrowIfCancellationRequested();
+
+			//a
+			Commands.Stage(repositoryObject, "*");
+
+			cancellationToken.ThrowIfCancellationRequested();
+
+			var dto = DateTimeOffset.UtcNow;
+			var authorSig = new LibGit2Sharp.Signature(CreateIdentity(pullRequest.User), dto);
+			var committerSig = new LibGit2Sharp.Signature(CreateIdentity(committer), dto);
+			return repositoryObject.Commit(String.Format(CultureInfo.InvariantCulture, "{0} - (#{1}){2}{3}", pullRequest.Title, pullRequest.Number, Environment.NewLine, pullRequest.Body), authorSig, committerSig, new CommitOptions { PrettifyMessage = true }).Sha;
+		}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Current);
 
 		/// <inheritdoc />
 		public Task<SemaphoreSlimContext> LockToCallStack(CancellationToken cancellationToken)
@@ -160,22 +221,32 @@ namespace TGWebhooks.Core
 		}
 
 		/// <inheritdoc />
-		public Task<string> CommitChanges(IEnumerable<string> pathsToStage, CancellationToken cancellationToken)
-		{
-			throw new NotImplementedException();
-		}
+		public Task<string> CommitChanges(IEnumerable<string> pathsToStage, string message, User author, User committer, CancellationToken cancellationToken) => Task.Factory.StartNew(() =>
+		   {
+			   foreach (var I in pathsToStage)
+				   Commands.Stage(repositoryObject, I);
+			   var dto = DateTimeOffset.UtcNow;
+			   var authorSig = new LibGit2Sharp.Signature(CreateIdentity(author), dto);
+			   var commiterSig = new LibGit2Sharp.Signature(CreateIdentity(committer), dto);
+			   return repositoryObject.Commit(message, authorSig, commiterSig).Sha;
+		   }, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Current);
 
 		/// <inheritdoc />
-		public Task Push(string remote, string branch, string commit, string token, bool force, CancellationToken cancellationToken)
-		{
-			var remoteObject = repositoryObject.Network.Remotes.Where(x => x.Url == remote).First();
-			return Task.Factory.StartNew(() =>
+		public Task Push(string remote, string branch, string commit, string token, bool force, CancellationToken cancellationToken) => Task.Factory.StartNew(() =>
 			{
 				try
 				{
-					repositoryObject.Network.Push(remoteObject, commit, String.Format(CultureInfo.InvariantCulture, "{0}{1}:{2}", force ? "+" : String.Empty, commit, branch), new PushOptions()
+					var remoteObject = repositoryObject.Network.Remotes.Where(x => x.Url == remote).FirstOrDefault();
+					if (remoteObject == default(Remote))
 					{
-						OnPushTransferProgress = (a, b, c) => !cancellationToken.IsCancellationRequested
+						repositoryObject.Network.Remotes.Remove("tempRemote");
+						remoteObject = repositoryObject.Network.Remotes.Add("tempRemote", remote);
+					}
+					repositoryObject.Network.Push(remoteObject, commit, String.Format(CultureInfo.InvariantCulture, "{0}{1}:{2}", force ? "+" : null, commit, branch), new PushOptions()
+					{
+						OnPushTransferProgress = (a, b, c) => !cancellationToken.IsCancellationRequested,
+						OnPackBuilderProgress = (a, b, c) => !cancellationToken.IsCancellationRequested,
+						OnNegotiationCompletedBeforePush = (a) => !cancellationToken.IsCancellationRequested
 					});
 				}
 				catch (UserCancelledException)
@@ -183,6 +254,5 @@ namespace TGWebhooks.Core
 					cancellationToken.ThrowIfCancellationRequested();
 				}
 			}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Current);
-		}
 	}
 }

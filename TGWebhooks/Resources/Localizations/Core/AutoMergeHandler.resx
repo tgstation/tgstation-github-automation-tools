@@ -130,6 +130,6 @@
     <value>The pull request is compliant with standards</value>
   </data>
   <data name="MergeProcessInterruption" xml:space="preserve">
-    <value>Merge process interupted! Error:\n```\n{0}\n```</value>
+    <value>Merge process interupted! Error:\n```\n{0}\n``` your old HEAD commit was {1}</value>
   </data>
 </root>

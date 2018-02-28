@@ -65,9 +65,9 @@ namespace TGWebhooks.Modules
 		/// Squashes and merges the given <see cref="PullRequest"/> with it's current <see cref="PullRequest.Title"/>, <see cref="PullRequest.Number"/>, and <see cref="PullRequest.Body"/> as the log message
 		/// </summary>
 		/// <param name="pullRequest">The <see cref="PullRequest"/> to merge</param>
-		/// <param name="overrideAccessToken">The access token to merge with</param>
+		/// <param name="accessToken">The access token to merge with</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
-		Task MergePullRequest(PullRequest pullRequest, string overrideAccessToken);
+		Task MergePullRequest(PullRequest pullRequest, string accessToken);
 
 		/// <summary>
 		/// Get all <see cref="PullRequestReview"/>s for a given <paramref name="pullRequest"/>

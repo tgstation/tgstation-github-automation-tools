@@ -71,37 +71,51 @@ namespace TGWebhooks.Core
 		async Task MergePullRequest(PullRequest pullRequest, string mergerToken, CancellationToken cancellationToken)
 		{
 			var acceptedHEAD = pullRequest.Head.Sha;
-			
-			var startoffCommit = await repository.CreatePullRequestWorkingCommit(pullRequest, cancellationToken).ConfigureAwait(false);
-			//run any merge handlers
-			var workingCommit = startoffCommit;
-			//component provider already checked by CheckMergePullRequest
-			foreach (var I in componentProvider.MergeHooks)
-				workingCommit = await I.ModifyMerge(pullRequest, workingCommit, cancellationToken).ConfigureAwait(false);
-
-			var anyUpdate = acceptedHEAD != workingCommit;
-			if (anyUpdate)
-				//force push this bitch up
-				await repository.Push(pullRequest.Head.Repository.GitUrl, pullRequest.Head.Ref.Split(':')[1], workingCommit, mergerToken, true, cancellationToken).ConfigureAwait(false);
-
-			try
+			var tokenUserTask = gitHubManager.GetUserLogin(mergerToken, cancellationToken);
+			using (await repository.LockToCallStack(cancellationToken).ConfigureAwait(false))
 			{
-				await gitHubManager.MergePullRequest(pullRequest, mergerToken).ConfigureAwait(false);
-			}
-			catch (Exception e2)
-			{
-				logger.LogError(e2, "Merge process unable to be completed!");
+				var tokenUser = await tokenUserTask.ConfigureAwait(false);
+				var startoffCommit = await repository.CreatePullRequestWorkingCommit(pullRequest, tokenUser, cancellationToken).ConfigureAwait(false);
+				//run any merge handlers
+				var workingCommit = startoffCommit;
+				//component provider already checked by CheckMergePullRequest
+				foreach (var I in componentProvider.MergeHooks)
+					workingCommit = await I.ModifyMerge(pullRequest, workingCommit, cancellationToken).ConfigureAwait(false);
+
+				var anyUpdate = acceptedHEAD != workingCommit;
+				if (anyUpdate)
+					//force push this bitch up
+					await repository.Push(pullRequest.Head.Repository.GitUrl, pullRequest.Head.Ref.Split(':')[1], workingCommit, mergerToken, true, cancellationToken).ConfigureAwait(false);
+
 				try
 				{
-					await gitHubManager.CreateComment(pullRequest.Number, stringLocalizer["MergeProcessInterruption", e2.ToString()]).ConfigureAwait(false);
+					await gitHubManager.MergePullRequest(pullRequest, mergerToken).ConfigureAwait(false);
+					if (anyUpdate)
+						//change things back to normal for the user's sake
+						//no cancellation token due to ciritcal op
+						await repository.Push(pullRequest.Head.Repository.GitUrl, pullRequest.Head.Ref.Split(':')[1], acceptedHEAD, mergerToken, true, CancellationToken.None).ConfigureAwait(false);
 				}
-				catch (Exception e)
+				catch (Exception e2)
 				{
-					logger.LogError(e, "Unable to comment on merge process failure!");
+					logger.LogError(e2, "Merge process unable to be completed!");
+					try
+					{
+						await gitHubManager.CreateComment(pullRequest.Number, stringLocalizer["MergeProcessInterruption", e2.ToString(), acceptedHEAD]).ConfigureAwait(false);
+					}
+					catch (Exception e)
+					{
+						logger.LogError(e, "Unable to comment on merge process failure!");
+					}
+					throw;
 				}
-				throw;
 			}
 		}
+
+		/// <summary>
+		/// Schedules a recheck of the <see cref="AutoMergeStatus"/>es of a given <paramref name="prNumber"/>
+		/// </summary>
+		/// <param name="prNumber">The <see cref="PullRequest.Number"/> <see cref="PullRequest"/> to check</param>
+		public void RecheckPullRequest(int prNumber) => backgroundJobClient.Enqueue(() => RecheckPullRequest(prNumber, JobCancellationToken.Null));
 
 		/// <summary>
 		/// Rechecks the <see cref="AutoMergeStatus"/>es of a given <paramref name="pullRequestNumber"/>
@@ -133,8 +147,12 @@ namespace TGWebhooks.Core
 		/// <param name="pullRequest">The <see cref="PullRequest"/> to check</param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
-		async Task CheckMergePullRequest(PullRequest pullRequest, CancellationToken cancellationToken)
+		public async Task CheckMergePullRequest(PullRequest pullRequest, CancellationToken cancellationToken)
 		{
+			if (pullRequest == null)
+				throw new ArgumentNullException(nameof(pullRequest));
+			if (pullRequest.Merged)
+				return;
 			using (logger.BeginScope("Checking mergability of pull request #{0}.", pullRequest.Number))
 			{
 				bool merge = true;
