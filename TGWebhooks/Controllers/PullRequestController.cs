@@ -139,7 +139,7 @@ namespace TGWebhooks.Controllers
 
 			ViewBag.ModuleViews = new List<string>();
 
-			await componentProvider.AddViewVars(pr, (object)ViewBag, cancellationToken);
+			await componentProvider.AddViewVars(pr, (object)ViewBag, cancellationToken).ConfigureAwait(false);
 
 			return View();
 		}

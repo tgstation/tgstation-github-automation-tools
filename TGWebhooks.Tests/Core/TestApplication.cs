@@ -25,7 +25,7 @@ namespace TGWebhooks.Core.Tests
 			Assert.ThrowsException<ArgumentNullException>(() => new Application(null, null));
 			Assert.ThrowsException<ArgumentNullException>(() => new Application(mockConfig.Object, null));
 			Assert.ThrowsException<ArgumentNullException>(() => new Application(null, mockHostingEnvironment.Object));
-			new Application(mockConfig.Object, mockHostingEnvironment.Object);
+			var app = new Application(mockConfig.Object, mockHostingEnvironment.Object);
 		}
 
 		[TestMethod]

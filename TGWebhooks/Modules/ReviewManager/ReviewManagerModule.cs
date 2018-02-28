@@ -15,8 +15,6 @@ namespace TGWebhooks.Modules.ReviewManager
 	public sealed class ReviewManagerModule : IModule, IMergeRequirement
 	{
 		/// <inheritdoc />
-		public bool Enabled { get; set; }
-		/// <inheritdoc />
 		public Guid Uid => new Guid("8d8122d0-ad0d-4a91-977f-204d617efd04");
 
 		/// <inheritdoc />
@@ -42,6 +40,11 @@ namespace TGWebhooks.Modules.ReviewManager
 		/// The <see cref="IStringLocalizer"/> for the <see cref="ReviewManagerModule"/>
 		/// </summary>
 		readonly IStringLocalizer<ReviewManagerModule> stringLocalizer;
+
+		/// <summary>
+		/// Backing field for <see cref="SetEnabled(bool)"/>
+		/// </summary>
+		bool enabled;
 
 		/// <summary>
 		/// Construct a <see cref="ReviewManagerModule"/>
@@ -128,5 +131,8 @@ namespace TGWebhooks.Modules.ReviewManager
 
 			return result;
 		}
+
+		/// <inheritdoc />
+		public void SetEnabled(bool enabled) => this.enabled = enabled;
 	}
 }

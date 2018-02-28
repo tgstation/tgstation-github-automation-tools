@@ -61,7 +61,7 @@ namespace TGWebhooks.Models
 		public async Task<Dictionary<string, object>> ExportDictionary(CancellationToken cancellationToken)
 		{
 			var prefixString = prefix.ToString();
-			var results = await databaseContext.KeyValuePairs.Where(x => x.Key.StartsWith(prefixString)).ToAsyncEnumerable().ToList().ConfigureAwait(false);
+			var results = await databaseContext.KeyValuePairs.Where(x => x.Key.StartsWith(prefixString, StringComparison.InvariantCultureIgnoreCase)).ToAsyncEnumerable().ToList().ConfigureAwait(false);
 			var dic = new Dictionary<string, object>();
 			foreach(var I in results)
 				dic.Add(I.Key.Substring(prefixString.Length), JsonConvert.DeserializeObject(I.Value));

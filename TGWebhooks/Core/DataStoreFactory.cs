@@ -22,6 +22,6 @@ namespace TGWebhooks.Core
 		}
 
 		/// <inheritdoc />
-		public IDataStore CreateDataStore(TModule module) => new DataStore(module?.Uid ?? throw new ArgumentNullException(nameof(module)), databaseContext);
+		public IDataStore CreateDataStore(TModule ownerModule) => new DataStore(ownerModule?.Uid ?? throw new ArgumentNullException(nameof(ownerModule)), databaseContext);
 	}
 }

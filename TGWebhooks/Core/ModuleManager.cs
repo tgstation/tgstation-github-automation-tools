@@ -112,7 +112,7 @@ namespace TGWebhooks.Core
 					foreach (var I in tasks2.Select(x => x.Result))
 					{
 						modulesAndEnabledStatus.Add(I);
-						I.Key.Enabled = I.Value;
+						I.Key.SetEnabled(I.Value);
 					}
 				}
 			}
@@ -126,18 +126,18 @@ namespace TGWebhooks.Core
 		}
 
 		/// <inheritdoc />
-		public async Task SetModuleEnabled(Guid guid, bool enabled, CancellationToken cancellationToken)
+		public async Task SetModuleEnabled(Guid uid, bool enabled, CancellationToken cancellationToken)
 		{
-			var module = modulesAndEnabledStatus.Keys.First(x => x.Uid == guid);
+			var module = modulesAndEnabledStatus.Keys.First(x => x.Uid == uid);
 			if (modulesAndEnabledStatus[module] == enabled)
 			{
 				logger.LogInformation("Module {0} already enabled/disabled ({1})", module.Name, enabled);
 				return;
 			}
 			modulesAndEnabledStatus[module] = enabled;
-			module.Enabled = enabled;
+			module.SetEnabled(enabled);
 
-			var dbentry = await databaseContext.ModuleMetadatas.Where(x => x.Id == guid).ToAsyncEnumerable().First(cancellationToken).ConfigureAwait(false);
+			var dbentry = await databaseContext.ModuleMetadatas.Where(x => x.Id == uid).ToAsyncEnumerable().First(cancellationToken).ConfigureAwait(false);
 			dbentry.Enabled = enabled;
 			await databaseContext.Save(cancellationToken).ConfigureAwait(false);
 

@@ -78,7 +78,7 @@ namespace TGWebhooks.Controllers
 		public async Task<IActionResult> SignOut(int prNumber)
 		{
 			gitHubManager.ExpireAuthorization(Response.Cookies);
-			return RedirectToAction("ReviewPullRequest", "PullRequest", new { number = prNumber > 0 ? prNumber : (await gitHubManager.GetOpenPullRequests().ConfigureAwait(false)).First().Number });
+			return RedirectToAction("ReviewPullRequest", "PullRequest", new { number = prNumber > 0 ? prNumber : (await gitHubManager.GetOpenPullRequests().ConfigureAwait(false))[0].Number });
 		}
 
 		/// <summary>
@@ -89,7 +89,7 @@ namespace TGWebhooks.Controllers
 		public async Task<IActionResult> SignOut()
 		{
 			gitHubManager.ExpireAuthorization(Response.Cookies);
-			return RedirectToAction("ReviewPullRequest", "PullRequest", new { number = (await gitHubManager.GetOpenPullRequests().ConfigureAwait(false)).First().Number });
+			return RedirectToAction("ReviewPullRequest", "PullRequest", new { number = (await gitHubManager.GetOpenPullRequests().ConfigureAwait(false))[0].Number });
 		}
 	}
 }

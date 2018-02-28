@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using Octokit;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,9 +15,6 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 	/// </summary>
 	public sealed class GoodBoyPointsModule : IModule, IPayloadHandler<PullRequestEventPayload>, IMergeRequirement
 	{
-		/// <inheritdoc />
-		public bool Enabled { get; set; }
-
 		/// <inheritdoc />
 		public Guid Uid => new Guid("a8875569-8807-4a58-adf6-ac5a408c7e16");
 
@@ -68,6 +66,11 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 		readonly IStringLocalizer<GoodBoyPointsModule> stringLocalizer;
 
 		/// <summary>
+		/// Backing field for <see cref="SetEnabled(bool)"/>
+		/// </summary>
+		bool enabled;
+
+		/// <summary>
 		/// Calculates the change to a <paramref name="goodBoyPointsEntry"/> given a set of <paramref name="labels"/>
 		/// </summary>
 		/// <param name="goodBoyPointsEntry">The <see cref="GoodBoyPointsEntry"/> to adjust</param>
@@ -100,7 +103,7 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 		/// <param name="offset">The <see cref="GoodBoyPointsOffset"/> for <paramref name="prNumber"/></param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
-		public Task SetOffset(int prNumber, GoodBoyPointsOffset offset, CancellationToken cancellationToken) => dataStore.WriteData(prNumber.ToString(), offset ?? throw new ArgumentNullException(nameof(offset)), cancellationToken);
+		public Task SetOffset(int prNumber, GoodBoyPointsOffset offset, CancellationToken cancellationToken) => dataStore.WriteData(prNumber.ToString(CultureInfo.InvariantCulture), offset ?? throw new ArgumentNullException(nameof(offset)), cancellationToken);
 
 		/// <summary>
 		/// Construct a <see cref="GoodBoyPointsModule"/>
@@ -119,7 +122,7 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 		public async Task<AutoMergeStatus> EvaluateFor(PullRequest pullRequest, CancellationToken cancellationToken)
 		{
 			var labelsTask = gitHubManager.GetIssueLabels(pullRequest.Number);
-			var offsetTask = dataStore.ReadData<GoodBoyPointsOffset>(pullRequest.Number.ToString(), cancellationToken);
+			var offsetTask = dataStore.ReadData<GoodBoyPointsOffset>(pullRequest.Number.ToString(CultureInfo.InvariantCulture), cancellationToken);
 			var userGBP = await dataStore.ReadData<GoodBoyPointsEntry>(pullRequest.User.Login, cancellationToken).ConfigureAwait(false);
 
 			var newGBP = AdjustGBP(userGBP, await offsetTask.ConfigureAwait(false), await labelsTask.ConfigureAwait(false));
@@ -155,13 +158,13 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 
 			var labelsTask = gitHubManager.GetIssueLabels(payload.PullRequest.Number);
 			var gbpTask = dataStore.ReadData<GoodBoyPointsEntry>(payload.PullRequest.User.Login, cancellationToken);
-			var offset = await dataStore.ReadData<GoodBoyPointsOffset>(payload.PullRequest.Number.ToString(), cancellationToken).ConfigureAwait(false);
+			var offset = await dataStore.ReadData<GoodBoyPointsOffset>(payload.PullRequest.Number.ToString(CultureInfo.InvariantCulture), cancellationToken).ConfigureAwait(false);
 
 			var gbp = await gbpTask.ConfigureAwait(false);
 
 			gbp = AdjustGBP(gbp, offset, await labelsTask.ConfigureAwait(false));
 
-			await dataStore.WriteData(payload.PullRequest.User.Login, gbp, cancellationToken);
+			await dataStore.WriteData(payload.PullRequest.User.Login, gbp, cancellationToken).ConfigureAwait(false);
 		}
 
 		/// <summary>
@@ -194,12 +197,15 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 			viewBag.AdjustGBPHeader = stringLocalizer["AdjustGBPHeader"];
 
 			var gbpTask = dataStore.ReadData<GoodBoyPointsEntry>(pullRequest.User.Login, cancellationToken);
-			var offset = await dataStore.ReadData<GoodBoyPointsOffset>(pullRequest.Number.ToString(), cancellationToken).ConfigureAwait(false);
+			var offset = await dataStore.ReadData<GoodBoyPointsOffset>(pullRequest.Number.ToString(CultureInfo.InvariantCulture), cancellationToken).ConfigureAwait(false);
 			var gbp = await gbpTask.ConfigureAwait(false);
 
 			viewBag.GBPBase = gbp.Points;
 			viewBag.GBPLabels = AdjustGBP(gbp, null, await gitHubManager.GetIssueLabels(pullRequest.Number).ConfigureAwait(false)).Points - gbp.Points;
 			viewBag.GBPOffset = offset.Offset;
 		}
+
+		/// <inheritdoc />
+		public void SetEnabled(bool enabled) => this.enabled = enabled;
 	}
 }

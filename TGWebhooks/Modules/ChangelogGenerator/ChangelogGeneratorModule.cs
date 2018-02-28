@@ -20,9 +20,6 @@ namespace TGWebhooks.Modules.ChangelogGenerator
 	public sealed class ChangelogGeneratorModule : IModule, IMergeRequirement, IMergeHook
 	{
 		/// <inheritdoc />
-		public bool Enabled { get; set; }
-
-		/// <inheritdoc />
 		public Guid Uid => new Guid("eb442717-57a2-402f-bfd4-0d4dce80f16a");
 
 		/// <inheritdoc />
@@ -64,6 +61,11 @@ namespace TGWebhooks.Modules.ChangelogGenerator
 		readonly IRepository repository;
 
 		/// <summary>
+		/// Backing field for <see cref="SetEnabled(bool)"/>
+		/// </summary>
+		bool enabled;
+
+		/// <summary>
 		/// Construct a <see cref="ChangelogGeneratorModule"/>
 		/// </summary>
 		/// <param name="dataStoreFactory">The <see cref="IDataStoreFactory{TModule}"/> to create <see cref="dataStore"/> from</param>
@@ -88,7 +90,7 @@ namespace TGWebhooks.Modules.ChangelogGenerator
 		/// <returns>A <see cref="Task{TResult}"/> resulting in the <see cref="RequireChangelogEntry"/> for the <paramref name="pullRequest"/></returns>
 		async Task<RequireChangelogEntry> GetRequired(PullRequest pullRequest, CancellationToken cancellationToken)
 		{
-			var setRequired = await dataStore.ReadData<RequireChangelogEntry>(pullRequest.Number.ToString(), cancellationToken).ConfigureAwait(false);
+			var setRequired = await dataStore.ReadData<RequireChangelogEntry>(pullRequest.Number.ToString(CultureInfo.InvariantCulture), cancellationToken).ConfigureAwait(false);
 			if (!setRequired.Required.HasValue)
 				setRequired.Required = generalConfiguration.DefaultChangelogRequired;
 			return setRequired;
@@ -140,7 +142,9 @@ namespace TGWebhooks.Modules.ChangelogGenerator
 				return workingCommit;
 			
 			var result = new List<Dictionary<string, string>>();
+#pragma warning disable CA1308 // Normalize strings to uppercase
 			result.AddRange(changelog.Changes.Select(x => new Dictionary<string, string> { { x.Type.ToString().ToLowerInvariant(), x.Text } }));
+#pragma warning restore CA1308 // Normalize strings to uppercase
 
 			//create the object graph
 			var graph = new
@@ -150,14 +154,17 @@ namespace TGWebhooks.Modules.ChangelogGenerator
 				changes = result
 			};
 			//hack because '-' isn't a valid identifier in c#
-			var yaml = new Serializer().Serialize(graph).Replace("delete_after_temporary_for_replacement", "delete-after");
+			var yaml = new Serializer().Serialize(graph).Replace("delete_after_temporary_for_replacement", "delete-after", StringComparison.InvariantCulture);
 
 			var title = String.Format(CultureInfo.InvariantCulture, "AutoChangeLog-pr-{0}.yml", pullRequest.Number);
 
 			var pathToWrite = ioManager.ConcatPath(repository.Path, "html", "changelogs", title);
 			await ioManager.WriteAllText(pathToWrite, yaml, cancellationToken).ConfigureAwait(false);
 
-			return await repository.CommitChanges(new List<string> { pathToWrite }, cancellationToken);
+			return await repository.CommitChanges(new List<string> { pathToWrite }, cancellationToken).ConfigureAwait(false);
 		}
+
+		/// <inheritdoc />
+		public void SetEnabled(bool enabled) => this.enabled = enabled;
 	}
 }

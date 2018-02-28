@@ -15,8 +15,6 @@ namespace TGWebhooks.Modules.PRTagger
 	/// </summary>
 	public sealed class PullRequestLabellerModule : IModule, IPayloadHandler<PullRequestEventPayload>
 	{
-		/// <inheritdoc />
-		public bool Enabled { get; set; }
 
 		/// <inheritdoc />
 		public Guid Uid => new Guid("3a6dd37c-3dee-4a7a-a016-885a4a775968");
@@ -37,6 +35,11 @@ namespace TGWebhooks.Modules.PRTagger
 		/// The <see cref="IGitHubManager"/> for the <see cref="PullRequestLabellerModule"/>
 		/// </summary>
 		readonly IGitHubManager gitHubManager;
+
+		/// <summary>
+		/// Backing field for <see cref="SetEnabled(bool)"/>
+		/// </summary>
+		bool enabled;
 
 		/// <summary>
 		/// Construct a <see cref="PullRequestLabellerModule"/>
@@ -268,5 +271,8 @@ namespace TGWebhooks.Modules.PRTagger
 
 		/// <inheritdoc />
 		public Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken) => Task.CompletedTask;
+
+		/// <inheritdoc />
+		public void SetEnabled(bool enabled) => this.enabled = enabled;
 	}
 }

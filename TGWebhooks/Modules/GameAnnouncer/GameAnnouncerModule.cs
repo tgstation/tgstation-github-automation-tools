@@ -20,9 +20,6 @@ namespace TGWebhooks.Modules.GameAnnouncer
 	sealed class GameAnnouncerModule : IModule, IPayloadHandler<PullRequestEventPayload>
 	{
 		/// <inheritdoc />
-		public bool Enabled { get; set; }
-
-		/// <inheritdoc />
 		public Guid Uid => new Guid("a52b2545-94e3-4d74-bb8a-bb9ca94194c3");
 
 		/// <inheritdoc />
@@ -49,6 +46,11 @@ namespace TGWebhooks.Modules.GameAnnouncer
 		/// The <see cref="IStringLocalizer"/>s for the <see cref="GameAnnouncerModule"/>
 		/// </summary>
 		readonly IStringLocalizer<GameAnnouncerModule> stringLocalizer;
+
+		/// <summary>
+		/// Backing field for <see cref="SetEnabled(bool)"/>
+		/// </summary>
+		bool enabled;
 
 		public GameAnnouncerModule(IByondTopicSender byondTopicSender, IOptions<ServerConfiguration> serverConfigurationOptions, IStringLocalizer<GameAnnouncerModule> stringLocalizer)
 		{
@@ -104,5 +106,8 @@ namespace TGWebhooks.Modules.GameAnnouncer
 			}
 			throw new NotSupportedException();
 		}
+
+		/// <inheritdoc />
+		public void SetEnabled(bool enabled) => this.enabled = enabled;
 	}
 }
