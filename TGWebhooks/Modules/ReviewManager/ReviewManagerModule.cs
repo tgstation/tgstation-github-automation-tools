@@ -108,7 +108,11 @@ namespace TGWebhooks.Modules.ReviewManager
 					continue;
 
 				++result.Progress;
+				result.Notes.Add(stringLocalizer["ApprovedBy", I.Login]);
 			}
+
+			if(result.Progress == 0)
+				result.Notes.Add(stringLocalizer["NoApproval"]);
 
 			result.RequiredProgress = result.Progress;
 

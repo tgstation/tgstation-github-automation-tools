@@ -35,7 +35,7 @@ namespace TGWebhooks.Modules.ChangelogGenerator
 		public string RequirementDescription => stringLocalizer["RequirementDescription"];
 
 		/// <inheritdoc />
-		public IEnumerable<IMergeRequirement> MergeRequirements => Enumerable.Empty<IMergeRequirement>();
+		public IEnumerable<IMergeRequirement> MergeRequirements => new List<IMergeRequirement> { this };
 
 		/// <inheritdoc />
 		public IEnumerable<IMergeHook> MergeHooks => new List<IMergeHook> { this };

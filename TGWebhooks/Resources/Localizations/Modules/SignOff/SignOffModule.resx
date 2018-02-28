@@ -133,6 +133,6 @@
     <value>Sign Off</value>
   </data>
   <data name="RequirementDescription" xml:space="preserve">
-    <value>Have a maintainer sign off on the pull request</value>
+    <value>A maintainer must sign off on the pull request</value>
   </data>
 </root>

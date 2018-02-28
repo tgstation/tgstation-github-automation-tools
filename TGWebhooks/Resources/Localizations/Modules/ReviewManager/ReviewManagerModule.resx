@@ -117,16 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ApprovedBy" xml:space="preserve">
+    <value>Approved by {0}</value>
+  </data>
   <data name="Description" xml:space="preserve">
     <value>Manages auto-dismissal and tagging of maintainer reviews</value>
   </data>
   <data name="Name" xml:space="preserve">
     <value>Review Manager</value>
   </data>
+  <data name="NoApproval" xml:space="preserve">
+    <value>No approvals</value>
+  </data>
   <data name="RequestedChanges" xml:space="preserve">
     <value>{0} requested changes on this pull request</value>
   </data>
   <data name="RequirementDescription" xml:space="preserve">
-    <value>Have an approved review with no outstanding requested changes</value>
+    <value>Must have an approved review with no outstanding requested changes</value>
   </data>
 </root>

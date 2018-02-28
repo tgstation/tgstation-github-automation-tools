@@ -1,0 +1,101 @@
+.progress-button {
+    position: relative;
+    display: inline-block;
+    text-align: center;
+}
+
+.progress-button button {
+    display: block;
+    width: 250px;
+    height: 70px;
+    margin: 0 auto;
+    padding: 0;
+    background-color: transparent;
+    border: 2px solid #1ecd97;
+    border-radius: 40px;
+    color: #1ecd97;
+    letter-spacing: 1px;
+    font-size: 18px;
+    font-family: 'Montserrat', sans-serif;
+    /*
+-webkit-transition: background-color 0.3s, color 0.3s, width 0.3s, border-width 0.3s, border-color 0.3s;
+transition: background-color 0.3s, color 0.3s, width 0.3s, border-width 0.3s, border-color 0.3s;
+*/
+    transition: all 0.3s;
+}
+
+
+.progress-button button:hover,
+.progress-button button:focus {
+    background-color: #1ecd97;
+    color: #ffffff;
+}
+
+.progress-button button:focus {
+    outline: none;
+}
+
+.progress-button svg {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+
+.progress-button svg path {
+    visibility: hidden;
+    opacity: 0;
+    fill: none;
+}
+
+.progress-button svg.progress-circle path {
+    stroke: #1ecd97;
+    stroke-width: 5;
+}
+
+.progress-button svg.checkmark path,
+.progress-button svg.cross path {
+    stroke: #ffffff;
+    stroke-width: 5;
+    stroke-linecap: round;
+    transition: visibility 0s linear .1s, opacity 0.1s linear;
+}
+
+.loading.progress-button button {
+    width: 70px;
+    background-color: transparent;
+    border-width: 5px;
+    border-color: #ddd;
+    color: #fff;
+    transition-delay: 0s;
+}
+
+.loading.progress-button button:hover, .loading.progress-button button:focus {
+    background-color: transparent;
+}
+
+.loading.progress-button button span,
+.success.progress-button button span,
+.error.progress-button button span {
+    visibility: hidden;
+    opacity: 0;
+}
+
+.loading.progress-button svg.progress-circle path,
+.success.progress-button svg.checkmark path,
+.error.progress-button svg.cross path {
+    visibility: visible;
+    opacity: 1;
+    transition: stroke-dashoffset 0.3s;
+}
+
+.success.progress-button button {
+    background-color: #1ecd97;
+    border-color: #1ecd97;
+}
+
+.error.progress-button button {
+    background-color: #fb797e;
+    border-color: #fb797e;
+}

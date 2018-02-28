@@ -1,6 +1,6 @@
-﻿<div class="row">
+﻿<div class="row" align="center">
     <a href="https://github.com/@ViewBag.PullRequestAuthor">
-        <img class="pull-left" style="margin-right: 20px" alt="@ViewBag.PullRequestAuthor" src="https://avatars3.githubusercontent.com/u/@ViewBag.PullRequestAuthorID?s=88&amp;v=4" width="90" height="90">
+        <img title="@ViewBag.PullRequestAuthorLogin" style="margin-right: 20px" alt="@ViewBag.PullRequestAuthor" src="https://avatars3.githubusercontent.com/u/@ViewBag.PullRequestAuthorID?s=88&amp;v=4" width="90" height="90">
     </a>
     <h1>@ViewBag.PullRequestTitle (<a href="@ViewBag.PullRequestHref">#@ViewBag.PullRequestNumber</a>)</h1>
 </div>
@@ -13,11 +13,76 @@
 else
 {
     <div class="container">
-        <h2>@ViewBag.MergeRequirements</h2>
+        <h2>@ViewBag.MergeRequirements:</h2>
+        <br />
+        <div class="row">
+            @{ int i = 0;
+            }
+            @foreach (var I in (IDictionary<IMergeRequirement, AutoMergeStatus>)ViewBag.Statuses)
+        {
+            <div class="container col-sm-4">
+                <div id="PB-@((++i).ToString())" class="progress-button loading" data-result="true" style="display: block; margin: auto">
+                    <svg class="progress-circle" width="70" height="70">
+                        <path d="m35,2.5c17.955803,0 32.5,14.544199 32.5,32.5c0,17.955803 -14.544197,32.5 -32.5,32.5c-17.955803,0 -32.5,-14.544197 -32.5,-32.5c0,-17.955801 14.544197,-32.5 32.5,-32.5z" />
+                    </svg>
+
+                    <svg class="checkmark" width="70" height="70">
+                        <path d="m31.5,46.5l15.3,-23.2" />
+                        <path d="m31.5,46.5l-8.5,-7.1" />
+                    </svg>
+                </div>
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <h4 align="center">@I.Key.RequirementDescription</h4>
+                <ul>
+                    @foreach (var J in I.Value.Notes)
+                    {
+                    <li>
+                        @J
+                    </li>
+                    }
+                </ul>
+            </div>
+    }
+        </div>
     </div>
     foreach (string I in ViewBag.ModuleViews)
     {
         <hr />
         @Html.Partial(I);
+    }
+}
+
+@section Scripts{ 
+    @if (!ViewBag.PullRequestClosed)
+    {
+    <script type="text/javascript">
+        $(function () {
+            $.fn.filterFind = function (selector) {
+                return this.find('*')         // Take the current selection and find all descendants,
+                    .addBack()         // add the original selection back to the set 
+                    .filter(selector); // and filter by the selector.
+            };
+            $.fn.svgDraw = function (progress) {
+                this.filterFind('path').each(function () {
+                    var pathLength = this.getTotalLength();
+                    $(this).css('strokeDasharray', pathLength + ' ' + pathLength);
+                    $(this).css('strokeDashoffset', pathLength * ((1 - progress)).clamp(0, 1));
+                });
+
+                return this;
+            };
+            @{  int i = 0;
+            }
+            @foreach (var I in (IDictionary<IMergeRequirement, AutoMergeStatus>)ViewBag.Statuses)
+            {
+                @:$('#PB-@((++i).ToString())').svgDraw(50);
+            }
+
+        });
+    </script>   
     }
 }
