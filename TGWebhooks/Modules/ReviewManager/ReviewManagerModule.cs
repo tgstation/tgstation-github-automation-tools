@@ -88,11 +88,13 @@ namespace TGWebhooks.Modules.ReviewManager
 				}
 				if (I.State.Value == PullRequestReviewState.Approved)
 				{
+					critics.RemoveAll(x => x.Id == I.User.Id);
 					approvers.Add(I.User);
 					CheckupUser();
 				}
 				else if (I.State.Value == PullRequestReviewState.ChangesRequested)
 				{
+					approvers.RemoveAll(x => x.Id == I.User.Id);
 					critics.Add(I.User);
 					CheckupUser();
 				}
