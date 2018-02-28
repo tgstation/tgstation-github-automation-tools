@@ -14,7 +14,7 @@ namespace TGWebhooks.Core
 {
 	/// <inheritdoc />
 #pragma warning disable CA1812
-	sealed class AutoMergeHandler : IAutoMergeHandler
+	sealed class AutoMergeHandler : IAutoMergeHandler, IDisposable
 #pragma warning restore CA1812
 	{
 		/// <summary>
@@ -41,6 +41,10 @@ namespace TGWebhooks.Core
 		/// The <see cref="IBackgroundJobClient"/> for the <see cref="AutoMergeHandler"/>
 		/// </summary>
 		readonly IBackgroundJobClient backgroundJobClient;
+		/// <summary>
+		/// Used for pull request checking serialization
+		/// </summary>
+		readonly SemaphoreSlim semaphore;
 
 		/// <summary>
 		/// Construct an <see cref="AutoMergeHandler"/>
@@ -59,7 +63,11 @@ namespace TGWebhooks.Core
 			repository = _repository ?? throw new ArgumentNullException(nameof(_repository));
 			stringLocalizer = _stringLocalizer ?? throw new ArgumentNullException(nameof(_stringLocalizer));
 			backgroundJobClient = _backgroundJobClient ?? throw new ArgumentNullException(nameof(_backgroundJobClient));
+			semaphore = new SemaphoreSlim(1);
 		}
+
+		/// <inheritdoc />
+		public void Dispose() => semaphore.Dispose();
 
 		/// <summary>
 		/// Merges a <paramref name="pullRequest"/>
@@ -72,42 +80,39 @@ namespace TGWebhooks.Core
 		{
 			var acceptedHEAD = pullRequest.Head.Sha;
 			var tokenUserTask = gitHubManager.GetUserLogin(mergerToken, cancellationToken);
-			using (await repository.LockToCallStack(cancellationToken).ConfigureAwait(false))
+			var tokenUser = await tokenUserTask.ConfigureAwait(false);
+			var startoffCommit = await repository.CreatePullRequestWorkingCommit(pullRequest, tokenUser, cancellationToken).ConfigureAwait(false);
+			//run any merge handlers
+			var workingCommit = startoffCommit;
+			//component provider already checked by CheckMergePullRequest
+			foreach (var I in componentProvider.MergeHooks)
+				workingCommit = await I.ModifyMerge(pullRequest, workingCommit, cancellationToken).ConfigureAwait(false);
+
+			var anyUpdate = acceptedHEAD != workingCommit;
+			if (anyUpdate)
+				//force push this bitch up
+				await repository.Push(pullRequest.Head.Repository.GitUrl, pullRequest.Head.Ref.Split(':')[1], workingCommit, mergerToken, true, cancellationToken).ConfigureAwait(false);
+
+			try
 			{
-				var tokenUser = await tokenUserTask.ConfigureAwait(false);
-				var startoffCommit = await repository.CreatePullRequestWorkingCommit(pullRequest, tokenUser, cancellationToken).ConfigureAwait(false);
-				//run any merge handlers
-				var workingCommit = startoffCommit;
-				//component provider already checked by CheckMergePullRequest
-				foreach (var I in componentProvider.MergeHooks)
-					workingCommit = await I.ModifyMerge(pullRequest, workingCommit, cancellationToken).ConfigureAwait(false);
-
-				var anyUpdate = acceptedHEAD != workingCommit;
+				await gitHubManager.MergePullRequest(pullRequest, mergerToken).ConfigureAwait(false);
 				if (anyUpdate)
-					//force push this bitch up
-					await repository.Push(pullRequest.Head.Repository.GitUrl, pullRequest.Head.Ref.Split(':')[1], workingCommit, mergerToken, true, cancellationToken).ConfigureAwait(false);
-
+					//change things back to normal for the user's sake
+					//no cancellation token due to ciritcal op
+					await repository.Push(pullRequest.Head.Repository.GitUrl, pullRequest.Head.Ref.Split(':')[1], acceptedHEAD, mergerToken, true, CancellationToken.None).ConfigureAwait(false);
+			}
+			catch (Exception e2)
+			{
+				logger.LogError(e2, "Merge process unable to be completed!");
 				try
 				{
-					await gitHubManager.MergePullRequest(pullRequest, mergerToken).ConfigureAwait(false);
-					if (anyUpdate)
-						//change things back to normal for the user's sake
-						//no cancellation token due to ciritcal op
-						await repository.Push(pullRequest.Head.Repository.GitUrl, pullRequest.Head.Ref.Split(':')[1], acceptedHEAD, mergerToken, true, CancellationToken.None).ConfigureAwait(false);
+					await gitHubManager.CreateComment(pullRequest.Number, stringLocalizer["MergeProcessInterruption", e2.ToString(), acceptedHEAD]).ConfigureAwait(false);
 				}
-				catch (Exception e2)
+				catch (Exception e)
 				{
-					logger.LogError(e2, "Merge process unable to be completed!");
-					try
-					{
-						await gitHubManager.CreateComment(pullRequest.Number, stringLocalizer["MergeProcessInterruption", e2.ToString(), acceptedHEAD]).ConfigureAwait(false);
-					}
-					catch (Exception e)
-					{
-						logger.LogError(e, "Unable to comment on merge process failure!");
-					}
-					throw;
+					logger.LogError(e, "Unable to comment on merge process failure!");
 				}
+				throw;
 			}
 		}
 
@@ -151,10 +156,14 @@ namespace TGWebhooks.Core
 		{
 			if (pullRequest == null)
 				throw new ArgumentNullException(nameof(pullRequest));
-			if (pullRequest.Merged)
-				return;
+			using (await SemaphoreSlimContext.Lock(semaphore, cancellationToken).ConfigureAwait(false))
 			using (logger.BeginScope("Checking mergability of pull request #{0}.", pullRequest.Number))
 			{
+				if (pullRequest.State.Value == ItemState.Closed)
+				{
+					logger.LogDebug("Pull request is closed!");
+					return;
+				}
 				bool merge = true;
 				string mergerToken = null;
 				int rescheduleIn = 0;

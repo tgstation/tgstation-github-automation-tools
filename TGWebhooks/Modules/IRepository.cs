@@ -16,13 +16,6 @@ namespace TGWebhooks.Modules
 		string Path { get; }
 
 		/// <summary>
-		/// Restricts usage of the repo to the current call stack
-		/// </summary>
-		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
-		/// <returns>A <see cref="Task{TResult}"/> resulting in a <see cref="SemaphoreSlimContext"/> indicating ownership of the <see cref="IRepository"/></returns>
-		Task<SemaphoreSlimContext> LockToCallStack(CancellationToken cancellationToken);
-
-		/// <summary>
 		/// Fetches the given <paramref name="pullRequest"/> into the <see cref="IRepository"/> and returns the proper HEAD commit. If the <see cref="PullRequest.Commits"/> count is more than one it will be squashed. Must be done in the returned <see cref="SemaphoreSlimContext"/> of <see cref="LockToCallStack(CancellationToken)"/>
 		/// </summary>
 		/// <param name="pullRequest">The <see cref="PullRequest"/> to fetch</param>

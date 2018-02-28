@@ -50,11 +50,6 @@ namespace TGWebhooks.Core
 		LibGit2Sharp.Repository repositoryObject;
 
 		/// <summary>
-		/// Used for guarding access to the <see cref="Repository"/>
-		/// </summary>
-		SemaphoreSlim semaphore;
-
-		/// <summary>
 		/// Create an <see cref="Identity"/> given a <see cref="User"/>
 		/// </summary>
 		/// <param name="user">The <see cref="User"/> to derive the <see cref="Identity"/> from</param>
@@ -73,17 +68,12 @@ namespace TGWebhooks.Core
 			stringLocalizer = _stringLocalizer ?? throw new ArgumentNullException(nameof(_stringLocalizer));
 			gitHubConfiguration = gitHubConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(gitHubConfigurationOptions));
 			ioManager = new ResolvingIOManager(_ioManager ?? throw new ArgumentNullException(nameof(_ioManager)), _ioManager.ConcatPath(Application.DataDirectory, RepositoriesDirectory));
-			semaphore = new SemaphoreSlim(1);
 		}
 
 		/// <summary>
 		/// Disposes the <see cref="repositoryObject"/>
 		/// </summary>
-		public void Dispose()
-		{
-			repositoryObject?.Dispose();
-			semaphore.Dispose();
-		}
+		public void Dispose() => repositoryObject?.Dispose();
 
 		/// <inheritdoc />
 		public Task Initialize(CancellationToken cancellationToken) => Task.Factory.StartNew(async () =>
@@ -220,9 +210,6 @@ namespace TGWebhooks.Core
 			var committerSig = new LibGit2Sharp.Signature(CreateIdentity(committer), dto);
 			return repositoryObject.Commit(String.Format(CultureInfo.InvariantCulture, "{0} - (#{1}){2}{3}", pullRequest.Title, pullRequest.Number, Environment.NewLine, pullRequest.Body), authorSig, committerSig, new CommitOptions { PrettifyMessage = true }).Sha;
 		}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Current);
-
-		/// <inheritdoc />
-		public Task<SemaphoreSlimContext> LockToCallStack(CancellationToken cancellationToken) => SemaphoreSlimContext.Lock(semaphore, cancellationToken);
 
 		/// <inheritdoc />
 		public Task<string> CommitChanges(IEnumerable<string> pathsToStage, string message, User author, User committer, CancellationToken cancellationToken) => Task.Factory.StartNew(() =>
