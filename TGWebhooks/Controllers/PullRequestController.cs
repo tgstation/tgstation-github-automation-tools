@@ -90,7 +90,11 @@ namespace TGWebhooks.Controllers
 
 				var resultDic = new Dictionary<IMergeRequirement, AutoMergeStatus>();
 				foreach (var I in Enumerable.Zip(componentProvider.MergeRequirements, tasks, (x, y) => new Tuple<IMergeRequirement, AutoMergeStatus>(x, y.Result)))
+				{
+					++I.Item2.RequiredProgress;
+					++I.Item2.Progress;
 					resultDic.Add(I.Item1, I.Item2);
+				}
 
 				ViewBag.Statuses = resultDic;
 				ViewBag.PullRequestClosed = false;

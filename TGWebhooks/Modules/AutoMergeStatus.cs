@@ -30,6 +30,6 @@ namespace TGWebhooks.Modules
 		/// <summary>
 		/// The GitHub access token override to merge with
 		/// </summary>
-		public string MergerAccessToken { get; }
+		public string MergerAccessToken { get; set; }
 	}
 }

@@ -1,12 +1,10 @@
 ﻿using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
 using Octokit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TGWebhooks.Modules;
 
 namespace TGWebhooks.Modules.SignOff
 {
@@ -17,11 +15,6 @@ namespace TGWebhooks.Modules.SignOff
 	{
 		/// <inheritdoc />
 		public bool Enabled { get; set; }
-
-		/// <summary>
-		/// The key in <see cref="dataStore"/> where <see cref="PullRequestSignOffs"/>s are stored
-		/// </summary>
-		const string SignOffDataKey = "Signoffs";
 
 		/// <inheritdoc />
 		public Guid Uid => new Guid("bde81200-a275-4e93-b855-13865f3629fe");
@@ -72,13 +65,17 @@ namespace TGWebhooks.Modules.SignOff
 		{
 			if (pullRequest == null)
 				throw new ArgumentNullException(nameof(pullRequest));
-			var signOff = await dataStore.ReadData<PullRequestSignOffs>(SignOffDataKey, cancellationToken).ConfigureAwait(false);
+			var signOff = await dataStore.ReadData<PullRequestSignOff>(pullRequest.Number.ToString(), cancellationToken).ConfigureAwait(false);
 
-			var result = new AutoMergeStatus() { RequiredProgress = 1 };
-			if (signOff.Entries.TryGetValue(pullRequest.Number, out List<string> signers) && signers.Count > 0)
-			{
-				result.Progress = signers.Count;
-				result.Notes.AddRange(signers.Select(x => (string)stringLocalizer["Signer", x]));
+			var result = new AutoMergeStatus() {
+				RequiredProgress = 1,
+				Progress = signOff.AccessToken != null ? 1 : 0,
+				MergerAccessToken = signOff.AccessToken
+			};
+
+			if (signOff.AccessToken != null) {
+				var user = await gitHubManager.GetUserLogin(signOff.AccessToken, cancellationToken).ConfigureAwait(false);
+				result.Notes.Add(stringLocalizer["Signer", user.Login]);
 			}
 			else
 				result.Notes.Add(stringLocalizer["NoSignOffs"]);
@@ -107,12 +104,12 @@ namespace TGWebhooks.Modules.SignOff
 			if(payload.Action != "edited")
 				throw new NotSupportedException();
 
-			var signOff = await dataStore.ReadData<PullRequestSignOffs>(SignOffDataKey, cancellationToken).ConfigureAwait(false);
+			var signOff = await dataStore.ReadData<PullRequestSignOff>(payload.PullRequest.Number.ToString(), cancellationToken).ConfigureAwait(false);
 
-			if (!signOff.Entries.Remove(payload.PullRequest.Number))
+			if (signOff.AccessToken == null)
 				return;
 
-			await dataStore.WriteData(SignOffDataKey, signOff, cancellationToken).ConfigureAwait(false);
+			await dataStore.WriteData(payload.PullRequest.Number.ToString(), signOff, cancellationToken).ConfigureAwait(false);
 
 			var botLoginTask = gitHubManager.GetUserLogin(null, cancellationToken);
 			var reviews = await gitHubManager.GetPullRequestReviews(payload.PullRequest).ConfigureAwait(false);

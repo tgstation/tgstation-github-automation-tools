@@ -56,10 +56,16 @@ transition: background-color 0.3s, color 0.3s, width 0.3s, border-width 0.3s, bo
 
 .progress-button svg.checkmark path,
 .progress-button svg.cross path {
-    stroke: #ffffff;
     stroke-width: 5;
     stroke-linecap: round;
     transition: visibility 0s linear .1s, opacity 0.1s linear;
+}
+
+.progress-button svg.checkmark path {
+    stroke: #00ff00;
+}
+.progress-button svg.cross path {
+    stroke: #ff0000;
 }
 
 .loading.progress-button button {

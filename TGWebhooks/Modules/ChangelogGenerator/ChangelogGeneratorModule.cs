@@ -117,7 +117,16 @@ namespace TGWebhooks.Modules.ChangelogGenerator
 				Progress = changelog != null ? 1 : 0
 			};
 			if (result.Progress < result.RequiredProgress || malformed)
-				result.Notes.Add(stringLocalizer[malformed ? "ChangelogMalformed" : "NeedsChangelog"]);
+			{
+				if (malformed)
+					result.Notes.Add(stringLocalizer["ChangelogMalformed"]);
+				else if (required.Requestor != null)
+					result.Notes.Add(stringLocalizer["ChangelogRequested", required.Requestor]);
+				else
+					result.Notes.Add(stringLocalizer["NeedsChangelog"]);
+			}
+			else if (changelog == null)
+				result.Notes.Add(stringLocalizer["NoChangelogRequired"]);
 			return result;
 		}
 		

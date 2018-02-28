@@ -4,6 +4,7 @@
     </a>
     <h1>@ViewBag.PullRequestTitle (<a href="@ViewBag.PullRequestHref">#@ViewBag.PullRequestNumber</a>)</h1>
 </div>
+
 <hr />
 
 @if (ViewBag.PullRequestClosed)
@@ -21,14 +22,23 @@ else
             @foreach (var I in (IDictionary<IMergeRequirement, AutoMergeStatus>)ViewBag.Statuses)
         {
             <div class="container col-sm-4">
-                <div id="PB-@((++i).ToString())" class="progress-button loading" data-result="true" style="display: block; margin: auto">
-                    <svg class="progress-circle" width="70" height="70">
+                <div id="PB-@((++i).ToString())" class="progress-button loading@(I.Value.Progress >= I.Value.RequiredProgress ? " success" : I.Value.FailStatusReport ? " error": null)" data-result="true" style="display: block; margin: auto">
+                    <svg id="PBC-@(i.ToString())" class="progress-circle" width="70" height="70">
                         <path d="m35,2.5c17.955803,0 32.5,14.544199 32.5,32.5c0,17.955803 -14.544197,32.5 -32.5,32.5c-17.955803,0 -32.5,-14.544197 -32.5,-32.5c0,-17.955801 14.544197,-32.5 32.5,-32.5z" />
                     </svg>
 
                     <svg class="checkmark" width="70" height="70">
                         <path d="m31.5,46.5l15.3,-23.2" />
                         <path d="m31.5,46.5l-8.5,-7.1" />
+                    </svg>
+
+
+                    <!-- cross to show on error -->
+                    <svg class="cross" width="70" height="70">
+                        <path d="m35,35l-9.3,-9.3" />
+                        <path d="m35,35l9.3,9.3" />
+                        <path d="m35,35l-9.3,9.3" />
+                        <path d="m35,35l9.3,-9.3" />
                     </svg>
                 </div>
                 <br />
@@ -59,11 +69,14 @@ else
 @section Scripts{ 
     @if (!ViewBag.PullRequestClosed)
     {
-    <script type="text/javascript">
+        <script type="text/javascript">
+        Number.prototype.clamp = function (min, max) {
+            return Math.min(Math.max(this, min), max);
+        };
         $(function () {
             $.fn.filterFind = function (selector) {
                 return this.find('*')         // Take the current selection and find all descendants,
-                    .addBack()         // add the original selection back to the set 
+                    .addBack()         // add the original selection back to the set
                     .filter(selector); // and filter by the selector.
             };
             $.fn.svgDraw = function (progress) {
@@ -79,10 +92,11 @@ else
             }
             @foreach (var I in (IDictionary<IMergeRequirement, AutoMergeStatus>)ViewBag.Statuses)
             {
-                @:$('#PB-@((++i).ToString())').svgDraw(50);
+                @:$('#PBC-@((++i).ToString())').svgDraw(0);
+                @:$('#PBC-@(i.ToString())').svgDraw(@((double)I.Value.Progress / I.Value.RequiredProgress));
             }
 
         });
-    </script>   
+        </script>   
     }
 }
