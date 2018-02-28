@@ -123,14 +123,23 @@
   <data name="ChangelogMalformed" xml:space="preserve">
     <value>The changelog is malformed</value>
   </data>
+  <data name="ChangelogNotRequired" xml:space="preserve">
+    <value>Not Required</value>
+  </data>
   <data name="ChangelogRequested" xml:space="preserve">
-    <value>Changelog requested by {0}</value>
+    <value>A changelog was requested</value>
+  </data>
+  <data name="ChangelogRequired" xml:space="preserve">
+    <value>Required</value>
+  </data>
+  <data name="ChangelogRequirementHeader" xml:space="preserve">
+    <value>Changelog Requirement</value>
   </data>
   <data name="Description" xml:space="preserve">
-    <value>Generates .yaml changelog files</value>
+    <value>Requires and generates .yaml changelog files</value>
   </data>
   <data name="Name" xml:space="preserve">
-    <value>Changelog Generator</value>
+    <value>Changelogs</value>
   </data>
   <data name="NeedsChangelog" xml:space="preserve">
     <value>A changelog is required</value>

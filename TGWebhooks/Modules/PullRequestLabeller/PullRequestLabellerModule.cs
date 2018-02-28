@@ -138,7 +138,7 @@ namespace TGWebhooks.Modules.PRTagger
 				UniqueAdd("Fix");
 
 			//run through the changelog
-			var changelog = Changelog.GetChangelog(payload.PullRequest, out bool malformed);
+			var changelog = Models.Changelog.GetChangelog(payload.PullRequest, out bool malformed);
 			if(changelog != null)
 				foreach(var I in changelog.Changes.Select(x => x.Type))
 					switch (I)

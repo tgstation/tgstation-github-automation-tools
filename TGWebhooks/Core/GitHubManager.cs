@@ -164,6 +164,10 @@ namespace TGWebhooks.Core
 		/// <inheritdoc />
 		public Task MergePullRequest(PullRequest pullRequest, string accessToken)
 		{
+#if DEBUG
+			System.Diagnostics.Debugger.Break();
+#endif
+
 			if (pullRequest == null)
 				throw new ArgumentNullException(nameof(pullRequest));
 			if (accessToken == null)

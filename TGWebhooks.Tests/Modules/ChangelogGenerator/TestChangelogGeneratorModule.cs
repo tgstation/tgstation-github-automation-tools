@@ -7,15 +7,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Modules.Tests;
 
-namespace TGWebhooks.Modules.ChangelogGenerator.Tests
+namespace TGWebhooks.Modules.Changelog.Tests
 {
 	/// <summary>
-	/// Tests for <see cref="ChangelogGeneratorModule"/>
+	/// Tests for <see cref="ChangelogModule"/>
 	/// </summary>
 	[TestClass]
-	public sealed class TestChangelogGeneratorModule : TestModule<ChangelogGeneratorModule>
+	public sealed class TestChangelogGeneratorModule : TestModule<ChangelogModule>
 	{
-		protected override ChangelogGeneratorModule Instantiate() => new ChangelogGeneratorModule(MockDataStoreFactory.Object, MockStringLocalizer.Object, MockGeneralConfigurationOptions.Object, MockIOManager.Object, MockRepository.Object);
+		protected override ChangelogModule Instantiate() => new ChangelogModule(MockDataStoreFactory.Object, MockStringLocalizer.Object, MockGeneralConfigurationOptions.Object, MockIOManager.Object, MockRepository.Object);
 
 		[TestMethod]
 		public async Task TestEvaluate()

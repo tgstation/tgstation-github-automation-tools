@@ -1,0 +1,57 @@
+﻿<div class="row">
+    <h3>@ViewBag.ChangelogRequirementHeader:</h3>
+</div>
+<div class="row">
+    <input id="changelogToggle" data-on="@ViewBag.ChangelogRequired" data-off="@ViewBag.ChangelogNotRequired" @(ViewBag.ChangelogIsRequired ? "checked" : null) data-toggle="toggle" type="checkbox">
+    <i class="fa fa-spinner" id="changelogSpinner" style="display: none"></i>
+    <script type="text/javascript">
+        $(function () {
+            $("#changelogToggle").change(function () {
+                $('#changelogSpinner').addClass("fa-spinner");
+                $('#changelogSpinner').addClass("fa-spin");
+                $('#changelogSpinner').css("color", "");
+                $('#changelogSpinner').removeClass("fa-check");
+                $('#changelogSpinner').removeClass("fa-times");
+                $('#changelogSpinner').show();
+                var required = this.checked;
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("SetRequirement", "Changelog", new { prNumber = ViewBag.PullRequestNumber})',
+                    data: JSON.stringify({
+                        Required: required
+                    }),
+                    contentType: "application/json",
+                    success: function () {
+                        $('#changelogSpinner').removeClass("fa-spin");
+                        $('#changelogSpinner').removeClass("fa-spinner");
+                        $('#changelogSpinner').css("color", "green");
+                        $('#changelogSpinner').addClass("fa-check");
+                        //HACK ALERT, these indexes should NOT be hardcoded
+                        var circle = $('#PBC-5');
+                        var check = $('#PB-5');
+                        var notes = $('#NT-5');
+
+                        //no better way without refreshing the page
+                        notes.hide();
+                        @if(!ViewBag.ChangelogPresent){
+                            @:if (required) {
+                                @:circle.svgDraw(.5);
+                                @:check.removeClass('success');
+                                @:check.addClass('error');
+                            @:} else {
+                                @:circle.svgDraw(1);
+                                @:check.addClass('success');
+                                @:check.removeClass('error');
+                            @:}
+                        }
+                    },
+                    error: function () {
+                        $('#changelogSpinner').removeClass("fa-spin");
+                        $('#changelogSpinner').removeClass("fa-spinner");
+                        $('#changelogSpinner').css("color", "red");
+                        $('#changelogSpinner').addClass("fa-times");
+                }});
+            })
+        });
+    </script>
+</div>

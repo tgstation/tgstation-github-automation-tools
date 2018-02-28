@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
 using Octokit;
-using SharpYaml;
 using SharpYaml.Serialization;
 using System;
 using System.Collections.Generic;
@@ -10,14 +9,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Configuration;
-using TGWebhooks.Models;
 
-namespace TGWebhooks.Modules.ChangelogGenerator
+namespace TGWebhooks.Modules.Changelog
 {
 	/// <summary>
 	/// Generates changelog .yaml files
 	/// </summary>
-	public sealed class ChangelogGeneratorModule : IModule, IMergeRequirement, IMergeHook
+	public sealed class ChangelogModule : IModule, IMergeRequirement, IMergeHook
 	{
 		/// <inheritdoc />
 		public Guid Uid => new Guid("eb442717-57a2-402f-bfd4-0d4dce80f16a");
@@ -40,23 +38,23 @@ namespace TGWebhooks.Modules.ChangelogGenerator
 		public IEnumerable<IPayloadHandler<TPayload>> GetPayloadHandlers<TPayload>() where TPayload : ActivityPayload => Enumerable.Empty<IPayloadHandler<TPayload>>();
 
 		/// <summary>
-		/// The <see cref="GeneralConfiguration"/> for the <see cref="ChangelogGeneratorModule"/>
+		/// The <see cref="GeneralConfiguration"/> for the <see cref="ChangelogModule"/>
 		/// </summary>
 		readonly GeneralConfiguration generalConfiguration;
 		/// <summary>
-		/// The <see cref="IDataStore"/> for the <see cref="ChangelogGeneratorModule"/>
+		/// The <see cref="IDataStore"/> for the <see cref="ChangelogModule"/>
 		/// </summary>
 		readonly IDataStore dataStore;
 		/// <summary>
-		/// The <see cref="IStringLocalizer"/> for the <see cref="ChangelogGeneratorModule"/>
+		/// The <see cref="IStringLocalizer"/> for the <see cref="ChangelogModule"/>
 		/// </summary>
-		readonly IStringLocalizer<ChangelogGeneratorModule> stringLocalizer;
+		readonly IStringLocalizer<ChangelogModule> stringLocalizer;
 		/// <summary>
-		/// The <see cref="IIOManager"/> for the <see cref="ChangelogGeneratorModule"/>
+		/// The <see cref="IIOManager"/> for the <see cref="ChangelogModule"/>
 		/// </summary>
 		readonly IIOManager ioManager;
 		/// <summary>
-		/// The <see cref="IRepository"/> for the <see cref="ChangelogGeneratorModule"/>
+		/// The <see cref="IRepository"/> for the <see cref="ChangelogModule"/>
 		/// </summary>
 		readonly IRepository repository;
 
@@ -66,14 +64,14 @@ namespace TGWebhooks.Modules.ChangelogGenerator
 		bool enabled;
 
 		/// <summary>
-		/// Construct a <see cref="ChangelogGeneratorModule"/>
+		/// Construct a <see cref="ChangelogModule"/>
 		/// </summary>
 		/// <param name="dataStoreFactory">The <see cref="IDataStoreFactory{TModule}"/> to create <see cref="dataStore"/> from</param>
 		/// <param name="stringLocalizer">The value of <see cref="stringLocalizer"/></param>
 		/// <param name="generalConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the value of <see cref="generalConfiguration"/></param>
 		/// <param name="ioManager">The value of <see cref="ioManager"/></param>
 		/// <param name="repository">The value of <see cref="repository"/></param>
-		public ChangelogGeneratorModule(IDataStoreFactory<ChangelogGeneratorModule> dataStoreFactory, IStringLocalizer<ChangelogGeneratorModule> stringLocalizer, IOptions<GeneralConfiguration> generalConfigurationOptions, IIOManager ioManager, IRepository repository)
+		public ChangelogModule(IDataStoreFactory<ChangelogModule> dataStoreFactory, IStringLocalizer<ChangelogModule> stringLocalizer, IOptions<GeneralConfiguration> generalConfigurationOptions, IIOManager ioManager, IRepository repository)
 		{
 			this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
 			this.ioManager = ioManager ?? throw new ArgumentNullException(nameof(ioManager));
@@ -91,13 +89,42 @@ namespace TGWebhooks.Modules.ChangelogGenerator
 		async Task<RequireChangelogEntry> GetRequired(PullRequest pullRequest, CancellationToken cancellationToken)
 		{
 			var setRequired = await dataStore.ReadData<RequireChangelogEntry>(pullRequest.Number.ToString(CultureInfo.InvariantCulture), cancellationToken).ConfigureAwait(false);
-			if (!setRequired.Required.HasValue)
-				setRequired.Required = generalConfiguration.DefaultChangelogRequired;
 			return setRequired;
 		}
 
 		/// <inheritdoc />
-		public Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken) => Task.CompletedTask;
+		public async Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken)
+		{
+			if (pullRequest == null)
+				throw new ArgumentNullException(nameof(pullRequest));
+			if (viewBag == null)
+				throw new ArgumentNullException(nameof(viewBag));
+
+			if (!viewBag.IsMaintainer)
+				return;
+			
+			((IList<string>)viewBag.ModuleViews).Add("/Modules/Changelog/Views/Changelog.cshtml");
+
+			var required = await GetRequired(pullRequest, cancellationToken).ConfigureAwait(false);
+			var changelog = Models.Changelog.GetChangelog(pullRequest, out bool malformed);
+
+			viewBag.ChangelogIsRequired = required.Required ?? generalConfiguration.DefaultChangelogRequired;
+			viewBag.ChangelogPresent = changelog != null || malformed;
+			viewBag.ChangelogMalformed = malformed;
+
+			viewBag.ChangelogRequirementHeader = stringLocalizer["ChangelogRequirementHeader"];
+			viewBag.ChangelogRequired = stringLocalizer["ChangelogRequired"];
+			viewBag.ChangelogNotRequired = stringLocalizer["ChangelogNotRequired"];
+		}
+
+		/// <summary>
+		/// Set the <see cref="RequireChangelogEntry"/> for a <paramref name="prNumber"/>
+		/// </summary>
+		/// <param name="prNumber">The <see cref="PullRequest.Number"/></param>
+		/// <param name="requireChangelogEntry">The <see cref="RequireChangelogEntry"/></param>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task{TResult}"/> resulting in an <see cref="IActionResult"/></returns>
+		public Task SetRequirement(int prNumber, RequireChangelogEntry requireChangelogEntry, CancellationToken cancellationToken) => dataStore.WriteData(prNumber.ToString(CultureInfo.InvariantCulture), requireChangelogEntry, cancellationToken);
 
 		/// <inheritdoc />
 		public async Task<AutoMergeStatus> EvaluateFor(PullRequest pullRequest, CancellationToken cancellationToken)
@@ -107,7 +134,7 @@ namespace TGWebhooks.Modules.ChangelogGenerator
 
 			var required = await GetRequired(pullRequest, cancellationToken).ConfigureAwait(false);
 
-			var changelog = Changelog.GetChangelog(pullRequest, out bool malformed);
+			var changelog = Models.Changelog.GetChangelog(pullRequest, out bool malformed);
 
 			var result = new AutoMergeStatus
 			{
@@ -115,17 +142,17 @@ namespace TGWebhooks.Modules.ChangelogGenerator
 				RequiredProgress = required.Required.Value || malformed ? 1 : 0, //TODO:maintainer_can_modify field
 				Progress = changelog != null ? 1 : 0
 			};
-			if (result.Progress < result.RequiredProgress || malformed)
+			if (malformed)
+				result.Notes.Add(stringLocalizer["ChangelogMalformed"]);
+			else if (required.Required.HasValue)
 			{
-				if (malformed)
-					result.Notes.Add(stringLocalizer["ChangelogMalformed"]);
-				else if (required.Requestor != null)
-					result.Notes.Add(stringLocalizer["ChangelogRequested", required.Requestor]);
+				if (!required.Required.Value)
+					result.Notes.Add(stringLocalizer["NoChangelogRequired"]);
 				else
-					result.Notes.Add(stringLocalizer["NeedsChangelog"]);
+					result.Notes.Add(stringLocalizer["ChangelogRequested"]);
 			}
-			else if (changelog == null)
-				result.Notes.Add(stringLocalizer["NoChangelogRequired"]);
+			else if (generalConfiguration.DefaultChangelogRequired)
+				result.Notes.Add(stringLocalizer["NeedsChangelog"]);
 			return result;
 		}
 		
@@ -137,7 +164,7 @@ namespace TGWebhooks.Modules.ChangelogGenerator
 			if (workingCommit == null)
 				throw new ArgumentNullException(nameof(workingCommit));
 
-			var changelog = Changelog.GetChangelog(pullRequest, out bool malformed);
+			var changelog = Models.Changelog.GetChangelog(pullRequest, out bool malformed);
 			if (changelog == null)
 				return workingCommit;
 			
