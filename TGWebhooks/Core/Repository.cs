@@ -242,6 +242,10 @@ namespace TGWebhooks.Core
 						repositoryObject.Network.Remotes.Remove("tempRemote");
 						remoteObject = repositoryObject.Network.Remotes.Add("tempRemote", remote);
 					}
+#if DEBUG
+					System.Diagnostics.Debugger.Break();
+#endif
+
 					repositoryObject.Network.Push(remoteObject, commit, String.Format(CultureInfo.InvariantCulture, "{0}{1}:{2}", force ? "+" : null, commit, branch), new PushOptions()
 					{
 						OnPushTransferProgress = (a, b, c) => !cancellationToken.IsCancellationRequested,
