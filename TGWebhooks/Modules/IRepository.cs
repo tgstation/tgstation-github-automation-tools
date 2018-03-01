@@ -41,10 +41,11 @@ namespace TGWebhooks.Modules
 		/// <param name="remote">The git remote to push to</param>
 		/// <param name="branch">The branch on <paramref name="remote"/> to push to</param>
 		/// <param name="commit">The SHA of the commit to push</param>
+		/// <param name="user">The <see cref="User"/> doing the pushing</param>
 		/// <param name="token">The token to use in place of a password for pushing</param>
 		/// <param name="force">If <see langword="true"/> the push will be done as a force push</param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
-		Task Push(string remote, string branch, string commit, string token, bool force, CancellationToken cancellationToken);
+		Task Push(string remote, string branch, string commit, User user, string token, bool force, CancellationToken cancellationToken);
 	}
 }

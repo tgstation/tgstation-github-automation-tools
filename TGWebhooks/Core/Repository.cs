@@ -54,7 +54,11 @@ namespace TGWebhooks.Core
 		/// </summary>
 		/// <param name="user">The <see cref="User"/> to derive the <see cref="Identity"/> from</param>
 		/// <returns>A new <see cref="Identity"/></returns>
-		static Identity CreateIdentity(User user) => user == null ? new Identity(Application.UserAgent, String.Concat(Application.UserAgent, "@users.noreply.github.com")) : new Identity(user.Name, user.Email);
+		static Identity CreateIdentity(User user)
+		{
+			const string defaultEmail = "@users.noreply.github.com";
+			return user == null ? new Identity(Application.UserAgent, Application.UserAgent + defaultEmail) : new Identity(user.Name ?? user.Login, user.Email ?? (user.Login + defaultEmail));
+		}
 
 		/// <summary>
 		/// Construct a <see cref="Repository"/>
@@ -162,6 +166,10 @@ namespace TGWebhooks.Core
 
 			cancellationToken.ThrowIfCancellationRequested();
 
+			repositoryObject.Reset(ResetMode.Hard);
+
+			cancellationToken.ThrowIfCancellationRequested();
+
 			try
 			{
 				Commands.Fetch(repositoryObject, origin, refspecs, new FetchOptions()
@@ -175,7 +183,7 @@ namespace TGWebhooks.Core
 			{
 				cancellationToken.ThrowIfCancellationRequested();
 			}
-
+			
 			cancellationToken.ThrowIfCancellationRequested();
 			Commands.Checkout(repositoryObject, pullRequest.Base.Sha);
 
@@ -196,19 +204,14 @@ namespace TGWebhooks.Core
 			cancellationToken.ThrowIfCancellationRequested();
 			var headCommit = repositoryObject.Head.Tip;
 			//now soft reset and prepare to squash
-			repositoryObject.Reset(ResetMode.Mixed, headCommit.Parents.First());
-
-			cancellationToken.ThrowIfCancellationRequested();
-
-			//a
-			Commands.Stage(repositoryObject, "*");
+			repositoryObject.Reset(ResetMode.Soft, headCommit.Parents.First());
 
 			cancellationToken.ThrowIfCancellationRequested();
 
 			var dto = DateTimeOffset.UtcNow;
 			var authorSig = new LibGit2Sharp.Signature(CreateIdentity(pullRequest.User), dto);
 			var committerSig = new LibGit2Sharp.Signature(CreateIdentity(committer), dto);
-			return repositoryObject.Commit(String.Format(CultureInfo.InvariantCulture, "{0} - (#{1}){2}{3}", pullRequest.Title, pullRequest.Number, Environment.NewLine, pullRequest.Body), authorSig, committerSig, new CommitOptions { PrettifyMessage = true }).Sha;
+			return repositoryObject.Commit(String.Format(CultureInfo.InvariantCulture, "{0} - (#{1}){2}{3}{2}{2}{4}", pullRequest.Title, pullRequest.Number, Environment.NewLine, pullRequest.Body, pullRequest.Head.Sha), authorSig, committerSig, new CommitOptions { PrettifyMessage = true }).Sha;
 		}, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Current);
 
 		/// <inheritdoc />
@@ -223,26 +226,52 @@ namespace TGWebhooks.Core
 		   }, cancellationToken, TaskCreationOptions.LongRunning, TaskScheduler.Current);
 
 		/// <inheritdoc />
-		public Task Push(string remote, string branch, string commit, string token, bool force, CancellationToken cancellationToken) => Task.Factory.StartNew(() =>
+		public Task Push(string remote, string branch, string commit, User user, string token, bool force, CancellationToken cancellationToken) => Task.Factory.StartNew(() =>
 			{
 				try
 				{
+					const string tempRemoteName = "tempRemote";
 					var remoteObject = repositoryObject.Network.Remotes.Where(x => x.Url == remote).FirstOrDefault();
 					if (remoteObject == default(Remote))
 					{
-						const string tempRemoteName = "tempRemote";
 						repositoryObject.Network.Remotes.Remove(tempRemoteName);
 						remoteObject = repositoryObject.Network.Remotes.Add(tempRemoteName, remote);
 					}
+
+					try
+					{
+						Commands.Fetch(repositoryObject, tempRemoteName, new List<string> { String.Format(CultureInfo.InvariantCulture, "+refs/heads/{1}:refs/remotes/{0}/{1}", tempRemoteName, branch) }, new FetchOptions()
+						{
+							OnProgress = (a) => !cancellationToken.IsCancellationRequested,
+							OnTransferProgress = (a) => !cancellationToken.IsCancellationRequested,
+							RepositoryOperationStarting = (a) => !cancellationToken.IsCancellationRequested
+						}, stringLocalizer["FetchLogMessage", String.Concat(remote, '/', branch)]);
+					}
+					catch (UserCancelledException)
+					{
+						cancellationToken.ThrowIfCancellationRequested();
+					}
+
 #if DEBUG
 					System.Diagnostics.Debugger.Break();
 #endif
 
-					repositoryObject.Network.Push(remoteObject, commit, String.Format(CultureInfo.InvariantCulture, "{0}{1}:{2}", force ? "+" : null, commit, branch), new PushOptions()
+					LibGit2Sharp.Credentials GenerateGitCredentials(string url, string usernameFromUrl, SupportedCredentialTypes types) => new UsernamePasswordCredentials() { Username = user.Login, Password = token };
+
+					const string PushBranch = "push_branch";
+					var commitObj = repositoryObject.Lookup<LibGit2Sharp.Commit>(commit);
+					var remoteBranch = repositoryObject.Branches[String.Concat(tempRemoteName, '/', branch)];
+
+					repositoryObject.Branches.Remove(PushBranch);
+					var pushBranch = repositoryObject.CreateBranch(PushBranch, commit);
+					repositoryObject.Branches.Update(pushBranch, x => x.TrackedBranch = remoteBranch.CanonicalName);
+
+					repositoryObject.Network.Push(remoteObject, String.Format(CultureInfo.InvariantCulture, "{0}{1}:{2}", force ? "+" : null, pushBranch.CanonicalName, remoteBranch.UpstreamBranchCanonicalName), new PushOptions()
 					{
 						OnPushTransferProgress = (a, b, c) => !cancellationToken.IsCancellationRequested,
 						OnPackBuilderProgress = (a, b, c) => !cancellationToken.IsCancellationRequested,
-						OnNegotiationCompletedBeforePush = (a) => !cancellationToken.IsCancellationRequested
+						OnNegotiationCompletedBeforePush = (a) => !cancellationToken.IsCancellationRequested,
+						CredentialsProvider = GenerateGitCredentials
 					});
 				}
 				catch (UserCancelledException)

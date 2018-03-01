@@ -66,8 +66,9 @@ namespace TGWebhooks.Modules
 		/// </summary>
 		/// <param name="pullRequest">The <see cref="PullRequest"/> to merge</param>
 		/// <param name="accessToken">The access token to merge with</param>
+		/// <param name="sha">The <see cref="GitReference.Sha"/> to accept the merge of</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
-		Task MergePullRequest(PullRequest pullRequest, string accessToken);
+		Task MergePullRequest(PullRequest pullRequest, string accessToken, string sha);
 
 		/// <summary>
 		/// Get all <see cref="PullRequestReview"/>s for a given <paramref name="pullRequest"/>

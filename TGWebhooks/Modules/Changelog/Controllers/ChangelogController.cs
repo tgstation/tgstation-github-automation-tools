@@ -22,7 +22,7 @@ namespace TGWebhooks.Modules.Changelog.Controllers
 		/// <summary>
 		/// The <see cref="IAutoMergeHandler"/> for the <see cref="ChangelogController"/>
 		/// </summary>
-		//readonly IAutoMergeHandler autoMergeHandler;
+		readonly IAutoMergeHandler autoMergeHandler;
 
 		/// <summary>
 		/// Construct a <see cref="ChangelogController"/>
@@ -30,11 +30,11 @@ namespace TGWebhooks.Modules.Changelog.Controllers
 		/// <param name="changelogModule">The value of <see cref="changelogModule"/></param>
 		/// <param name="gitHubManager">The value of <see cref="gitHubManager"/></param>
 		/// <param name="autoMergeHandler">The value of <see cref="autoMergeHandler"/></param>
-		public ChangelogController(ChangelogModule changelogModule, IGitHubManager gitHubManager)
+		public ChangelogController(ChangelogModule changelogModule, IGitHubManager gitHubManager, IAutoMergeHandler autoMergeHandler)
 		{
 			this.changelogModule = changelogModule ?? throw new ArgumentNullException(nameof(changelogModule));
 			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
-			//this.autoMergeHandler = autoMergeHandler ?? throw new ArgumentNullException(nameof(autoMergeHandler));
+			this.autoMergeHandler = autoMergeHandler ?? throw new ArgumentNullException(nameof(autoMergeHandler));
 		}
 
 		/// <summary>
@@ -59,7 +59,7 @@ namespace TGWebhooks.Modules.Changelog.Controllers
 			
 			await changelogModule.SetRequirement(prNumber, requireChangelogEntry, cancellationToken).ConfigureAwait(false);
 
-			//autoMergeHandler.RecheckPullRequest(prNumber);
+			autoMergeHandler.RecheckPullRequest(prNumber);
 
 			return Json(new object());
 		}

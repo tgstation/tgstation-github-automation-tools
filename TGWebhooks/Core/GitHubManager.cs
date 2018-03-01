@@ -162,7 +162,7 @@ namespace TGWebhooks.Core
 		}
 
 		/// <inheritdoc />
-		public Task MergePullRequest(PullRequest pullRequest, string accessToken)
+		public Task MergePullRequest(PullRequest pullRequest, string accessToken, string sha)
 		{
 #if DEBUG
 			System.Diagnostics.Debugger.Break();
@@ -181,10 +181,10 @@ namespace TGWebhooks.Core
 
 			return mergerClient.PullRequest.Merge(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, pullRequest.Number, new MergePullRequest
 			{
-				CommitTitle = String.Format(CultureInfo.InvariantCulture, "{0} (#{1})", pullRequest.Title, pullRequest.Body),
-				CommitMessage = pullRequest.Body,
+				CommitTitle = String.Format(CultureInfo.InvariantCulture, "Merge pull request #{0}", pullRequest.Number),
+				CommitMessage = pullRequest.Title,
 				MergeMethod = PullRequestMergeMethod.Merge,
-				Sha = pullRequest.Head.Sha
+				Sha = sha
 			});
 		}
 

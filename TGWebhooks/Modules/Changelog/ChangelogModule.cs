@@ -139,7 +139,7 @@ namespace TGWebhooks.Modules.Changelog
 			var result = new AutoMergeStatus
 			{
 				FailStatusReport = true,
-				RequiredProgress = required.Required.Value || malformed ? 1 : 0, //TODO:maintainer_can_modify field
+				RequiredProgress = (required.Required.HasValue && required.Required.Value) || malformed ? 1 : 0, //TODO:maintainer_can_modify field
 				Progress = changelog != null ? 1 : 0
 			};
 			if (malformed)
