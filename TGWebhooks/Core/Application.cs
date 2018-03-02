@@ -88,7 +88,8 @@ namespace TGWebhooks.Core
 			services.AddScoped<IModuleManager, ModuleManager>();
 			services.AddScoped<IComponentProvider>(x => x.GetRequiredService<IModuleManager>());
 			services.AddModules();
-			
+
+			services.AddSingleton<IContinuousIntegration, TravisContinuousIntegration>();
 			services.AddSingleton<IWebRequestManager, WebRequestManager>();
 			services.AddSingleton<IContinuousIntegration, TravisContinuousIntegration>();
 			services.AddSingleton<IAutoMergeHandler, AutoMergeHandler>();

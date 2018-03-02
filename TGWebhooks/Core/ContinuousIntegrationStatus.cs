@@ -1,4 +1,4 @@
-﻿namespace TGWebhooks.Modules
+﻿namespace TGWebhooks.Core
 {
 #pragma warning disable CA1717 // Only FlagsAttribute enums should have plural names
 	/// <summary>
@@ -16,12 +16,20 @@
 		/// </summary>
 		Pending,
 		/// <summary>
+		/// The job has errored out
+		/// </summary>
+		Errored,
+		/// <summary>
 		/// The job has failed
 		/// </summary>
 		Failed,
 		/// <summary>
 		/// The job has passed
 		/// </summary>
-		Passed
+		Passed,
+		/// <summary>
+		/// The job has passed, but is not up to date with the given <see cref="Octokit.PullRequest.Base"/>
+		/// </summary>
+		PassedOutdated,
 	}
 }

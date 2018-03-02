@@ -2,18 +2,13 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TGWebhooks.Modules
+namespace TGWebhooks.Core
 {
 	/// <summary>
 	/// Describes continuous integration status for a <see cref="PullRequest"/>
 	/// </summary>
 	interface IContinuousIntegration
     {
-		/// <summary>
-		/// The name of the <see cref="IContinuousIntegration"/> provider
-		/// </summary>
-		string Name { get; }
-
 		/// <summary>
 		/// Checks the job status for a <paramref name="pullRequest"/>
 		/// </summary>

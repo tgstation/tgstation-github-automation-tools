@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Octokit;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using TGWebhooks.Configuration;
 using TGWebhooks.Modules;
 
 namespace TGWebhooks.Core
@@ -35,6 +37,14 @@ namespace TGWebhooks.Core
 		/// </summary>
 		readonly IBackgroundJobClient backgroundJobClient;
 		/// <summary>
+		/// The <see cref="IContinuousIntegration"/> for the <see cref="AutoMergeHandler"/>
+		/// </summary>
+		readonly IContinuousIntegration continuousIntegration;
+		/// <summary>
+		/// The <see cref="GeneralConfiguration"/> for the <see cref="AutoMergeHandler"/>
+		/// </summary>
+		readonly GeneralConfiguration generalConfiguration;
+		/// <summary>
 		/// Used for pull request checking serialization
 		/// </summary>
 		readonly SemaphoreSlim semaphore;
@@ -46,12 +56,15 @@ namespace TGWebhooks.Core
 		/// <param name="_logger">The value of <see cref="logger"/></param>
 		/// <param name="_stringLocalizer">The value of <see cref="stringLocalizer"/></param>
 		/// <param name="_backgroundJobClient">The value of <see cref="backgroundJobClient"/></param>
-		public AutoMergeHandler(IServiceProvider _serviceProvider, ILogger<AutoMergeHandler> _logger,  IStringLocalizer<AutoMergeHandler> _stringLocalizer, IBackgroundJobClient _backgroundJobClient)
+		/// <param name="_continuousIntegration">The value of <see cref="continuousIntegration"/></param>
+		public AutoMergeHandler(IServiceProvider _serviceProvider, ILogger<AutoMergeHandler> _logger,  IStringLocalizer<AutoMergeHandler> _stringLocalizer, IBackgroundJobClient _backgroundJobClient, IContinuousIntegration _continuousIntegration, IOptions<GeneralConfiguration> generalConfigurationOptions)
 		{
 			serviceProvider = _serviceProvider ?? throw new ArgumentNullException(nameof(_serviceProvider));
 			logger = _logger ?? throw new ArgumentNullException(nameof(_logger));
 			stringLocalizer = _stringLocalizer ?? throw new ArgumentNullException(nameof(_stringLocalizer));
 			backgroundJobClient = _backgroundJobClient ?? throw new ArgumentNullException(nameof(_backgroundJobClient));
+			continuousIntegration = _continuousIntegration ?? throw new ArgumentNullException(nameof(_continuousIntegration));
+			generalConfiguration = generalConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(generalConfigurationOptions));
 			semaphore = new SemaphoreSlim(1);
 		}
 
@@ -175,6 +188,25 @@ namespace TGWebhooks.Core
 
 				if (merge)
 				{
+					//check CI now
+					var ciStatus = await continuousIntegration.GetJobStatus(pullRequest, cancellationToken).ConfigureAwait(false);
+
+					switch (ciStatus)
+					{
+						case ContinuousIntegrationStatus.Failed:
+							//lets just fuck off then
+							return;
+						case ContinuousIntegrationStatus.Passed:
+							break;
+						case ContinuousIntegrationStatus.Errored:
+						case ContinuousIntegrationStatus.PassedOutdated:
+							await continuousIntegration.TriggerJobRestart(pullRequest, cancellationToken).ConfigureAwait(false);
+							goto case ContinuousIntegrationStatus.NotPresent;
+						case ContinuousIntegrationStatus.NotPresent:
+							backgroundJobClient.Schedule(() => RecheckPullRequest(pullRequest.Number, JobCancellationToken.Null), DateTimeOffset.UtcNow.AddMinutes(generalConfiguration.CIRecheckInterval));
+							return;
+					}
+
 					if (mergerToken == null)
 						logger.LogWarning("Not merging due to lack of provided merger token!");
 					else

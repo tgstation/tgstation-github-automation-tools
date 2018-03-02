@@ -26,5 +26,10 @@ namespace TGWebhooks.Configuration
 		/// If changelogs are required by default, can also be adjusted on a per <see cref="Octokit.PullRequest"/> basis
 		/// </summary>
 		public bool DefaultChangelogRequired { get; set; }
+
+		/// <summary>
+		/// Time in minutes to schedule CI rechecks
+		/// </summary>
+		public int CIRecheckInterval { get; set; }
 	}
 }
