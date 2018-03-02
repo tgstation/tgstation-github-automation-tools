@@ -141,6 +141,13 @@ namespace TGWebhooks.Modules
 		Task CreateComment(int number, string body);
 
 		/// <summary>
+		/// Gets a specified <see cref="Commit"/>
+		/// </summary>
+		/// <param name="sha">The <see cref="GitReference.Ref"/> of the <see cref="Commit"/></param>
+		/// <returns>A <see cref="Task{TResult}"/> resulting in the <see cref="Commit"/></returns>
+		Task<Commit> GetCommit(string sha);
+
+		/// <summary>
 		/// Creates an "Approved" review on <paramref name="pullRequest"/>
 		/// </summary>
 		/// <param name="pullRequest">The <see cref="PullRequest"/> to approve</param>

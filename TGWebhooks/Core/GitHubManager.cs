@@ -417,5 +417,8 @@ namespace TGWebhooks.Core
 
 		/// <inheritdoc />
 		public Task CreateFile(string branchName, string commitMessage, string path, string content) => gitHubClient.Repository.Content.CreateFile(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, path, new CreateFileRequest(commitMessage, content, branchName, true));
+
+		/// <inheritdoc />
+		public Task<Commit> GetCommit(string reference) => gitHubClient.Git.Commit.Get(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, reference);
 	}
 }
