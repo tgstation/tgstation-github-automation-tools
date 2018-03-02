@@ -95,7 +95,6 @@ namespace TGWebhooks.Core
 			//I'll probably hate myself for that later
 		}
 
-#pragma warning disable CA1822 // Mark members as static
 		/// <summary>
 		/// Configure the <see cref="Application"/>
 		/// </summary>
@@ -104,6 +103,7 @@ namespace TGWebhooks.Core
 		/// <param name="loggerFactory">The <see cref="ILoggerFactory"/> to configure</param>
 		/// <param name="databaseContext">The <see cref="IDatabaseContext"/> to configure</param>
 		/// <param name="applicationLifetime">The <see cref="IApplicationLifetime"/> to use <see cref="System.Threading.CancellationToken"/>s from</param>
+#pragma warning disable CA1822 // Mark members as static
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime applicationLifetime, IDatabaseContext databaseContext)
 #pragma warning restore CA1822 // Mark members as static
 		{
