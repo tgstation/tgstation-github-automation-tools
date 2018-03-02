@@ -44,6 +44,12 @@ namespace TGWebhooks.Core
 		/// </summary>
 		readonly TravisConfiguration travisConfiguration;
 
+		/// <summary>
+		/// Runs a <paramref name="handler"/> for each travis status on a given <paramref name="pullRequest"/>. Does not run in paralled
+		/// </summary>
+		/// <param name="pullRequest">The <see cref="PullRequest"/> to check for statuses</param>
+		/// <param name="handler">A function taking a <see cref="CommitState"/> and travis build id <see cref="string"/> and returning <see langword="true"/> to continue, <see langword="false"/> to cancel</param>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
 		async Task NonParallelForEachBuild(PullRequest pullRequest, Func<CommitState, string, bool> handler)
 		{
 			var statuses = await gitHubManager.GetLatestCommitStatus(pullRequest).ConfigureAwait(false);
