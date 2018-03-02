@@ -84,14 +84,13 @@ namespace TGWebhooks.Core
 			services.AddScoped(typeof(IDataStoreFactory<>), typeof(DataStoreFactory<>));
 			services.AddScoped<IGitHubClientFactory, GitHubClientFactory>();
 			services.AddScoped<IGitHubManager, GitHubManager>();
+			services.AddScoped<IContinuousIntegration, TravisContinuousIntegration>();
 
 			services.AddScoped<IModuleManager, ModuleManager>();
 			services.AddScoped<IComponentProvider>(x => x.GetRequiredService<IModuleManager>());
 			services.AddModules();
 
-			services.AddSingleton<IContinuousIntegration, TravisContinuousIntegration>();
 			services.AddSingleton<IWebRequestManager, WebRequestManager>();
-			services.AddSingleton<IContinuousIntegration, TravisContinuousIntegration>();
 			services.AddSingleton<IAutoMergeHandler, AutoMergeHandler>();
 			services.AddSingleton<IByondTopicSender, ByondTopicSender>();	//note the send/recieve timeouts are configured by the GameAnnouncerModule
 			//I'll probably hate myself for that later

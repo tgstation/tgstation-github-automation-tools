@@ -117,40 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ChangelogCommitMessage" xml:space="preserve">
-    <value>Automatic changelog generation for PR #{0} [ci skip]</value>
-  </data>
-  <data name="ChangelogMalformed" xml:space="preserve">
-    <value>The changelog is malformed</value>
-  </data>
-  <data name="ChangelogNotRequired" xml:space="preserve">
-    <value>Not Required</value>
-  </data>
-  <data name="ChangelogRequested" xml:space="preserve">
-    <value>A changelog was requested</value>
-  </data>
-  <data name="ChangelogRequired" xml:space="preserve">
-    <value>Required</value>
-  </data>
-  <data name="ChangelogRequirementHeader" xml:space="preserve">
-    <value>Changelog Requirement</value>
-  </data>
-  <data name="CommitMessage" xml:space="preserve">
-    <value>Automatic changelog generation for PR #{0} [ci skip]</value>
-  </data>
   <data name="Description" xml:space="preserve">
-    <value>Requires and generates .yaml changelog files</value>
+    <value>Automatically labels pull requests based on certain criteria</value>
+  </data>
+  <data name="LabelDeny" xml:space="preserve">
+    <value>{0} label present</value>
   </data>
   <data name="Name" xml:space="preserve">
-    <value>Changelogs</value>
-  </data>
-  <data name="NeedsChangelog" xml:space="preserve">
-    <value>A changelog is required</value>
-  </data>
-  <data name="NoChangelogRequired" xml:space="preserve">
-    <value>No changelog is required</value>
+    <value>Pull Request Tagger</value>
   </data>
   <data name="RequirementDescription" xml:space="preserve">
-    <value>A proper changelog is present if necessary</value>
+    <value>Not labelled with [DNM] or [WIP]</value>
   </data>
 </root>

@@ -37,10 +37,6 @@ namespace TGWebhooks.Core
 		/// </summary>
 		readonly IBackgroundJobClient backgroundJobClient;
 		/// <summary>
-		/// The <see cref="IContinuousIntegration"/> for the <see cref="AutoMergeHandler"/>
-		/// </summary>
-		readonly IContinuousIntegration continuousIntegration;
-		/// <summary>
 		/// The <see cref="GeneralConfiguration"/> for the <see cref="AutoMergeHandler"/>
 		/// </summary>
 		readonly GeneralConfiguration generalConfiguration;
@@ -56,14 +52,13 @@ namespace TGWebhooks.Core
 		/// <param name="_logger">The value of <see cref="logger"/></param>
 		/// <param name="_stringLocalizer">The value of <see cref="stringLocalizer"/></param>
 		/// <param name="_backgroundJobClient">The value of <see cref="backgroundJobClient"/></param>
-		/// <param name="_continuousIntegration">The value of <see cref="continuousIntegration"/></param>
-		public AutoMergeHandler(IServiceProvider _serviceProvider, ILogger<AutoMergeHandler> _logger,  IStringLocalizer<AutoMergeHandler> _stringLocalizer, IBackgroundJobClient _backgroundJobClient, IContinuousIntegration _continuousIntegration, IOptions<GeneralConfiguration> generalConfigurationOptions)
+		/// <param name="generalConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the value of <see cref="generalConfiguration"/></param>
+		public AutoMergeHandler(IServiceProvider _serviceProvider, ILogger<AutoMergeHandler> _logger,  IStringLocalizer<AutoMergeHandler> _stringLocalizer, IBackgroundJobClient _backgroundJobClient, IOptions<GeneralConfiguration> generalConfigurationOptions)
 		{
 			serviceProvider = _serviceProvider ?? throw new ArgumentNullException(nameof(_serviceProvider));
 			logger = _logger ?? throw new ArgumentNullException(nameof(_logger));
 			stringLocalizer = _stringLocalizer ?? throw new ArgumentNullException(nameof(_stringLocalizer));
 			backgroundJobClient = _backgroundJobClient ?? throw new ArgumentNullException(nameof(_backgroundJobClient));
-			continuousIntegration = _continuousIntegration ?? throw new ArgumentNullException(nameof(_continuousIntegration));
 			generalConfiguration = generalConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(generalConfigurationOptions));
 			semaphore = new SemaphoreSlim(1);
 		}
@@ -100,6 +95,7 @@ namespace TGWebhooks.Core
 			{
 				var componentProvider = serviceProvider.GetRequiredService<IComponentProvider>();
 				var gitHubManager = serviceProvider.GetRequiredService<IGitHubManager>();
+				var continuousIntegration = serviceProvider.GetRequiredService<IContinuousIntegration>();
 				var pullRequest = await gitHubManager.GetPullRequest(prNumber).ConfigureAwait(false);
 				if (pullRequest.State.Value == ItemState.Closed)
 				{
@@ -137,10 +133,11 @@ namespace TGWebhooks.Core
 					var failReasons = new List<string>();
 					foreach (var I in tasks.Select(x => x.Result))
 					{
-						if (I.Progress < I.RequiredProgress && merge)
+						if (I.Progress < I.RequiredProgress)
 						{
 							logger.LogDebug("Aborting merge due to status failure: {0}/{1}", I.Progress, I.RequiredProgress);
-							merge = false;
+							if (merge)
+								merge = false;
 							if (I.FailStatusReport)
 							{
 								goodStatus = false;
@@ -203,6 +200,7 @@ namespace TGWebhooks.Core
 							await continuousIntegration.TriggerJobRestart(pullRequest, cancellationToken).ConfigureAwait(false);
 							goto case ContinuousIntegrationStatus.NotPresent;
 						case ContinuousIntegrationStatus.NotPresent:
+						case ContinuousIntegrationStatus.Pending:
 							backgroundJobClient.Schedule(() => RecheckPullRequest(pullRequest.Number, JobCancellationToken.Null), DateTimeOffset.UtcNow.AddMinutes(generalConfiguration.CIRecheckInterval));
 							return;
 					}

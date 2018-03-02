@@ -1,4 +1,5 @@
-﻿using Octokit;
+﻿using Microsoft.Extensions.Localization;
+using Octokit;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -8,30 +9,37 @@ using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Models;
 
-namespace TGWebhooks.Modules.PRTagger
+namespace TGWebhooks.Modules.PullRequestLabeller
 {
 	/// <summary>
 	/// <see cref="IModule"/> for auto labelling a <see cref="PullRequest"/>
 	/// </summary>
-	public sealed class PullRequestLabellerModule : IModule, IPayloadHandler<PullRequestEventPayload>
+	public sealed class PullRequestLabellerModule : IModule, IPayloadHandler<PullRequestEventPayload>, IMergeRequirement
 	{
 
 		/// <inheritdoc />
 		public Guid Uid => new Guid("3a6dd37c-3dee-4a7a-a016-885a4a775968");
 
 		/// <inheritdoc />
-		public string Name => "Pull Request Tagger";
+		public string Name => stringLocalizer["Name"];
 
 		/// <inheritdoc />
-		public string Description => "Automatically labels pull requests based on certain criteria";
+		public string Description => stringLocalizer["Description"];
 
 		/// <inheritdoc />
-		public IEnumerable<IMergeRequirement> MergeRequirements => Enumerable.Empty<IMergeRequirement>();
+		public IEnumerable<IMergeRequirement> MergeRequirements => new List<IMergeRequirement> { this };
+
+		/// <inheritdoc />
+		public string RequirementDescription => stringLocalizer["RequirementDescription"];
 
 		/// <summary>
 		/// The <see cref="IGitHubManager"/> for the <see cref="PullRequestLabellerModule"/>
 		/// </summary>
 		readonly IGitHubManager gitHubManager;
+		/// <summary>
+		/// The <see cref="IGitHubManager"/> for the <see cref="PullRequestLabellerModule"/>
+		/// </summary>
+		readonly IStringLocalizer<PullRequestLabellerModule> stringLocalizer;
 
 		/// <summary>
 		/// Backing field for <see cref="SetEnabled(bool)"/>
@@ -41,10 +49,12 @@ namespace TGWebhooks.Modules.PRTagger
 		/// <summary>
 		/// Construct a <see cref="PullRequestLabellerModule"/>
 		/// </summary>
-		/// <param name="gitHubManager">The valus of <see cref="gitHubManager"/></param>
-		public PullRequestLabellerModule(IGitHubManager gitHubManager)
+		/// <param name="gitHubManager">The value of <see cref="gitHubManager"/></param>
+		/// <param name="stringLocalizer">The value of <see cref="stringLocalizer"/></param>
+		public PullRequestLabellerModule(IGitHubManager gitHubManager, IStringLocalizer<PullRequestLabellerModule> stringLocalizer)
 		{
 			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
+			this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
 		}
 
 		/// <summary>
@@ -271,5 +281,34 @@ namespace TGWebhooks.Modules.PRTagger
 
 		/// <inheritdoc />
 		public void SetEnabled(bool enabled) => this.enabled = enabled;
+
+		/// <inheritdoc />
+		public async Task<AutoMergeStatus> EvaluateFor(PullRequest pullRequest, CancellationToken cancellationToken)
+		{
+			if (pullRequest == null)
+				throw new ArgumentNullException(nameof(pullRequest));
+
+			var labels = await gitHubManager.GetIssueLabels(pullRequest.Number).ConfigureAwait(false);
+
+			var result = new AutoMergeStatus
+			{
+				RequiredProgress = 2,
+				Progress = 2
+			};
+
+			foreach (var I in labels)
+			{
+				void CheckLabelDeny(string label) {
+					if (I.Name == label)
+					{
+						--result.Progress;
+						result.Notes.Add(stringLocalizer["LabelDeny", label]);
+					}
+				};
+				CheckLabelDeny("Work In Progress");
+				CheckLabelDeny("Do Not Merge");
+			}
+			return result;
+		}
 	}
 }

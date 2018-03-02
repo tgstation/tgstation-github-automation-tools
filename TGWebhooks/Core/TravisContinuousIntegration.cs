@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -83,7 +84,7 @@ namespace TGWebhooks.Core
 		/// <returns>A <see cref="List{T}"/> of <see cref="string"/> headers required to use the Travis API</returns>
 		List<string> GetRequestHeaders()
 		{
-			return new List<string> { String.Format(CultureInfo.InvariantCulture, "User-Agent: {0}", Application.UserAgent), String.Format(CultureInfo.InvariantCulture, "Authorization: token {0}", travisConfiguration.APIToken) };
+			return new List<string> { String.Format(CultureInfo.InvariantCulture, "User-Agent: {0}", Application.UserAgent), String.Format(CultureInfo.InvariantCulture, "Authorization: token {0}", travisConfiguration.APIToken), "Travis-API-Version: 3" };
 		}
 
 		/// <summary>
@@ -97,8 +98,17 @@ namespace TGWebhooks.Core
 			logger.LogDebug("Restarting build #{0}", buildNumber);
 			var baseUrl = String.Join('/', BaseBuildUrl, buildNumber);
 			Task DoBuildPost(string method) => requestManager.RunRequest(new Uri(String.Join('/', baseUrl, method)), String.Empty, GetRequestHeaders(), RequestMethod.POST, cancellationToken);
-			//first ensure it's over
-			await DoBuildPost("cancel").ConfigureAwait(false);
+			try
+			{
+				//first ensure it's over
+				await DoBuildPost("cancel").ConfigureAwait(false);
+			}
+			catch (WebException e)
+			{
+				//409 is what happens if the build isn't already running
+				if (e.Status != WebExceptionStatus.ProtocolError || !(e.Response is HttpWebResponse response) || response.StatusCode != HttpStatusCode.Conflict)
+					throw;					
+			}
 			//then restart it
 			await DoBuildPost("restart").ConfigureAwait(false);
 		}
@@ -137,7 +147,7 @@ namespace TGWebhooks.Core
 						{
 							//https://developer.travis-ci.org/resource/build#Build
 							var build = String.Join('/', BaseBuildUrl, buildNumber);
-							var json = await requestManager.RunRequest(new Uri(build), String.Empty, GetRequestHeaders(), RequestMethod.GET, innerToken).ConfigureAwait(false);
+							var json = await requestManager.RunRequest(new Uri(build), null, GetRequestHeaders(), RequestMethod.GET, innerToken).ConfigureAwait(false);
 							var jsonObj = JObject.Parse(json);
 							var commitObj = (JObject)jsonObj["commit"];
 							var sha = (string)commitObj["sha"];
