@@ -32,7 +32,14 @@ namespace TGWebhooks.Models
 		{
 			string author = null;
 			List<ChangelogEntry> entries = null;
-			foreach (var line in pullRequest?.Body?.Split('\n') ?? throw new ArgumentNullException(nameof(pullRequest)))
+			if (pullRequest == null)
+				throw new ArgumentNullException(nameof(pullRequest));
+			if (pullRequest.Body == null)
+			{
+				malformed = false;
+				return null;
+			}
+			foreach (var line in pullRequest.Body.Split('\n') ?? throw new ArgumentNullException(nameof(pullRequest)))
 			{
 				if (String.IsNullOrWhiteSpace(line))
 					continue;
