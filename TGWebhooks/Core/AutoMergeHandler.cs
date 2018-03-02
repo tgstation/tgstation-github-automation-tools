@@ -188,6 +188,7 @@ namespace TGWebhooks.Core
 					//check CI now
 					var ciStatus = await continuousIntegration.GetJobStatus(pullRequest, cancellationToken).ConfigureAwait(false);
 
+					var rescheduleInterval = generalConfiguration.CIRecheckInterval;
 					switch (ciStatus)
 					{
 						case ContinuousIntegrationStatus.Failed:
@@ -198,10 +199,11 @@ namespace TGWebhooks.Core
 						case ContinuousIntegrationStatus.Errored:
 						case ContinuousIntegrationStatus.PassedOutdated:
 							await continuousIntegration.TriggerJobRestart(pullRequest, cancellationToken).ConfigureAwait(false);
+							rescheduleInterval = generalConfiguration.CIRecheckInitial;
 							goto case ContinuousIntegrationStatus.NotPresent;
 						case ContinuousIntegrationStatus.NotPresent:
 						case ContinuousIntegrationStatus.Pending:
-							backgroundJobClient.Schedule(() => RecheckPullRequest(pullRequest.Number, JobCancellationToken.Null), DateTimeOffset.UtcNow.AddMinutes(generalConfiguration.CIRecheckInterval));
+							backgroundJobClient.Schedule(() => RecheckPullRequest(pullRequest.Number, JobCancellationToken.Null), DateTimeOffset.UtcNow.AddMinutes(rescheduleInterval));
 							return;
 					}
 

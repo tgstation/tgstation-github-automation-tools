@@ -28,7 +28,12 @@ namespace TGWebhooks.Configuration
 		public bool DefaultChangelogRequired { get; set; }
 
 		/// <summary>
-		/// Time in minutes to schedule CI rechecks
+		/// Time in minutes to schedule first CI recheck
+		/// </summary>
+		public int CIRecheckInitial { get; set; }
+
+		/// <summary>
+		/// Time in minutes to schedule successive CI rechecks
 		/// </summary>
 		public int CIRecheckInterval { get; set; }
 	}
