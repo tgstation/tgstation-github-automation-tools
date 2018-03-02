@@ -157,7 +157,18 @@ namespace TGWebhooks.Core
 							var jsonObj = JObject.Parse(json);
 							var commitObj = (JObject)jsonObj["commit"];
 							var sha = (string)commitObj["sha"];
-							return sha == pullRequest.MergeCommitSha;
+							if (sha == pullRequest.MergeCommitSha)
+								return true;
+
+							//so because of gender questioning memes, travis doesn't update the commit sha in the api when you restart the build
+							//even though the correct build DID run
+							//so now we gotta compare the creation time of the build to the creation time of the merge commit sha to make sure this plumber isn't lying to us
+
+							var commit = await gitHubManager.GetCommit(pullRequest.MergeCommitSha).ConfigureAwait(false);
+
+							var buildStartedAt = DateTimeOffset.Parse((string)jsonObj["started_at"], CultureInfo.InvariantCulture);
+
+							return commit.Committer.Date < buildStartedAt;
 						};
 
 						tasks.Add(BuildIsUpToDate());
