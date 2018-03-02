@@ -26,9 +26,6 @@ namespace TGWebhooks.Core
 		/// </summary>
 		readonly ILogger<ModuleManager> logger;
 		/// <summary>
-		/// The <see cref="IRepository"/> for the <see cref="ModuleManager"/>
-		/// </summary>
-		/// <summary>
 		/// The <see cref="IDatabaseContext"/> for the <see cref="ModuleManager"/>
 		/// </summary>
 		readonly IDatabaseContext databaseContext;

@@ -113,7 +113,7 @@ namespace TGWebhooks.Modules.Changelog
 		/// <param name="prNumber">The <see cref="PullRequest.Number"/></param>
 		/// <param name="requireChangelogEntry">The <see cref="RequireChangelogEntry"/></param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
-		/// <returns>A <see cref="Task{TResult}"/> resulting in an <see cref="IActionResult"/></returns>
+		/// <returns>A <see cref="Task{TResult}"/> representing the running operation</returns>
 		public Task SetRequirement(int prNumber, RequireChangelogEntry requireChangelogEntry, CancellationToken cancellationToken) => dataStore.WriteData(prNumber.ToString(CultureInfo.InvariantCulture), requireChangelogEntry, cancellationToken);
 
 		/// <inheritdoc />

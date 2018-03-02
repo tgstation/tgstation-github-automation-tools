@@ -40,7 +40,7 @@ namespace TGWebhooks.Modules.Changelog.Controllers
 		/// <summary>
 		/// Set the <see cref="RequireChangelogEntry"/> for a <paramref name="prNumber"/>
 		/// </summary>
-		/// <param name="prNumber">The <see cref="PullRequest.Number"/></param>
+		/// <param name="prNumber">The <see cref="Octokit.PullRequest.Number"/></param>
 		/// <param name="requireChangelogEntry">The <see cref="RequireChangelogEntry"/></param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in an <see cref="IActionResult"/></returns>

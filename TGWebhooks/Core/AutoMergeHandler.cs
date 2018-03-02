@@ -48,7 +48,7 @@ namespace TGWebhooks.Core
 		/// <summary>
 		/// Construct an <see cref="AutoMergeHandler"/>
 		/// </summary>
-		/// <param name="_componentProviderFactory">The value of <see cref="componentProviderFactory"/></param>
+		/// <param name="_serviceProvider">The value of <see cref="serviceProvider"/></param>
 		/// <param name="_logger">The value of <see cref="logger"/></param>
 		/// <param name="_stringLocalizer">The value of <see cref="stringLocalizer"/></param>
 		/// <param name="_backgroundJobClient">The value of <see cref="backgroundJobClient"/></param>
@@ -82,9 +82,9 @@ namespace TGWebhooks.Core
 		public Task RecheckPullRequest(int pullRequestNumber, IJobCancellationToken jobCancellationToken) => CheckMergePullRequest(pullRequestNumber, jobCancellationToken.ShutdownToken);
 
 		/// <summary>
-		/// Checks if a given <paramref name="pullRequest"/> is considered mergeable and does so if need be and sets it's commit status
+		/// Checks if a given <see cref="PullRequest"/> is considered mergeable and does so if need be and sets it's commit status
 		/// </summary>
-		/// <param name="pullRequest">The <see cref="PullRequest"/> to check</param>
+		/// <param name="prNumber">The <see cref="PullRequest.Number"/> of the <see cref="PullRequest"/> to check</param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
 		async Task CheckMergePullRequest(int prNumber, CancellationToken cancellationToken)
