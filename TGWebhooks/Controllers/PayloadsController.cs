@@ -108,6 +108,7 @@ namespace TGWebhooks.Controllers
 		/// <param name="json">The JSON <see cref="string"/> of the <typeparamref name="TPayload"/> to process</param>
 		/// <param name="jobCancellationToken">The <see cref="IJobCancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running handlers</returns>
+		[AutomaticRetry(Attempts = 0)]
 		public async Task InvokeHandlers<TPayload>(string json, IJobCancellationToken jobCancellationToken) where TPayload : ActivityPayload
 		{
 			logger.LogTrace("Beginning payload processing job: {0}");

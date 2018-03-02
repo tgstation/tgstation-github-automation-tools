@@ -5,6 +5,7 @@ using SharpYaml.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace TGWebhooks.Modules.Changelog
 	/// <summary>
 	/// Generates changelog .yaml files
 	/// </summary>
-	public sealed class ChangelogModule : IModule, IMergeRequirement, IMergeHook
+	public sealed class ChangelogModule : IModule, IMergeRequirement, IPayloadHandler<PullRequestEventPayload>
 	{
 		/// <inheritdoc />
 		public Guid Uid => new Guid("eb442717-57a2-402f-bfd4-0d4dce80f16a");
@@ -32,11 +33,6 @@ namespace TGWebhooks.Modules.Changelog
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => new List<IMergeRequirement> { this };
 
-		/// <inheritdoc />
-		public IEnumerable<IMergeHook> MergeHooks => new List<IMergeHook> { this };
-		/// <inheritdoc />
-		public IEnumerable<IPayloadHandler<TPayload>> GetPayloadHandlers<TPayload>() where TPayload : ActivityPayload => Enumerable.Empty<IPayloadHandler<TPayload>>();
-
 		/// <summary>
 		/// The <see cref="GeneralConfiguration"/> for the <see cref="ChangelogModule"/>
 		/// </summary>
@@ -50,13 +46,9 @@ namespace TGWebhooks.Modules.Changelog
 		/// </summary>
 		readonly IStringLocalizer<ChangelogModule> stringLocalizer;
 		/// <summary>
-		/// The <see cref="IIOManager"/> for the <see cref="ChangelogModule"/>
+		/// The <see cref="IGitHubManager"/> for the <see cref="ChangelogModule"/>
 		/// </summary>
-		readonly IIOManager ioManager;
-		/// <summary>
-		/// The <see cref="IRepository"/> for the <see cref="ChangelogModule"/>
-		/// </summary>
-		readonly IRepository repository;
+		readonly IGitHubManager gitHubManager;
 
 		/// <summary>
 		/// Backing field for <see cref="SetEnabled(bool)"/>
@@ -69,13 +61,11 @@ namespace TGWebhooks.Modules.Changelog
 		/// <param name="dataStoreFactory">The <see cref="IDataStoreFactory{TModule}"/> to create <see cref="dataStore"/> from</param>
 		/// <param name="stringLocalizer">The value of <see cref="stringLocalizer"/></param>
 		/// <param name="generalConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the value of <see cref="generalConfiguration"/></param>
-		/// <param name="ioManager">The value of <see cref="ioManager"/></param>
-		/// <param name="repository">The value of <see cref="repository"/></param>
-		public ChangelogModule(IDataStoreFactory<ChangelogModule> dataStoreFactory, IStringLocalizer<ChangelogModule> stringLocalizer, IOptions<GeneralConfiguration> generalConfigurationOptions, IIOManager ioManager, IRepository repository)
+		/// <param name="gitHubManager">The value of <see cref="gitHubManager"/></param>
+		public ChangelogModule(IDataStoreFactory<ChangelogModule> dataStoreFactory, IStringLocalizer<ChangelogModule> stringLocalizer, IOptions<GeneralConfiguration> generalConfigurationOptions, IGitHubManager gitHubManager)
 		{
 			this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
-			this.ioManager = ioManager ?? throw new ArgumentNullException(nameof(ioManager));
-			this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
+			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
 			generalConfiguration = generalConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(generalConfigurationOptions));
 			dataStore = dataStoreFactory?.CreateDataStore(this) ?? throw new ArgumentNullException(nameof(dataStoreFactory));
 		}
@@ -127,6 +117,13 @@ namespace TGWebhooks.Modules.Changelog
 		public Task SetRequirement(int prNumber, RequireChangelogEntry requireChangelogEntry, CancellationToken cancellationToken) => dataStore.WriteData(prNumber.ToString(CultureInfo.InvariantCulture), requireChangelogEntry, cancellationToken);
 
 		/// <inheritdoc />
+		public IEnumerable<IPayloadHandler<TPayload>> GetPayloadHandlers<TPayload>() where TPayload : ActivityPayload
+		{
+			if (typeof(TPayload) == typeof(PullRequestEventPayload))
+				yield return (IPayloadHandler<TPayload>)(object)this;
+		}
+
+		/// <inheritdoc />
 		public async Task<AutoMergeStatus> EvaluateFor(PullRequest pullRequest, CancellationToken cancellationToken)
 		{
 			if (pullRequest == null)
@@ -157,17 +154,21 @@ namespace TGWebhooks.Modules.Changelog
 		}
 		
 		/// <inheritdoc />
-		public async Task<string> ModifyMerge(PullRequest pullRequest, string workingCommit, CancellationToken cancellationToken)
-		{
-			if (pullRequest == null)
-				throw new ArgumentNullException(nameof(pullRequest));
-			if (workingCommit == null)
-				throw new ArgumentNullException(nameof(workingCommit));
+		public void SetEnabled(bool enabled) => this.enabled = enabled;
 
-			var changelog = Models.Changelog.GetChangelog(pullRequest, out bool malformed);
+		/// <inheritdoc />
+		public async Task ProcessPayload(PullRequestEventPayload payload, CancellationToken cancellationToken)
+		{
+			if (payload == null)
+				throw new ArgumentNullException(nameof(payload));
+
+			if (payload.Action != "closed" || !payload.PullRequest.Merged)
+				throw new NotSupportedException();
+
+			var changelog = Models.Changelog.GetChangelog(payload.PullRequest, out bool malformed);
 			if (changelog == null)
-				return workingCommit;
-			
+				return;
+
 			var result = new List<Dictionary<string, string>>();
 #pragma warning disable CA1308 // Normalize strings to uppercase
 			result.AddRange(changelog.Changes.Select(x => new Dictionary<string, string> { { x.Type.ToString().ToLowerInvariant(), x.Text } }));
@@ -183,15 +184,11 @@ namespace TGWebhooks.Modules.Changelog
 			//hack because '-' isn't a valid identifier in c#
 			var yaml = new Serializer().Serialize(graph).Replace("delete_after_temporary_for_replacement", "delete-after", StringComparison.InvariantCulture);
 
-			var title = String.Format(CultureInfo.InvariantCulture, "AutoChangeLog-pr-{0}.yml", pullRequest.Number);
+			var title = String.Format(CultureInfo.InvariantCulture, "AutoChangeLog-pr-{0}.yml", payload.PullRequest.Number);
 
-			var pathToWrite = ioManager.ConcatPath(repository.Path, "html", "changelogs", title);
-			await ioManager.WriteAllText(pathToWrite, yaml, cancellationToken).ConfigureAwait(false);
+			var pathToWrite = Path.Combine("html", "changelogs", title);
 
-			return await repository.CommitChanges(new List<string> { pathToWrite }, stringLocalizer["ChangelogCommitMessage", pullRequest.Number], null, null, cancellationToken).ConfigureAwait(false);
+			await gitHubManager.CreateFile(payload.PullRequest.Base.Ref, stringLocalizer["CommitMessage", payload.PullRequest.Number], pathToWrite, yaml).ConfigureAwait(false);
 		}
-
-		/// <inheritdoc />
-		public void SetEnabled(bool enabled) => this.enabled = enabled;
 	}
 }

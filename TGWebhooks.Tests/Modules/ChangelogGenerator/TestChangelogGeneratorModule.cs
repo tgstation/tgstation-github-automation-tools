@@ -15,7 +15,7 @@ namespace TGWebhooks.Modules.Changelog.Tests
 	[TestClass]
 	public sealed class TestChangelogGeneratorModule : TestModule<ChangelogModule>
 	{
-		protected override ChangelogModule Instantiate() => new ChangelogModule(MockDataStoreFactory.Object, MockStringLocalizer.Object, MockGeneralConfigurationOptions.Object, MockIOManager.Object, MockRepository.Object);
+		protected override ChangelogModule Instantiate() => new ChangelogModule(MockDataStoreFactory.Object, MockStringLocalizer.Object, MockGeneralConfigurationOptions.Object, MockGitHubManager.Object);
 
 		[TestMethod]
 		public async Task TestEvaluate()
@@ -38,20 +38,6 @@ namespace TGWebhooks.Modules.Changelog.Tests
 			var res2 = await clg.EvaluateFor(pr2, CancellationToken.None).ConfigureAwait(false);
 
 			Assert.AreEqual(1, res2.Progress);
-		}
-		[TestMethod]
-		public async Task TestYamlGeneration()
-		{
-			var clg = Instantiate();
-			
-			var body = ":cl: Cyberboss\ntweak: Example tweak 1\ntweak: Example tweak 2\n:cl:";
-
-			var pr2 = new PullRequest(123, String.Empty, String.Empty, String.Empty, String.Empty, String.Empty, String.Empty, 12345, ItemState.Open, String.Empty, body, new DateTimeOffset(DateTime.UtcNow), new DateTimeOffset(), null, null, new GitReference(), new GitReference(), new User(), new User(), new List<User>(), null, null, new User(), String.Empty, 0, 1, 1, 1, 1, new Milestone(), false, new List<User>());
-
-			await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => clg.ModifyMerge(null, null, CancellationToken.None)).ConfigureAwait(false);
-			await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => clg.ModifyMerge(null, String.Empty, CancellationToken.None)).ConfigureAwait(false);
-			await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => clg.ModifyMerge(pr2, null, CancellationToken.None)).ConfigureAwait(false);
-			await clg.ModifyMerge(pr2, String.Empty, CancellationToken.None).ConfigureAwait(false);
 		}
 	}
 }

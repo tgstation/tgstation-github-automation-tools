@@ -31,9 +31,6 @@ namespace TGWebhooks.Modules.GameAnnouncer
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => Enumerable.Empty<IMergeRequirement>();
 
-		/// <inheritdoc />
-		public IEnumerable<IMergeHook> MergeHooks => Enumerable.Empty<IMergeHook>();
-
 		/// <summary>
 		/// The <see cref="IByondTopicSender"/> for the <see cref="GameAnnouncerModule"/>
 		/// </summary>

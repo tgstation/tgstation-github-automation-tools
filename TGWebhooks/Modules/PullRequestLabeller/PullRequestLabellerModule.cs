@@ -28,9 +28,6 @@ namespace TGWebhooks.Modules.PRTagger
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => Enumerable.Empty<IMergeRequirement>();
 
-		/// <inheritdoc />
-		public IEnumerable<IMergeHook> MergeHooks => Enumerable.Empty<IMergeHook>();
-
 		/// <summary>
 		/// The <see cref="IGitHubManager"/> for the <see cref="PullRequestLabellerModule"/>
 		/// </summary>

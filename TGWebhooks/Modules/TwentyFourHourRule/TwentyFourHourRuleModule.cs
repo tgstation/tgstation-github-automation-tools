@@ -34,9 +34,6 @@ namespace TGWebhooks.Modules.TwentyFourHourRule
 		public IEnumerable<IMergeRequirement> MergeRequirements => new List<IMergeRequirement> { this };
 
 		/// <inheritdoc />
-		public IEnumerable<IMergeHook> MergeHooks => Enumerable.Empty<IMergeHook>();
-
-		/// <inheritdoc />
 		public IEnumerable<IPayloadHandler<TPayload>> GetPayloadHandlers<TPayload>() where TPayload : ActivityPayload => Enumerable.Empty<IPayloadHandler<TPayload>>();
 
 		/// <summary>

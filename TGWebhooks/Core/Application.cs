@@ -1,5 +1,4 @@
 ﻿using Byond.TopicSender;
-using Cyberboss.AspNetCore.AsyncInitializer;
 using Hangfire;
 using Hangfire.MySql;
 using Hangfire.SQLite;
@@ -38,11 +37,6 @@ namespace TGWebhooks.Core
 		public const string UserAgent = "tgstation-github-automation-tools";
 
 		/// <summary>
-		/// The path to the directory the <see cref="Application"/> should use for data files
-		/// </summary>
-		public static string DataDirectory { get; private set; }
-
-		/// <summary>
 		/// The <see cref="IConfiguration"/> for the <see cref="Application"/>
 		/// </summary>
 		readonly IConfiguration configuration;
@@ -50,12 +44,10 @@ namespace TGWebhooks.Core
 		/// <summary>
 		/// Construct an <see cref="Application"/>
 		/// </summary>
-		/// <param name="_configuration">The value of <see cref="configuration"/></param>
-		/// <param name="hostingEnvironment">The <see cref="IHostingEnvironment"/> used to determin the <see cref="DataDirectory"/></param>
-		public Application(IConfiguration _configuration, IHostingEnvironment hostingEnvironment)
+		/// <param name="configuration">The value of <see cref="configuration"/></param>
+		public Application(IConfiguration configuration)
 		{
-			configuration = _configuration ?? throw new ArgumentNullException(nameof(_configuration));
-			DataDirectory = Path.Combine(hostingEnvironment?.ContentRootPath ?? throw new ArgumentNullException(nameof(hostingEnvironment)), "App_Data");
+			this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 		}
 
 		/// <summary>
@@ -96,9 +88,7 @@ namespace TGWebhooks.Core
 			services.AddScoped<IModuleManager, ModuleManager>();
 			services.AddScoped<IComponentProvider>(x => x.GetRequiredService<IModuleManager>());
 			services.AddModules();
-
-			services.AddSingleton<IRepository, Repository>();
-			services.AddSingleton<IIOManager, DefaultIOManager>();
+			
 			services.AddSingleton<IWebRequestManager, WebRequestManager>();
 			services.AddSingleton<IContinuousIntegration, TravisContinuousIntegration>();
 			services.AddSingleton<IAutoMergeHandler, AutoMergeHandler>();
@@ -122,10 +112,10 @@ namespace TGWebhooks.Core
 				throw new ArgumentNullException(nameof(app));
 			if (env == null)
 				throw new ArgumentNullException(nameof(env));
-#if DEBUG
+
 			//prevent telemetry from polluting the debug log
 			TelemetryConfiguration.Active.DisableTelemetry = true;
-#endif
+
 			databaseContext.Initialize(applicationLifetime.ApplicationStopping).GetAwaiter().GetResult();
 
 			loggerFactory.AddEntityFramework<DatabaseContext>(app.ApplicationServices);
@@ -158,8 +148,6 @@ namespace TGWebhooks.Core
 				SupportedUICultures = supportedCultures,
 			};
 			app.UseRequestLocalization(options);
-
-			app.UseAsyncInitialization<IRepository>((repository, cancellationToken) => repository.Initialize(cancellationToken));
 
 			app.UseHangfireServer();
 

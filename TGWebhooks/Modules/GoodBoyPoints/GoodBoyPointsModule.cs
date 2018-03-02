@@ -30,9 +30,6 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => new List<IMergeRequirement> { this };
 
-		/// <inheritdoc />
-		public IEnumerable<IMergeHook> MergeHooks => Enumerable.Empty<IMergeHook>();
-
 		/// <summary>
 		/// Map of labels to point values
 		/// </summary>

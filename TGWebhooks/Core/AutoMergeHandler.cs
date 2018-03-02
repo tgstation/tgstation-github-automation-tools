@@ -27,10 +27,6 @@ namespace TGWebhooks.Core
 		/// </summary>
 		readonly ILogger<AutoMergeHandler> logger;
 		/// <summary>
-		/// The <see cref="IRepository"/> for the <see cref="AutoMergeHandler"/>
-		/// </summary>
-		readonly IRepository repository;
-		/// <summary>
 		/// The <see cref="IStringLocalizer{T}"/> for the <see cref="AutoMergeHandler"/>
 		/// </summary>
 		readonly IStringLocalizer<AutoMergeHandler> stringLocalizer;
@@ -48,14 +44,12 @@ namespace TGWebhooks.Core
 		/// </summary>
 		/// <param name="_componentProviderFactory">The value of <see cref="componentProviderFactory"/></param>
 		/// <param name="_logger">The value of <see cref="logger"/></param>
-		/// <param name="_repository">The value of <see cref="repository"/></param>
 		/// <param name="_stringLocalizer">The value of <see cref="stringLocalizer"/></param>
 		/// <param name="_backgroundJobClient">The value of <see cref="backgroundJobClient"/></param>
-		public AutoMergeHandler(IServiceProvider _serviceProvider, ILogger<AutoMergeHandler> _logger, IRepository _repository, IStringLocalizer<AutoMergeHandler> _stringLocalizer, IBackgroundJobClient _backgroundJobClient)
+		public AutoMergeHandler(IServiceProvider _serviceProvider, ILogger<AutoMergeHandler> _logger,  IStringLocalizer<AutoMergeHandler> _stringLocalizer, IBackgroundJobClient _backgroundJobClient)
 		{
 			serviceProvider = _serviceProvider ?? throw new ArgumentNullException(nameof(_serviceProvider));
 			logger = _logger ?? throw new ArgumentNullException(nameof(_logger));
-			repository = _repository ?? throw new ArgumentNullException(nameof(_repository));
 			stringLocalizer = _stringLocalizer ?? throw new ArgumentNullException(nameof(_stringLocalizer));
 			backgroundJobClient = _backgroundJobClient ?? throw new ArgumentNullException(nameof(_backgroundJobClient));
 			semaphore = new SemaphoreSlim(1);
@@ -63,62 +57,6 @@ namespace TGWebhooks.Core
 
 		/// <inheritdoc />
 		public void Dispose() => semaphore.Dispose();
-
-		/// <summary>
-		/// Merges a <paramref name="pullRequest"/>
-		/// </summary>
-		/// <param name="pullRequest">The <see cref="PullRequest"/> to merge</param>
-		/// <param name="gitHubManager">The <see cref="IGitHubManager"/> to use for merging</param>
-		/// <param name="componentProvider">The <see cref="IComponentProvider"/> to use for merging</param>
-		/// <param name="mergerToken">The token to use for merging</param>
-		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
-		/// <returns>A <see cref="Task"/> representing the running operation</returns>
-		async Task MergePullRequest(PullRequest pullRequest, IGitHubManager gitHubManager, IComponentProvider componentProvider, string mergerToken, CancellationToken cancellationToken)
-		{
-			var acceptedHEAD = pullRequest.Head.Sha;
-			var tokenUserTask = gitHubManager.GetUserLogin(mergerToken, cancellationToken);
-			var tokenUser = await tokenUserTask.ConfigureAwait(false);
-			var startoffCommit = await repository.CreatePullRequestWorkingCommit(pullRequest, tokenUser, cancellationToken).ConfigureAwait(false);
-			//run any merge handlers
-			var workingCommit = startoffCommit;
-			//component provider already checked by CheckMergePullRequest
-			foreach (var I in componentProvider.MergeHooks)
-				workingCommit = await I.ModifyMerge(pullRequest, workingCommit, cancellationToken).ConfigureAwait(false);
-
-			var anyUpdate = acceptedHEAD != workingCommit;
-			if (anyUpdate)
-				//force push this bitch up
-				await repository.Push(pullRequest.Head.Repository.HtmlUrl, pullRequest.Head.Ref, workingCommit, tokenUser, mergerToken, true, cancellationToken).ConfigureAwait(false);
-
-			try
-			{
-				await gitHubManager.MergePullRequest(pullRequest, mergerToken, workingCommit).ConfigureAwait(false);
-			}
-			catch (Exception e2)
-			{
-				logger.LogError(e2, "Merge process unable to be completed!");
-				try
-				{
-					if (anyUpdate)
-						//change things back to normal for the user's sake
-						//no cancellation token due to ciritcal op
-						await repository.Push(pullRequest.Head.Repository.HtmlUrl, pullRequest.Head.Ref, acceptedHEAD, tokenUser, mergerToken, true, CancellationToken.None).ConfigureAwait(false);
-				}
-				catch (Exception e3)
-				{
-					logger.LogError(e3, "Merge process unable to revert!");
-					try
-					{
-						await gitHubManager.CreateComment(pullRequest.Number, stringLocalizer["MergeProcessInterruption", e3.ToString(), acceptedHEAD]).ConfigureAwait(false);
-					}
-					catch (Exception e)
-					{
-						logger.LogError(e, "Unable to comment on merge process failure!");
-					}
-				}
-				throw;
-			}
-		}
 
 		/// <summary>
 		/// Schedules a recheck of the <see cref="AutoMergeStatus"/>es of a given <paramref name="prNumber"/>
@@ -132,11 +70,8 @@ namespace TGWebhooks.Core
 		/// <param name="pullRequestNumber">The <see cref="PullRequest.Number"/> <see cref="PullRequest"/> to check</param>
 		/// <param name="jobCancellationToken">The <see cref="IJobCancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
-		public Task RecheckPullRequest(int pullRequestNumber, IJobCancellationToken jobCancellationToken)
-		{
-			logger.LogDebug("Running scheduled recheck of pull request #{0}.", pullRequestNumber);
-			return CheckMergePullRequest(pullRequestNumber, jobCancellationToken.ShutdownToken);
-		}
+		[AutomaticRetry(Attempts = 0)]
+		public Task RecheckPullRequest(int pullRequestNumber, IJobCancellationToken jobCancellationToken) => CheckMergePullRequest(pullRequestNumber, jobCancellationToken.ShutdownToken);
 
 		/// <summary>
 		/// Checks if a given <paramref name="pullRequest"/> is considered mergeable and does so if need be and sets it's commit status
@@ -244,7 +179,7 @@ namespace TGWebhooks.Core
 						logger.LogWarning("Not merging due to lack of provided merger token!");
 					else
 					{
-						await MergePullRequest(pullRequest, gitHubManager, componentProvider, mergerToken, cancellationToken).ConfigureAwait(false);
+						await gitHubManager.MergePullRequest(pullRequest, mergerToken, pullRequest.Head.Sha).ConfigureAwait(false);
 						return;
 					}
 				}

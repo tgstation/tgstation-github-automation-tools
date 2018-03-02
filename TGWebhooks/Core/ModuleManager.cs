@@ -19,9 +19,6 @@ namespace TGWebhooks.Core
 		public IEnumerable<IMergeRequirement> MergeRequirements => modulesAndEnabledStatus.Where(x => x.Value).SelectMany(x => x.Key.MergeRequirements);
 
 		/// <inheritdoc />
-		public IEnumerable<IMergeHook> MergeHooks => modulesAndEnabledStatus.Where(x => x.Value).SelectMany(x => x.Key.MergeHooks);
-
-		/// <inheritdoc />
 		public IDictionary<IModule, bool> ModuleStatuses => modulesAndEnabledStatus;
 		
 		/// <summary>

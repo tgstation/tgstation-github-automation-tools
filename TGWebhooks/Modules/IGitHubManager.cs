@@ -158,6 +158,16 @@ namespace TGWebhooks.Modules
 		Task DismissReview(PullRequest pullRequest, PullRequestReview pullRequestReview, string dismissMessage);
 
 		/// <summary>
+		/// Creates a file on a given <paramref name="branch"/> at a given <paramref name="path"/>
+		/// </summary>
+		/// <param name="branch">The branch to push to</param>
+		/// <param name="commitMessage">The commit message for the push</param>
+		/// <param name="path">The path in the <see cref="Repository"/> to create the file at</param>
+		/// <param name="content">The content of the file</param>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		Task CreateFile(string branch, string commitMessage, string path, string content);
+
+		/// <summary>
 		/// Get the GitHub <see cref="User"/> of either the configured or specified <paramref name="accessToken"/>
 		/// </summary>
 		/// <param name="accessToken">Optional GitHub access token to get the user for</param>

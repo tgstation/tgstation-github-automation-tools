@@ -29,9 +29,6 @@ namespace TGWebhooks.Modules.ReviewManager
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => new List<IMergeRequirement> { this };
 
-		/// <inheritdoc />
-		public IEnumerable<IMergeHook> MergeHooks => Enumerable.Empty<IMergeHook>();
-
 		/// <summary>
 		/// The <see cref="IGitHubManager"/> for the <see cref="ReviewManagerModule"/>
 		/// </summary>

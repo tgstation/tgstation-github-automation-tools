@@ -15,9 +15,7 @@ namespace TGWebhooks.Modules.Tests
 	public abstract class TestModule<TModule> where TModule : IModule
 	{
 		protected Mock<ILogger> MockLogger { get; private set;  }
-		protected Mock<IRepository> MockRepository { get; private set; }
 		protected Mock<IGitHubManager> MockGitHubManager { get; private set; }
-		protected Mock<IIOManager> MockIOManager { get; private set; }
 		protected Mock<IWebRequestManager> MockWebRequestManager { get; private set; }
 		protected Mock<IDataStoreFactory<TModule>> MockDataStoreFactory { get; private set; }
 		protected Mock<IDataStore> MockDataStore { get; private set; }
@@ -27,9 +25,7 @@ namespace TGWebhooks.Modules.Tests
 		public TestModule()
 		{
 			MockLogger = new Mock<ILogger>();
-			MockRepository = new Mock<IRepository>();
 			MockGitHubManager = new Mock<IGitHubManager>();
-			MockIOManager = new Mock<IIOManager>();
 			MockWebRequestManager = new Mock<IWebRequestManager>();
 			MockDataStoreFactory = new Mock<IDataStoreFactory<TModule>>();
 			MockDataStore = new Mock<IDataStore>();
