@@ -150,4 +150,7 @@
   <data name="SignOfVetod" xml:space="preserve">
     <value>Sign off vetoed by @{0}</value>
   </data>
+  <data name="Disclaimer" xml:space="preserve">
+    <value>Remember, this is equivalent to merging the pull request if and when it meets all other criteria</value>
+  </data>
 </root>

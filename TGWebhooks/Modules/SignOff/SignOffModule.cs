@@ -110,6 +110,7 @@ namespace TGWebhooks.Modules.SignOff
 			viewBag.SignOffLabel = stringLocalizer["SignOffLabel"];
 			viewBag.VetoLabel = stringLocalizer["VetoLabel"];
 			viewBag.SignedBy = stringLocalizer["SignedBy"];
+			viewBag.SignOffDisclaimer = stringLocalizer["Disclaimer"];
 
 			var signer = await dataStore.ReadData<PullRequestSignOff>(pullRequest.Number.ToString(CultureInfo.InvariantCulture), cancellationToken).ConfigureAwait(false);
 			if (signer.AccessToken != null)

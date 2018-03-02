@@ -1,6 +1,5 @@
-﻿<div class="row">
-    <h3>@ViewBag.SignOffHeader:</h3>
-</div>
+﻿<h3>@ViewBag.SignOffHeader:</h3>
+<p>@ViewBag.SignOffDisclaimer</p>
 <div class="row">
     <h4 id="signOffLabel" style="@(ViewBag.Signer == null ? "display: none" : null)">@ViewBag.SignedBy: @ViewBag.Signer</h4>
     <button id="signOffButton" type="button" class="btn btn-@(ViewBag.Signer == null ? "primary" : "danger")">@(ViewBag.Signer != null ? ViewBag.VetoLabel : ViewBag.SignOffLabel)</button>
