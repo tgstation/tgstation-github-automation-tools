@@ -372,7 +372,7 @@ namespace TGWebhooks.Core
 				Context = String.Concat(Application.UserAgent, '/', "status"),
 				Description = description,
 				State = commitState,
-				TargetUrl = String.Concat(generalConfiguration.RootURL, PullRequestController.Route)
+				TargetUrl = String.Join('/', generalConfiguration.RootURL, PullRequestController.Route, pullRequest.Number)
 			});
 		}
 

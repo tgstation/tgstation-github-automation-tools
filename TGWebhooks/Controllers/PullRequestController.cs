@@ -122,7 +122,7 @@ namespace TGWebhooks.Controllers
 			var token = await tokenTask.ConfigureAwait(false);
 			if (token == null)
 			{
-				ViewBag.AuthHref = String.Concat(generalConfiguration.RootURL.ToString(), "Authorize/Login/", number);
+				ViewBag.AuthHref = Url.Action("Begin", "Authorization", new { prNumber = number });
 				ViewBag.AuthTitle = stringLocalizer["SignIn"];
 				ViewBag.IsMaintainer = false;
 				ViewBag.UserIsAuthor = false;
@@ -133,7 +133,7 @@ namespace TGWebhooks.Controllers
 				ViewBag.UserIsAuthor = pr.User.Id == user.Id;
 				ViewBag.IsMaintainer = await gitHubManager.UserHasWriteAccess(user).ConfigureAwait(false);
 				ViewBag.UserLogin = user.Login;
-				ViewBag.AuthHref = String.Concat(generalConfiguration.RootURL.ToString(), "Authorize/SignOut/", number);
+				ViewBag.AuthHref = Url.Action("SignOut", "Authorization", new { prNumber = number });
 				ViewBag.AuthTitle = stringLocalizer["SignOut", user.Login];
 			}
 

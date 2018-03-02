@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System;
-using System.Linq;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Modules;
@@ -44,8 +44,9 @@ namespace TGWebhooks.Controllers
 		{
 			if (await gitHubManager.CheckAuthorization(Request.Cookies, cancellationToken).ConfigureAwait(false) != null)
 				return RedirectToAction("ReviewPullRequest", "PullRequest", new { number = prNumber });
-			var redirectURI = new Uri(generalConfiguration.RootURL, Url.Action(nameof(Complete), prNumber));
-			return Redirect(String.Concat(gitHubManager.GetAuthorizationURL(redirectURI).ToString()));
+			
+			var redirectURI = Url.Action(nameof(Complete), new { prNumber });
+			return Redirect(gitHubManager.GetAuthorizationURL(new Uri(String.Format(CultureInfo.InvariantCulture, "https://{0}{1}", Request.Host, redirectURI))).ToString());
 		}
 
 		/// <summary>
