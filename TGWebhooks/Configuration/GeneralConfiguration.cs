@@ -36,5 +36,10 @@ namespace TGWebhooks.Configuration
 		/// Time in minutes to schedule successive CI rechecks
 		/// </summary>
 		public int CIRecheckInterval { get; set; }
+
+		/// <summary>
+		/// If the actual merge command will come from the <see cref="Core.Application"/>
+		/// </summary>
+		public bool EnableAutoMerging { get; set; }
 	}
 }

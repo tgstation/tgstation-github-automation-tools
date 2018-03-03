@@ -211,7 +211,10 @@ namespace TGWebhooks.Core
 						logger.LogWarning("Not merging due to lack of provided merger token!");
 					else
 					{
-						await gitHubManager.MergePullRequest(pullRequest, mergerToken, pullRequest.Head.Sha).ConfigureAwait(false);
+						if (!generalConfiguration.EnableAutoMerging)
+							logger.LogInformation("Pull request is ready for auto merge, but not merging due to configuration.");
+						else
+							await gitHubManager.MergePullRequest(pullRequest, mergerToken, pullRequest.Head.Sha).ConfigureAwait(false);
 						return;
 					}
 				}

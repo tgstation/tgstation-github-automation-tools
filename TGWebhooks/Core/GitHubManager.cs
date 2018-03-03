@@ -174,7 +174,7 @@ namespace TGWebhooks.Core
 			if (sha == null)
 				throw new ArgumentNullException(nameof(sha));
 
-			logger.LogTrace("Merge #{0}", pullRequest.Number);
+			logger.LogInformation("Merging pull request #{0} - {1}", pullRequest.Number, pullRequest.Title);
 			var mergerClient = new GitHubClient(new ProductHeaderValue(Application.UserAgent))
 			{
 				Credentials = new Credentials(accessToken)
