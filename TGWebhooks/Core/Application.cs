@@ -60,6 +60,8 @@ namespace TGWebhooks.Core
 
 			var dbConfigSection = configuration.GetSection(DatabaseConfiguration.Section);
 
+			services.Configure<IISOptions>((options) => options.ForwardClientCertificate = false);
+
 			services.Configure<GeneralConfiguration>(configuration.GetSection(GeneralConfiguration.Section));
 			services.Configure<GitHubConfiguration>(configuration.GetSection(GitHubConfiguration.Section));
 			services.Configure<TravisConfiguration>(configuration.GetSection(TravisConfiguration.Section));
