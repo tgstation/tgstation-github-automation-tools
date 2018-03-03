@@ -36,17 +36,5 @@ namespace TGWebhooks.Modules.Tests
 		}
 
 		protected abstract TModule Instantiate();
-
-		[TestMethod]
-		public void TestModuleBasics()
-		{
-			var module = Instantiate();
-			Assert.IsFalse(String.IsNullOrWhiteSpace(module.Name));
-			Assert.IsFalse(String.IsNullOrWhiteSpace(module.Description));
-			Assert.IsNotNull(module.Uid);
-			Assert.AreEqual(module.Uid, module.Uid);
-			Assert.IsNotNull(module.MergeRequirements);
-			Assert.IsNotNull(module.GetPayloadHandlers<ActivityPayload>());
-		}
 	}
 }
