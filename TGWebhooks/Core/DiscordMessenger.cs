@@ -66,11 +66,7 @@ namespace TGWebhooks.Core
 			};
 
 			var user = discordClient.CurrentUser;
-			await Task.WhenAll(discordClient.Guilds.SelectMany(x => x.TextChannels).Where(x =>
-			{
-				var perms = x.GetPermissionOverwrite(user);
-				return perms.HasValue && perms.Value.SendMessages == PermValue.Allow;
-			}).Select(x => SendDeMessage(x))).ConfigureAwait(false);
+			await Task.WhenAll(discordClient.Guilds.SelectMany(x => x.TextChannels).Select(x => SendDeMessage(x))).ConfigureAwait(false);
 		}
 	}
 }
