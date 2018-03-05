@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.11"/>
-<title>tgstation-github-automation-tools: TGWebhooks/Modules/ContinuousIntegrationStatus.cs File Reference</title>
+<title>tgstation-github-automation-tools: TGWebhooks/Core/ContinuousIntegrationStatus.cs File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -83,7 +83,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_6bef659e5d1950ab6d7d09bd3e444e2d.html">TGWebhooks</a></li><li class="navelem"><a class="el" href="dir_8c122e2013531be2d2e14aff154bb67b.html">Modules</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_6bef659e5d1950ab6d7d09bd3e444e2d.html">TGWebhooks</a></li><li class="navelem"><a class="el" href="dir_b7495edf02f3ccd907906c2770876c63.html">Core</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -99,18 +99,23 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
 Namespaces</h2></td></tr>
-<tr class="memitem:namespace_t_g_webhooks_1_1_modules"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_t_g_webhooks_1_1_modules.html">TGWebhooks.Modules</a></td></tr>
+<tr class="memitem:namespace_t_g_webhooks_1_1_core"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_t_g_webhooks_1_1_core.html">TGWebhooks.Core</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a5a129a59df4eabfd0ec5a221326d0dda"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_t_g_webhooks_1_1_modules.html#a5a129a59df4eabfd0ec5a221326d0dda">TGWebhooks.Modules.ContinuousIntegrationStatus</a> { <a class="el" href="namespace_t_g_webhooks_1_1_modules.html#a5a129a59df4eabfd0ec5a221326d0ddaa3f6dd2f10d0feb46f79e8f8890c6eff3">TGWebhooks.Modules.ContinuousIntegrationStatus.NotPresent</a>, 
-<a class="el" href="namespace_t_g_webhooks_1_1_modules.html#a5a129a59df4eabfd0ec5a221326d0ddaa2d13df6f8b5e4c5af9f87e0dc39df69d">TGWebhooks.Modules.ContinuousIntegrationStatus.Pending</a>, 
-<a class="el" href="namespace_t_g_webhooks_1_1_modules.html#a5a129a59df4eabfd0ec5a221326d0ddaad7c8c85bf79bbe1b7188497c32c3b0ca">TGWebhooks.Modules.ContinuousIntegrationStatus.Failed</a>, 
-<a class="el" href="namespace_t_g_webhooks_1_1_modules.html#a5a129a59df4eabfd0ec5a221326d0ddaaa0d0628f6b4e4d78d2ffef4d4d1c4b15">TGWebhooks.Modules.ContinuousIntegrationStatus.Passed</a>
- }<tr class="memdesc:a5a129a59df4eabfd0ec5a221326d0dda"><td class="mdescLeft">&#160;</td><td class="mdescRight">Describes the status for a IContinuousIntegration provider  <a href="namespace_t_g_webhooks_1_1_modules.html#a5a129a59df4eabfd0ec5a221326d0dda">More...</a><br /></td></tr>
+<tr class="memitem:a6edba1f50496d634e8bb6eac0776abc1"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1">TGWebhooks.Core.ContinuousIntegrationStatus</a> { <br />
+&#160;&#160;<a class="el" href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1a3f6dd2f10d0feb46f79e8f8890c6eff3">TGWebhooks.Core.ContinuousIntegrationStatus.NotPresent</a>, 
+<a class="el" href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1a2d13df6f8b5e4c5af9f87e0dc39df69d">TGWebhooks.Core.ContinuousIntegrationStatus.Pending</a>, 
+<a class="el" href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1a6e4b9537e303a4f10872e9a919b13183">TGWebhooks.Core.ContinuousIntegrationStatus.Errored</a>, 
+<a class="el" href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1ad7c8c85bf79bbe1b7188497c32c3b0ca">TGWebhooks.Core.ContinuousIntegrationStatus.Failed</a>, 
+<br />
+&#160;&#160;<a class="el" href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1aa0d0628f6b4e4d78d2ffef4d4d1c4b15">TGWebhooks.Core.ContinuousIntegrationStatus.Passed</a>, 
+<a class="el" href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1ad8f1dcd29f48fbc0d7fdca5f0996bf71">TGWebhooks.Core.ContinuousIntegrationStatus.PassedOutdated</a>
+<br />
+ }<tr class="memdesc:a6edba1f50496d634e8bb6eac0776abc1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Describes the status for a IContinuousIntegration provider  <a href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1">More...</a><br /></td></tr>
 </td></tr>
-<tr class="separator:a5a129a59df4eabfd0ec5a221326d0dda"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a6edba1f50496d634e8bb6eac0776abc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->

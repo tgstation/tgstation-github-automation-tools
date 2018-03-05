@@ -123,14 +123,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <h3><a class="anchor" id="index_g"></a>- g -</h3><ul>
 <li>GameAnnouncerModule()
-: <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_game_announcer_1_1_game_announcer_module.html#a8a2367d4fc44787ed5ed3e66c3495282">TGWebhooks.Modules.GameAnnouncer.GameAnnouncerModule</a>
+: <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_game_announcer_1_1_game_announcer_module.html#a8a2df05a73776e28b64e8579a336c50c">TGWebhooks.Modules.GameAnnouncer.GameAnnouncerModule</a>
 </li>
 <li>generalConfiguration
 : <a class="el" href="class_t_g_webhooks_1_1_controllers_1_1_authorization_controller.html#a7da2561f9b70e41795b0f021b4716a09">TGWebhooks.Controllers.AuthorizationController</a>
 , <a class="el" href="class_t_g_webhooks_1_1_controllers_1_1_modules_controller.html#a31c3b0f070a5d81bda6336687395d145">TGWebhooks.Controllers.ModulesController</a>
 , <a class="el" href="class_t_g_webhooks_1_1_controllers_1_1_pull_request_controller.html#aa2faa6528cf14e4969de0b4f160e87ae">TGWebhooks.Controllers.PullRequestController</a>
+, <a class="el" href="class_t_g_webhooks_1_1_core_1_1_auto_merge_handler.html#af7ac92b9832709ee573f68a8b8dd4629">TGWebhooks.Core.AutoMergeHandler</a>
 , <a class="el" href="class_t_g_webhooks_1_1_core_1_1_git_hub_manager.html#ad7dfacd0415277b5da4df30c9e17403d">TGWebhooks.Core.GitHubManager</a>
-, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_changelog_generator_1_1_changelog_generator_module.html#a91e019ef6acc4654bb170a712f556e71">TGWebhooks.Modules.ChangelogGenerator.ChangelogGeneratorModule</a>
+, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_changelog_1_1_changelog_module.html#a5c1318ab16ffb519e524a6938db10203">TGWebhooks.Modules.Changelog.ChangelogModule</a>
 </li>
 <li>GetAuthorizationURL()
 : <a class="el" href="class_t_g_webhooks_1_1_core_1_1_git_hub_manager.html#a4eb4fe3e7c7b145f1537f59543b3bdee">TGWebhooks.Core.GitHubManager</a>
@@ -139,29 +140,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>GetChangelog()
 : <a class="el" href="class_t_g_webhooks_1_1_models_1_1_changelog.html#a0917dfef1e1827c10209e51f3c177a3d">TGWebhooks.Models.Changelog</a>
 </li>
-<li>GetDirectoryName()
-: <a class="el" href="class_t_g_webhooks_1_1_core_1_1_default_i_o_manager.html#aabee137c077c7b7efdc66ca22b747d16">TGWebhooks.Core.DefaultIOManager</a>
-, <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_i_o_manager.html#ab2d894fc3f5ec30f548d8cb79f593755">TGWebhooks.Modules.IIOManager</a>
-</li>
-<li>GetFileName()
-: <a class="el" href="class_t_g_webhooks_1_1_core_1_1_default_i_o_manager.html#ac5e2f5a46adf29bc7f0f6be68cdae873">TGWebhooks.Core.DefaultIOManager</a>
-, <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_i_o_manager.html#a0f198676039bfdb0b51d0e406919f2ee">TGWebhooks.Modules.IIOManager</a>
-</li>
-<li>GetFileNameWithoutExtension()
-: <a class="el" href="class_t_g_webhooks_1_1_core_1_1_default_i_o_manager.html#a9bc7b26507cddac597430374ba2469dd">TGWebhooks.Core.DefaultIOManager</a>
-, <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_i_o_manager.html#abfc792bd4821fae7f4ee951e16616be1">TGWebhooks.Modules.IIOManager</a>
-</li>
-<li>GetFilesInDirectory()
-: <a class="el" href="class_t_g_webhooks_1_1_core_1_1_default_i_o_manager.html#aacb70e2de096ab0fa8f69b3661dc2bf9">TGWebhooks.Core.DefaultIOManager</a>
-, <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_i_o_manager.html#a72c8122f74b40fe7c1fcf2698e7f7965">TGWebhooks.Modules.IIOManager</a>
+<li>GetCommit()
+: <a class="el" href="class_t_g_webhooks_1_1_core_1_1_git_hub_manager.html#a13994ab5e465ed9cd922799e2ece0a5a">TGWebhooks.Core.GitHubManager</a>
+, <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#af2a8680959526a5205492053634acebf">TGWebhooks.Modules.IGitHubManager</a>
 </li>
 <li>GetIssueLabels()
 : <a class="el" href="class_t_g_webhooks_1_1_core_1_1_git_hub_manager.html#a7c7b0ae175da464a1dd7eebec6311bae">TGWebhooks.Core.GitHubManager</a>
 , <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a4732ca71390761bb6750fe1a4675016a">TGWebhooks.Modules.IGitHubManager</a>
 </li>
 <li>GetJobStatus()
-: <a class="el" href="class_t_g_webhooks_1_1_core_1_1_travis_continuous_integration.html#a7be2f1b19409154268fbe42a762a1d07">TGWebhooks.Core.TravisContinuousIntegration</a>
-, <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_continuous_integration.html#a0c17b74dbc769de0652cdd73d194bf4c">TGWebhooks.Modules.IContinuousIntegration</a>
+: <a class="el" href="interface_t_g_webhooks_1_1_core_1_1_i_continuous_integration.html#a12f53b403954746948f3fcfa3ad9a9d5">TGWebhooks.Core.IContinuousIntegration</a>
+, <a class="el" href="class_t_g_webhooks_1_1_core_1_1_travis_continuous_integration.html#a7be2f1b19409154268fbe42a762a1d07">TGWebhooks.Core.TravisContinuousIntegration</a>
 </li>
 <li>GetLatestCommitStatus()
 : <a class="el" href="class_t_g_webhooks_1_1_core_1_1_git_hub_manager.html#acd40d2fdd66af61ebb4eabd224ca8ec0">TGWebhooks.Core.GitHubManager</a>
@@ -174,12 +163,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>GetPayloadHandlers&lt; TPayload &gt;()
 : <a class="el" href="class_t_g_webhooks_1_1_core_1_1_module_manager.html#a629e0ad37188b16016e01b8d313bb034">TGWebhooks.Core.ModuleManager</a>
 , <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#a26e2eba6342dbc218d3e4e8972e98ea8">TGWebhooks.Modules.AutoDeleteBranch.AutoDeleteBranchModule</a>
-, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_changelog_generator_1_1_changelog_generator_module.html#a72c703b473041c17b2773f40e2be1a76">TGWebhooks.Modules.ChangelogGenerator.ChangelogGeneratorModule</a>
+, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_changelog_1_1_changelog_module.html#a55653e0628d416386f76e8c21994d640">TGWebhooks.Modules.Changelog.ChangelogModule</a>
 , <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_game_announcer_1_1_game_announcer_module.html#a89472ce66bddd3b60bebadeb7041c275">TGWebhooks.Modules.GameAnnouncer.GameAnnouncerModule</a>
 , <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_good_boy_points_1_1_good_boy_points_module.html#aaa7714021a8ef792f5f5090fbfcac2e5">TGWebhooks.Modules.GoodBoyPoints.GoodBoyPointsModule</a>
 , <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#aefa427cc9fb936de24b812eb90e0c9bc">TGWebhooks.Modules.Highlander.HighlanderModule</a>
-, <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html#afa191c6c95e62dd33703f9b825816b66">TGWebhooks.Modules.IComponentProvider</a>
-, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_p_r_tagger_1_1_pull_request_labeller_module.html#a6bb5663c9bfa1bf386a67b9f221448ea">TGWebhooks.Modules.PRTagger.PullRequestLabellerModule</a>
+, <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base.html#acf9d4b5c78b63f38c544e2ddc9cb2d36">TGWebhooks.Modules.IComponentProviderBase</a>
+, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_pull_request_labeller_1_1_pull_request_labeller_module.html#ad5c912070a13434863c43c7ac7e19b3d">TGWebhooks.Modules.PullRequestLabeller.PullRequestLabellerModule</a>
 , <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_review_manager_1_1_review_manager_module.html#a84cafdc427cb41c58b9ff72e0912ad98">TGWebhooks.Modules.ReviewManager.ReviewManagerModule</a>
 , <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_sign_off_1_1_sign_off_module.html#abdb4a60a2be52d010d06d7430c96ea3f">TGWebhooks.Modules.SignOff.SignOffModule</a>
 , <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module.html#aaab7702502edb69abf3ea314d849b077">TGWebhooks.Modules.TwentyFourHourRule.TwentyFourHourRuleModule</a>
@@ -199,6 +188,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>GetRequestHeaders()
 : <a class="el" href="class_t_g_webhooks_1_1_core_1_1_travis_continuous_integration.html#a715546b68b54f04a1343e025b91b9337">TGWebhooks.Core.TravisContinuousIntegration</a>
 </li>
+<li>GetRequired()
+: <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_changelog_1_1_changelog_module.html#a8dca048ca235ce1d39a43968464f315d">TGWebhooks.Modules.Changelog.ChangelogModule</a>
+</li>
 <li>GetUserLogin()
 : <a class="el" href="class_t_g_webhooks_1_1_core_1_1_git_hub_manager.html#a927f5d5670dda537efcadbb6bfa0d455">TGWebhooks.Core.GitHubManager</a>
 , <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a514fe36c41412e9315f63abaab219496">TGWebhooks.Modules.IGitHubManager</a>
@@ -216,25 +208,26 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="class_t_g_webhooks_1_1_controllers_1_1_payloads_controller.html#aed79900c43448b16e66910dc1bb1f21b">TGWebhooks.Controllers.PayloadsController</a>
 , <a class="el" href="class_t_g_webhooks_1_1_controllers_1_1_pull_request_controller.html#a24c079d69e4a483d409deae71017e158">TGWebhooks.Controllers.PullRequestController</a>
 , <a class="el" href="class_t_g_webhooks_1_1_core_1_1_git_hub_manager.html#a46655b46a0fdf134871351fde8efe5b6">TGWebhooks.Core.GitHubManager</a>
-, <a class="el" href="class_t_g_webhooks_1_1_core_1_1_repository.html#a2502ddddc8464baf047011fc27fdfe83">TGWebhooks.Core.Repository</a>
 </li>
 <li>gitHubManager
 : <a class="el" href="class_t_g_webhooks_1_1_controllers_1_1_authorization_controller.html#a1f07cdc7cf7f131943acb739567397f7">TGWebhooks.Controllers.AuthorizationController</a>
 , <a class="el" href="class_t_g_webhooks_1_1_controllers_1_1_modules_controller.html#a88b0bfa68f3219a82894cf3bf5dddc7e">TGWebhooks.Controllers.ModulesController</a>
 , <a class="el" href="class_t_g_webhooks_1_1_controllers_1_1_pull_request_controller.html#a050f25bce83a7ce4f4a114675a718ff5">TGWebhooks.Controllers.PullRequestController</a>
-, <a class="el" href="class_t_g_webhooks_1_1_core_1_1_auto_merge_handler.html#a0329e18d721d5780b072b22c58773fd8">TGWebhooks.Core.AutoMergeHandler</a>
 </li>
 <li>GitHubManager()
-: <a class="el" href="class_t_g_webhooks_1_1_core_1_1_git_hub_manager.html#a6887ba11213bf07ac084f628e2e97944">TGWebhooks.Core.GitHubManager</a>
+: <a class="el" href="class_t_g_webhooks_1_1_core_1_1_git_hub_manager.html#ae5a0a9149aacf622a45c064f0ea73f6a">TGWebhooks.Core.GitHubManager</a>
 </li>
 <li>gitHubManager
 : <a class="el" href="class_t_g_webhooks_1_1_core_1_1_travis_continuous_integration.html#ad8e0ccd4f31bc9e80940afda44a4f591">TGWebhooks.Core.TravisContinuousIntegration</a>
 , <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#affff3a2ba3910440c925bb8a08bf74d3">TGWebhooks.Modules.AutoDeleteBranch.AutoDeleteBranchModule</a>
+, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_changelog_1_1_changelog_module.html#a1c5eed76ba7bc92d1f20148ff0e3815a">TGWebhooks.Modules.Changelog.ChangelogModule</a>
+, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_changelog_1_1_controllers_1_1_changelog_controller.html#a2607868117c71dc44cc0bb194f38d257">TGWebhooks.Modules.Changelog.Controllers.ChangelogController</a>
 , <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_good_boy_points_1_1_controllers_1_1_good_boy_points_controller.html#a63fb081fe15debbbe4e008ba3fd3f530">TGWebhooks.Modules.GoodBoyPoints.Controllers.GoodBoyPointsController</a>
 , <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_good_boy_points_1_1_good_boy_points_module.html#ad2b1a214ba7d5065010a73062728d77e">TGWebhooks.Modules.GoodBoyPoints.GoodBoyPointsModule</a>
 , <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#afb5a565d7a9472885db6357a4738ae97">TGWebhooks.Modules.Highlander.HighlanderModule</a>
-, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_p_r_tagger_1_1_pull_request_labeller_module.html#a60c450348711fe9760888addcd2e88b1">TGWebhooks.Modules.PRTagger.PullRequestLabellerModule</a>
+, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_pull_request_labeller_1_1_pull_request_labeller_module.html#a4f4b09cfdc5f3b29f8f41bd1d44397ac">TGWebhooks.Modules.PullRequestLabeller.PullRequestLabellerModule</a>
 , <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_review_manager_1_1_review_manager_module.html#a035423bf0744be97d135eb1ba3887908">TGWebhooks.Modules.ReviewManager.ReviewManagerModule</a>
+, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_sign_off_1_1_controllers_1_1_sign_off_controller.html#aaa3e4cb7eec1fbfd91d8596b831674b9">TGWebhooks.Modules.SignOff.Controllers.SignOffController</a>
 , <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_sign_off_1_1_sign_off_module.html#a2e76189de821329a5664b32ac90599be">TGWebhooks.Modules.SignOff.SignOffModule</a>
 </li>
 <li>GoodBoyPointsController()

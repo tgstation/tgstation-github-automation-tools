@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['notpresent',['NotPresent',['../namespace_t_g_webhooks_1_1_modules.html#a5a129a59df4eabfd0ec5a221326d0ddaa3f6dd2f10d0feb46f79e8f8890c6eff3',1,'TGWebhooks::Modules']]]
+  ['imageadd',['ImageAdd',['../namespace_t_g_webhooks_1_1_models.html#a29f3939b6a44b3b350a17ae1b61ef5a9ad2b68cae824f958648e32dafa5e73bfa',1,'TGWebhooks::Models']]],
+  ['imagedel',['ImageDel',['../namespace_t_g_webhooks_1_1_models.html#a29f3939b6a44b3b350a17ae1b61ef5a9a826f864a4c262496e32cd2642818d1b5',1,'TGWebhooks::Models']]]
 ];

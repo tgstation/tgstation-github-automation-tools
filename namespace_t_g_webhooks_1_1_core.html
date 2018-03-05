@@ -89,7 +89,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#namespaces">Namespaces</a> &#124;
-<a href="#nested-classes">Classes</a>  </div>
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#enum-members">Enumerations</a>  </div>
   <div class="headertitle">
 <div class="title">TGWebhooks.Core Namespace Reference</div>  </div>
 </div><!--header-->
@@ -109,8 +110,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_core_1_1_data_store_factory.html">DataStoreFactory</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_core_1_1_default_i_o_manager.html">DefaultIOManager</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">IIOManager that resolves paths to Environment.CurrentDirectory  <a href="class_t_g_webhooks_1_1_core_1_1_default_i_o_manager.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_core_1_1_discord_messenger.html">DiscordMessenger</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="interface_t_g_webhooks_1_1_core_1_1_i_chat_messenger.html" title="Manages a chat client ">IChatMessenger</a> for Discord  <a href="class_t_g_webhooks_1_1_core_1_1_discord_messenger.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_core_1_1_git_hub_client_factory.html">GitHubClientFactory</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -118,6 +119,12 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_core_1_1_i_auto_merge_handler.html">IAutoMergeHandler</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Manages the automatic merge process for PullRequests  <a href="interface_t_g_webhooks_1_1_core_1_1_i_auto_merge_handler.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_core_1_1_i_chat_messenger.html">IChatMessenger</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Manages a chat client  <a href="interface_t_g_webhooks_1_1_core_1_1_i_chat_messenger.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_core_1_1_i_continuous_integration.html">IContinuousIntegration</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Describes continuous integration status for a PullRequest  <a href="interface_t_g_webhooks_1_1_core_1_1_i_continuous_integration.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">interface &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_core_1_1_i_git_hub_client_factory.html">IGitHubClientFactory</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Factory for IGitHubClients  <a href="interface_t_g_webhooks_1_1_core_1_1_i_git_hub_client_factory.html#details">More...</a><br /></td></tr>
@@ -127,20 +134,81 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_core_1_1_module_manager.html">ModuleManager</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_core_1_1_repository.html">Repository</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_core_1_1_resolving_i_o_manager.html">ResolvingIOManager</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">An IIOManager that resolve relative paths from another IIOManager to a subdirectory of that  <a href="class_t_g_webhooks_1_1_core_1_1_resolving_i_o_manager.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_core_1_1_service_collection_extensions.html">ServiceCollectionExtensions</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains extensions for IServiceCollection  <a href="class_t_g_webhooks_1_1_core_1_1_service_collection_extensions.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_core_1_1_travis_continuous_integration.html">TravisContinuousIntegration</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">IContinuousIntegration for Travis-CI  <a href="class_t_g_webhooks_1_1_core_1_1_travis_continuous_integration.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="interface_t_g_webhooks_1_1_core_1_1_i_continuous_integration.html" title="Describes continuous integration status for a PullRequest ">IContinuousIntegration</a> for Travis-CI  <a href="class_t_g_webhooks_1_1_core_1_1_travis_continuous_integration.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_core_1_1_web_request_manager.html">WebRequestManager</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:a6edba1f50496d634e8bb6eac0776abc1"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1">ContinuousIntegrationStatus</a> { <br />
+&#160;&#160;<a class="el" href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1a3f6dd2f10d0feb46f79e8f8890c6eff3">ContinuousIntegrationStatus.NotPresent</a>, 
+<a class="el" href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1a2d13df6f8b5e4c5af9f87e0dc39df69d">ContinuousIntegrationStatus.Pending</a>, 
+<a class="el" href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1a6e4b9537e303a4f10872e9a919b13183">ContinuousIntegrationStatus.Errored</a>, 
+<a class="el" href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1ad7c8c85bf79bbe1b7188497c32c3b0ca">ContinuousIntegrationStatus.Failed</a>, 
+<br />
+&#160;&#160;<a class="el" href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1aa0d0628f6b4e4d78d2ffef4d4d1c4b15">ContinuousIntegrationStatus.Passed</a>, 
+<a class="el" href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1ad8f1dcd29f48fbc0d7fdca5f0996bf71">ContinuousIntegrationStatus.PassedOutdated</a>
+<br />
+ }<tr class="memdesc:a6edba1f50496d634e8bb6eac0776abc1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Describes the status for a IContinuousIntegration provider  <a href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1">More...</a><br /></td></tr>
+</td></tr>
+<tr class="separator:a6edba1f50496d634e8bb6eac0776abc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a class="anchor" id="a6edba1f50496d634e8bb6eac0776abc1"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1">TGWebhooks.Core.ContinuousIntegrationStatus</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Describes the status for a <a class="el" href="interface_t_g_webhooks_1_1_core_1_1_i_continuous_integration.html" title="Describes continuous integration status for a PullRequest ">IContinuousIntegration</a> provider </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a class="anchor" id="a6edba1f50496d634e8bb6eac0776abc1a3f6dd2f10d0feb46f79e8f8890c6eff3"></a>NotPresent&#160;</td><td class="fielddoc">
+<p>The status for the <a class="el" href="interface_t_g_webhooks_1_1_core_1_1_i_continuous_integration.html" title="Describes continuous integration status for a PullRequest ">IContinuousIntegration</a> isn't present </p>
+</td></tr>
+<tr><td class="fieldname"><a class="anchor" id="a6edba1f50496d634e8bb6eac0776abc1a2d13df6f8b5e4c5af9f87e0dc39df69d"></a>Pending&#160;</td><td class="fielddoc">
+<p>The job is pending </p>
+</td></tr>
+<tr><td class="fieldname"><a class="anchor" id="a6edba1f50496d634e8bb6eac0776abc1a6e4b9537e303a4f10872e9a919b13183"></a>Errored&#160;</td><td class="fielddoc">
+<p>The job has errored out </p>
+</td></tr>
+<tr><td class="fieldname"><a class="anchor" id="a6edba1f50496d634e8bb6eac0776abc1ad7c8c85bf79bbe1b7188497c32c3b0ca"></a>Failed&#160;</td><td class="fielddoc">
+<p>The job has failed </p>
+</td></tr>
+<tr><td class="fieldname"><a class="anchor" id="a6edba1f50496d634e8bb6eac0776abc1aa0d0628f6b4e4d78d2ffef4d4d1c4b15"></a>Passed&#160;</td><td class="fielddoc">
+<p>The job has passed </p>
+</td></tr>
+<tr><td class="fieldname"><a class="anchor" id="a6edba1f50496d634e8bb6eac0776abc1ad8f1dcd29f48fbc0d7fdca5f0996bf71"></a>PassedOutdated&#160;</td><td class="fielddoc">
+<p>The job has passed, but is not up to date with the given Octokit.PullRequest.Base </p>
+</td></tr>
+</table>
+
+<p>Definition at line <a class="el" href="_continuous_integration_status_8cs_source.html#l00007">7</a> of file <a class="el" href="_continuous_integration_status_8cs_source.html">ContinuousIntegrationStatus.cs</a>.</p>
+<div class="fragment"><div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    {</div><div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;        <a class="code" href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1a3f6dd2f10d0feb46f79e8f8890c6eff3">NotPresent</a>,</div><div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <a class="code" href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1a2d13df6f8b5e4c5af9f87e0dc39df69d">Pending</a>,</div><div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <a class="code" href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1a6e4b9537e303a4f10872e9a919b13183">Errored</a>,</div><div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        <a class="code" href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1ad7c8c85bf79bbe1b7188497c32c3b0ca">Failed</a>,</div><div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <a class="code" href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1aa0d0628f6b4e4d78d2ffef4d4d1c4b15">Passed</a>,</div><div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <a class="code" href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1ad8f1dcd29f48fbc0d7fdca5f0996bf71">PassedOutdated</a>,</div><div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    }</div><div class="ttc" id="namespace_t_g_webhooks_1_1_core_html_a6edba1f50496d634e8bb6eac0776abc1a3f6dd2f10d0feb46f79e8f8890c6eff3"><div class="ttname"><a href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1a3f6dd2f10d0feb46f79e8f8890c6eff3">TGWebhooks.Core.ContinuousIntegrationStatus.NotPresent</a></div><div class="ttdoc">The status for the IContinuousIntegration isn&amp;#39;t present </div></div>
+<div class="ttc" id="namespace_t_g_webhooks_1_1_core_html_a6edba1f50496d634e8bb6eac0776abc1ad8f1dcd29f48fbc0d7fdca5f0996bf71"><div class="ttname"><a href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1ad8f1dcd29f48fbc0d7fdca5f0996bf71">TGWebhooks.Core.ContinuousIntegrationStatus.PassedOutdated</a></div><div class="ttdoc">The job has passed, but is not up to date with the given Octokit.PullRequest.Base ...</div></div>
+<div class="ttc" id="namespace_t_g_webhooks_1_1_core_html_a6edba1f50496d634e8bb6eac0776abc1a2d13df6f8b5e4c5af9f87e0dc39df69d"><div class="ttname"><a href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1a2d13df6f8b5e4c5af9f87e0dc39df69d">TGWebhooks.Core.ContinuousIntegrationStatus.Pending</a></div><div class="ttdoc">The job is pending </div></div>
+<div class="ttc" id="namespace_t_g_webhooks_1_1_core_html_a6edba1f50496d634e8bb6eac0776abc1aa0d0628f6b4e4d78d2ffef4d4d1c4b15"><div class="ttname"><a href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1aa0d0628f6b4e4d78d2ffef4d4d1c4b15">TGWebhooks.Core.ContinuousIntegrationStatus.Passed</a></div><div class="ttdoc">The job has passed </div></div>
+<div class="ttc" id="namespace_t_g_webhooks_1_1_core_html_a6edba1f50496d634e8bb6eac0776abc1a6e4b9537e303a4f10872e9a919b13183"><div class="ttname"><a href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1a6e4b9537e303a4f10872e9a919b13183">TGWebhooks.Core.ContinuousIntegrationStatus.Errored</a></div><div class="ttdoc">The job has errored out </div></div>
+<div class="ttc" id="namespace_t_g_webhooks_1_1_core_html_a6edba1f50496d634e8bb6eac0776abc1ad7c8c85bf79bbe1b7188497c32c3b0ca"><div class="ttname"><a href="namespace_t_g_webhooks_1_1_core.html#a6edba1f50496d634e8bb6eac0776abc1ad7c8c85bf79bbe1b7188497c32c3b0ca">TGWebhooks.Core.ContinuousIntegrationStatus.Failed</a></div><div class="ttdoc">The job has failed </div></div>
+</div><!-- fragment -->
+</div>
+</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

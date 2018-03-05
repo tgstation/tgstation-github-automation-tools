@@ -111,9 +111,9 @@ Inheritance diagram for TGWebhooks.Modules.IDataStoreFactory&lt; TModule &gt;:</
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a85901de61db552cbeaca00f77a5c13f0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_data_store.html">IDataStore</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_data_store_factory.html#a85901de61db552cbeaca00f77a5c13f0">CreateDataStore</a> (TModule module)</td></tr>
-<tr class="memdesc:a85901de61db552cbeaca00f77a5c13f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_data_store.html" title="Simple key-value data store ">IDataStore</a>  <a href="#a85901de61db552cbeaca00f77a5c13f0">More...</a><br /></td></tr>
-<tr class="separator:a85901de61db552cbeaca00f77a5c13f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ef300efacb96e1f8cab182249cc87c2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_data_store.html">IDataStore</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_data_store_factory.html#a3ef300efacb96e1f8cab182249cc87c2">CreateDataStore</a> (TModule ownerModule)</td></tr>
+<tr class="memdesc:a3ef300efacb96e1f8cab182249cc87c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_data_store.html" title="Simple key-value data store ">IDataStore</a>  <a href="#a3ef300efacb96e1f8cab182249cc87c2">More...</a><br /></td></tr>
+<tr class="separator:a3ef300efacb96e1f8cab182249cc87c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Factory for creating <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_data_store.html" title="Simple key-value data store ">IDataStore</a>s </p>
@@ -134,7 +134,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Definition at line <a class="el" href="_i_data_store_factory_8cs_source.html#l00007">7</a> of file <a class="el" href="_i_data_store_factory_8cs_source.html">IDataStoreFactory.cs</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a85901de61db552cbeaca00f77a5c13f0"></a>
+<a class="anchor" id="a3ef300efacb96e1f8cab182249cc87c2"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -142,7 +142,7 @@ Public Member Functions</h2></td></tr>
           <td class="memname"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_data_store.html">IDataStore</a> <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_data_store_factory.html">TGWebhooks.Modules.IDataStoreFactory</a>&lt; TModule &gt;.CreateDataStore </td>
           <td>(</td>
           <td class="paramtype">TModule&#160;</td>
-          <td class="paramname"><em>module</em></td><td>)</td>
+          <td class="paramname"><em>ownerModule</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -151,15 +151,15 @@ Public Member Functions</h2></td></tr>
 <p>Create a <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_data_store.html" title="Simple key-value data store ">IDataStore</a> </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">module</td><td>The <em>TModule</em>  that will use the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_data_store.html" title="Simple key-value data store ">IDataStore</a></td></tr>
+    <tr><td class="paramname">ownerModule</td><td>The <em>TModule</em>  that will use the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_data_store.html" title="Simple key-value data store ">IDataStore</a></td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A new <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_data_store.html" title="Simple key-value data store ">IDataStore</a></dd></dl>
 
-<p>Implemented in <a class="el" href="class_t_g_webhooks_1_1_core_1_1_data_store_factory.html#a9eb7ed5f11a0b75d96d39f57e272ce07">TGWebhooks.Core.DataStoreFactory&lt; TModule &gt;</a>.</p>
+<p>Implemented in <a class="el" href="class_t_g_webhooks_1_1_core_1_1_data_store_factory.html#aac60b0bedeb06337ad7be4d4df3f2fbf">TGWebhooks.Core.DataStoreFactory&lt; TModule &gt;</a>.</p>
 
-<p>Referenced by <a class="el" href="_changelog_generator_module_8cs_source.html#l00071">TGWebhooks.Modules.ChangelogGenerator.ChangelogGeneratorModule.ChangelogGeneratorModule()</a>, <a class="el" href="_good_boy_points_module_8cs_source.html#l00108">TGWebhooks.Modules.GoodBoyPoints.GoodBoyPointsModule.GoodBoyPointsModule()</a>, and <a class="el" href="_sign_off_module_8cs_source.html#l00060">TGWebhooks.Modules.SignOff.SignOffModule.SignOffModule()</a>.</p>
+<p>Referenced by <a class="el" href="_changelog_module_8cs_source.html#l00065">TGWebhooks.Modules.Changelog.ChangelogModule.ChangelogModule()</a>, <a class="el" href="_good_boy_points_module_8cs_source.html#l00111">TGWebhooks.Modules.GoodBoyPoints.GoodBoyPointsModule.GoodBoyPointsModule()</a>, and <a class="el" href="_sign_off_module_8cs_source.html#l00056">TGWebhooks.Modules.SignOff.SignOffModule.SignOffModule()</a>.</p>
 
 </div>
 </div>

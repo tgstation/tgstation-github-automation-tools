@@ -118,6 +118,15 @@ Properties</h2></td></tr>
 <tr class="memitem:a72ddf659ceeda4b306134cefd72a84ef"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_configuration_1_1_general_configuration.html#a72ddf659ceeda4b306134cefd72a84ef">DefaultChangelogRequired</a><code> [get, set]</code></td></tr>
 <tr class="memdesc:a72ddf659ceeda4b306134cefd72a84ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">If changelogs are required by default, can also be adjusted on a per Octokit.PullRequest basis  <a href="#a72ddf659ceeda4b306134cefd72a84ef">More...</a><br /></td></tr>
 <tr class="separator:a72ddf659ceeda4b306134cefd72a84ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa9f67dbb19e52568bcfcb8b29d383c5e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_configuration_1_1_general_configuration.html#aa9f67dbb19e52568bcfcb8b29d383c5e">CIRecheckInitial</a><code> [get, set]</code></td></tr>
+<tr class="memdesc:aa9f67dbb19e52568bcfcb8b29d383c5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time in minutes to schedule first CI recheck  <a href="#aa9f67dbb19e52568bcfcb8b29d383c5e">More...</a><br /></td></tr>
+<tr class="separator:aa9f67dbb19e52568bcfcb8b29d383c5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2167b51963cfafd3651497fa103e8b95"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_configuration_1_1_general_configuration.html#a2167b51963cfafd3651497fa103e8b95">CIRecheckInterval</a><code> [get, set]</code></td></tr>
+<tr class="memdesc:a2167b51963cfafd3651497fa103e8b95"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time in minutes to schedule successive CI rechecks  <a href="#a2167b51963cfafd3651497fa103e8b95">More...</a><br /></td></tr>
+<tr class="separator:a2167b51963cfafd3651497fa103e8b95"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18142241cac66ec1d702f0254b03c95c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_configuration_1_1_general_configuration.html#a18142241cac66ec1d702f0254b03c95c">EnableAutoMerging</a><code> [get, set]</code></td></tr>
+<tr class="memdesc:a18142241cac66ec1d702f0254b03c95c"><td class="mdescLeft">&#160;</td><td class="mdescRight">If the actual merge command will come from the <a class="el" href="class_t_g_webhooks_1_1_core_1_1_application.html" title="Startup point for the web application ">Core.Application</a>  <a href="#a18142241cac66ec1d702f0254b03c95c">More...</a><br /></td></tr>
+<tr class="separator:a18142241cac66ec1d702f0254b03c95c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>General <a class="el" href="class_t_g_webhooks_1_1_core_1_1_application.html" title="Startup point for the web application ">Core.Application</a> settings </p>
@@ -138,11 +147,59 @@ Properties</h2></td></tr>
 
 <p>Definition at line <a class="el" href="_general_configuration_8cs_source.html#l00013">13</a> of file <a class="el" href="_general_configuration_8cs_source.html">GeneralConfiguration.cs</a>.</p>
 
-<p>Referenced by <a class="el" href="_application_8cs_source.html#l00063">TGWebhooks.Core.Application.ConfigureServices()</a>.</p>
+<p>Referenced by <a class="el" href="_application_8cs_source.html#l00056">TGWebhooks.Core.Application.ConfigureServices()</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Property Documentation</h2>
+<a class="anchor" id="aa9f67dbb19e52568bcfcb8b29d383c5e"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int TGWebhooks.Configuration.GeneralConfiguration.CIRecheckInitial</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">get</span><span class="mlabel">set</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Time in minutes to schedule first CI recheck </p>
+
+<p>Definition at line <a class="el" href="_general_configuration_8cs_source.html#l00033">33</a> of file <a class="el" href="_general_configuration_8cs_source.html">GeneralConfiguration.cs</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a2167b51963cfafd3651497fa103e8b95"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int TGWebhooks.Configuration.GeneralConfiguration.CIRecheckInterval</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">get</span><span class="mlabel">set</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Time in minutes to schedule successive CI rechecks </p>
+
+<p>Definition at line <a class="el" href="_general_configuration_8cs_source.html#l00038">38</a> of file <a class="el" href="_general_configuration_8cs_source.html">GeneralConfiguration.cs</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="a72ddf659ceeda4b306134cefd72a84ef"></a>
 <div class="memitem">
 <div class="memproto">
@@ -188,6 +245,30 @@ Properties</h2></td></tr>
 <p>The default locale </p>
 
 <p>Definition at line <a class="el" href="_general_configuration_8cs_source.html#l00018">18</a> of file <a class="el" href="_general_configuration_8cs_source.html">GeneralConfiguration.cs</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a18142241cac66ec1d702f0254b03c95c"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool TGWebhooks.Configuration.GeneralConfiguration.EnableAutoMerging</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">get</span><span class="mlabel">set</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>If the actual merge command will come from the <a class="el" href="class_t_g_webhooks_1_1_core_1_1_application.html" title="Startup point for the web application ">Core.Application</a> </p>
+
+<p>Definition at line <a class="el" href="_general_configuration_8cs_source.html#l00043">43</a> of file <a class="el" href="_general_configuration_8cs_source.html">GeneralConfiguration.cs</a>.</p>
 
 </div>
 </div>

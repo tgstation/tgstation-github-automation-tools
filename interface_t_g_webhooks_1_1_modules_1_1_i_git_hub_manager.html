@@ -132,9 +132,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ad6636c8c09bee11ba69ca02761a6f0d7"><td class="memItemLeft" align="right" valign="top">Task&lt; IReadOnlyList&lt; PullRequestFile &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#ad6636c8c09bee11ba69ca02761a6f0d7">GetPullRequestChangedFiles</a> (int number)</td></tr>
 <tr class="memdesc:ad6636c8c09bee11ba69ca02761a6f0d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the files changed by a PullRequest  <a href="#ad6636c8c09bee11ba69ca02761a6f0d7">More...</a><br /></td></tr>
 <tr class="separator:ad6636c8c09bee11ba69ca02761a6f0d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a78b8a1276e891f7a520009d2cbcf3aa2"><td class="memItemLeft" align="right" valign="top">Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a78b8a1276e891f7a520009d2cbcf3aa2">MergePullRequest</a> (PullRequest pullRequest, string overrideAccessToken)</td></tr>
-<tr class="memdesc:a78b8a1276e891f7a520009d2cbcf3aa2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Squashes and merges the given PullRequest with it's current PullRequest.Title, PullRequest.Number, and PullRequest.Body as the log message  <a href="#a78b8a1276e891f7a520009d2cbcf3aa2">More...</a><br /></td></tr>
-<tr class="separator:a78b8a1276e891f7a520009d2cbcf3aa2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e308434547827caf3f8eda561a22618"><td class="memItemLeft" align="right" valign="top">Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a1e308434547827caf3f8eda561a22618">MergePullRequest</a> (PullRequest pullRequest, string accessToken, string sha)</td></tr>
+<tr class="memdesc:a1e308434547827caf3f8eda561a22618"><td class="mdescLeft">&#160;</td><td class="mdescRight">Squashes and merges the given PullRequest with it's current PullRequest.Title, PullRequest.Number, and PullRequest.Body as the log message  <a href="#a1e308434547827caf3f8eda561a22618">More...</a><br /></td></tr>
+<tr class="separator:a1e308434547827caf3f8eda561a22618"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3c68dac8db97c786514f5a38fd8ddcf6"><td class="memItemLeft" align="right" valign="top">Task&lt; IReadOnlyList&lt; PullRequestReview &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a3c68dac8db97c786514f5a38fd8ddcf6">GetPullRequestReviews</a> (PullRequest pullRequest)</td></tr>
 <tr class="memdesc:a3c68dac8db97c786514f5a38fd8ddcf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get all PullRequestReviews for a given <em>pullRequest</em>   <a href="#a3c68dac8db97c786514f5a38fd8ddcf6">More...</a><br /></td></tr>
 <tr class="separator:a3c68dac8db97c786514f5a38fd8ddcf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -162,12 +162,18 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a4f18977770c737ff7b08267e5aa8e0e9"><td class="memItemLeft" align="right" valign="top">Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a4f18977770c737ff7b08267e5aa8e0e9">CreateComment</a> (int number, string body)</td></tr>
 <tr class="memdesc:a4f18977770c737ff7b08267e5aa8e0e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a comment on the specified Issue  <a href="#a4f18977770c737ff7b08267e5aa8e0e9">More...</a><br /></td></tr>
 <tr class="separator:a4f18977770c737ff7b08267e5aa8e0e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2a8680959526a5205492053634acebf"><td class="memItemLeft" align="right" valign="top">Task&lt; Commit &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#af2a8680959526a5205492053634acebf">GetCommit</a> (string sha)</td></tr>
+<tr class="memdesc:af2a8680959526a5205492053634acebf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a specified Commit  <a href="#af2a8680959526a5205492053634acebf">More...</a><br /></td></tr>
+<tr class="separator:af2a8680959526a5205492053634acebf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac459a985e1a81b6365b33d52e34b54dc"><td class="memItemLeft" align="right" valign="top">Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#ac459a985e1a81b6365b33d52e34b54dc">ApprovePullRequest</a> (PullRequest pullRequest, string approveMessage)</td></tr>
 <tr class="memdesc:ac459a985e1a81b6365b33d52e34b54dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an "Approved" review on <em>pullRequest</em>   <a href="#ac459a985e1a81b6365b33d52e34b54dc">More...</a><br /></td></tr>
 <tr class="separator:ac459a985e1a81b6365b33d52e34b54dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a880f5ad5fcc4d869c59aa077aaf2cf43"><td class="memItemLeft" align="right" valign="top">Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a880f5ad5fcc4d869c59aa077aaf2cf43">DismissReview</a> (PullRequest pullRequest, PullRequestReview pullRequestReview, string dismissMessage)</td></tr>
 <tr class="memdesc:a880f5ad5fcc4d869c59aa077aaf2cf43"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dismiss a <em>pullRequestReview</em>   <a href="#a880f5ad5fcc4d869c59aa077aaf2cf43">More...</a><br /></td></tr>
 <tr class="separator:a880f5ad5fcc4d869c59aa077aaf2cf43"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f28e2ee64fb190a71cf695b1f0535f5"><td class="memItemLeft" align="right" valign="top">Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a0f28e2ee64fb190a71cf695b1f0535f5">CreateFile</a> (string branch, string commitMessage, string path, string content)</td></tr>
+<tr class="memdesc:a0f28e2ee64fb190a71cf695b1f0535f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a file on a given <em>branch</em>  at a given <em>path</em>   <a href="#a0f28e2ee64fb190a71cf695b1f0535f5">More...</a><br /></td></tr>
+<tr class="separator:a0f28e2ee64fb190a71cf695b1f0535f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a514fe36c41412e9315f63abaab219496"><td class="memItemLeft" align="right" valign="top">Task&lt; User &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a514fe36c41412e9315f63abaab219496">GetUserLogin</a> (string accessToken, CancellationToken cancellationToken)</td></tr>
 <tr class="memdesc:a514fe36c41412e9315f63abaab219496"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the GitHub User of either the configured or specified <em>accessToken</em>   <a href="#a514fe36c41412e9315f63abaab219496">More...</a><br /></td></tr>
 <tr class="separator:a514fe36c41412e9315f63abaab219496"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -407,6 +413,58 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a0f28e2ee64fb190a71cf695b1f0535f5"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Task TGWebhooks.Modules.IGitHubManager.CreateFile </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>branch</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>commitMessage</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>path</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>content</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creates a file on a given <em>branch</em>  at a given <em>path</em>  </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">branch</td><td>The branch to push to</td></tr>
+    <tr><td class="paramname">commitMessage</td><td>The commit message for the push</td></tr>
+    <tr><td class="paramname">path</td><td>The path in the Repository to create the file at</td></tr>
+    <tr><td class="paramname">content</td><td>The content of the file</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A Task representing the running operation</dd></dl>
+
+<p>Implemented in <a class="el" href="class_t_g_webhooks_1_1_core_1_1_git_hub_manager.html#a58159112e9a72d3e1c9a05c4d8138461">TGWebhooks.Core.GitHubManager</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="a53ec70b260189dd56a28cc8354283ca2"></a>
 <div class="memitem">
 <div class="memproto">
@@ -575,6 +633,33 @@ Public Member Functions</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>The Uri to send the user to</dd></dl>
 
 <p>Implemented in <a class="el" href="class_t_g_webhooks_1_1_core_1_1_git_hub_manager.html#a4eb4fe3e7c7b145f1537f59543b3bdee">TGWebhooks.Core.GitHubManager</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="af2a8680959526a5205492053634acebf"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Task&lt;Commit&gt; TGWebhooks.Modules.IGitHubManager.GetCommit </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>sha</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Gets a specified Commit </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">sha</td><td>The GitReference.Ref of the Commit</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A Task&lt;TResult&gt; resulting in the Commit</dd></dl>
+
+<p>Implemented in <a class="el" href="class_t_g_webhooks_1_1_core_1_1_git_hub_manager.html#a13994ab5e465ed9cd922799e2ece0a5a">TGWebhooks.Core.GitHubManager</a>.</p>
 
 </div>
 </div>
@@ -771,7 +856,7 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a78b8a1276e891f7a520009d2cbcf3aa2"></a>
+<a class="anchor" id="a1e308434547827caf3f8eda561a22618"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -785,7 +870,13 @@ Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>overrideAccessToken</em>&#160;</td>
+          <td class="paramname"><em>accessToken</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>sha</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -799,13 +890,14 @@ Public Member Functions</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">pullRequest</td><td>The PullRequest to merge</td></tr>
-    <tr><td class="paramname">overrideAccessToken</td><td>The access token to merge with</td></tr>
+    <tr><td class="paramname">accessToken</td><td>The access token to merge with</td></tr>
+    <tr><td class="paramname">sha</td><td>The GitReference.Sha to accept the merge of</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A Task representing the running operation</dd></dl>
 
-<p>Implemented in <a class="el" href="class_t_g_webhooks_1_1_core_1_1_git_hub_manager.html#a0458717a7a01edca166ff546a1614bfb">TGWebhooks.Core.GitHubManager</a>.</p>
+<p>Implemented in <a class="el" href="class_t_g_webhooks_1_1_core_1_1_git_hub_manager.html#acf4dd95f79c26ec647b93c13f903e1da">TGWebhooks.Core.GitHubManager</a>.</p>
 
 </div>
 </div>

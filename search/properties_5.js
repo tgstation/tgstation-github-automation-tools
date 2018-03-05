@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['id',['Id',['../class_t_g_webhooks_1_1_models_1_1_access_token_entry.html#a97c208c6adc12e46553e26090e69ae85',1,'TGWebhooks.Models.AccessTokenEntry.Id()'],['../class_t_g_webhooks_1_1_models_1_1_module_metadata.html#ae41d8052575589227bd93acaec63c81b',1,'TGWebhooks.Models.ModuleMetadata.Id()']]]
+  ['failstatusreport',['FailStatusReport',['../class_t_g_webhooks_1_1_modules_1_1_auto_merge_status.html#ade1e64ca28bfe143916f714675abcfb4',1,'TGWebhooks::Modules::AutoMergeStatus']]]
 ];

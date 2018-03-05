@@ -105,31 +105,18 @@ Inheritance diagram for TGWebhooks.Modules.IInitializable:</div>
  <div class="center">
   <img src="interface_t_g_webhooks_1_1_modules_1_1_i_initializable.png" usemap="#TGWebhooks.Modules.IInitializable_map" alt=""/>
   <map id="TGWebhooks.Modules.IInitializable_map" name="TGWebhooks.Modules.IInitializable_map">
-<area href="class_t_g_webhooks_1_1_core_1_1_repository.html" alt="TGWebhooks.Core.Repository" shape="rect" coords="0,56,428,80"/>
-<area href="interface_t_g_webhooks_1_1_models_1_1_i_database_context.html" title="Represents a database containing models " alt="TGWebhooks.Models.IDatabaseContext" shape="rect" coords="438,56,866,80"/>
-<area href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components " alt="TGWebhooks.Modules.IComponentProvider" shape="rect" coords="1095,56,1523,80"/>
-<area href="interface_t_g_webhooks_1_1_modules_1_1_i_repository.html" title="Represents the git repository being manager by the TGWebhooks " alt="TGWebhooks.Modules.IRepository" shape="rect" coords="1752,56,2180,80"/>
-<area href="class_t_g_webhooks_1_1_models_1_1_database_context.html" alt="TGWebhooks.Models.DatabaseContext" shape="rect" coords="438,112,866,136"/>
-<area href="interface_t_g_webhooks_1_1_core_1_1_i_module_manager.html" title="Manages webhook plugins " alt="TGWebhooks.Core.IModuleManager" shape="rect" coords="876,112,1304,136"/>
-<area href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html" title="Representation of a plugin for TGWebhooks " alt="TGWebhooks.Modules.IModule" shape="rect" coords="1314,112,1742,136"/>
-<area href="class_t_g_webhooks_1_1_core_1_1_repository.html" alt="TGWebhooks.Core.Repository" shape="rect" coords="1752,112,2180,136"/>
-<area href="class_t_g_webhooks_1_1_core_1_1_module_manager.html" alt="TGWebhooks.Core.ModuleManager" shape="rect" coords="876,168,1304,192"/>
-<area href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html" title="Contains the IPayloadHandler&lt;TPayload&gt; to delete merged branches " alt="TGWebhooks.Modules.AutoDeleteBranch.AutoDeleteBranchModule" shape="rect" coords="1752,168,2180,192"/>
-<area href="class_t_g_webhooks_1_1_modules_1_1_changelog_generator_1_1_changelog_generator_module.html" title="Generates changelog .yaml files " alt="TGWebhooks.Modules.ChangelogGenerator.ChangelogGeneratorModule" shape="rect" coords="1752,224,2180,248"/>
-<area href="class_t_g_webhooks_1_1_modules_1_1_game_announcer_1_1_game_announcer_module.html" title="Implements the game announcer IModule " alt="TGWebhooks.Modules.GameAnnouncer.GameAnnouncerModule" shape="rect" coords="1752,280,2180,304"/>
-<area href="class_t_g_webhooks_1_1_modules_1_1_good_boy_points_1_1_good_boy_points_module.html" title="Implements the Good Boy Points tracking " alt="TGWebhooks.Modules.GoodBoyPoints.GoodBoyPointsModule" shape="rect" coords="1752,336,2180,360"/>
-<area href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html" title="Implements the One Per Person IModule " alt="TGWebhooks.Modules.Highlander.HighlanderModule" shape="rect" coords="1752,392,2180,416"/>
-<area href="class_t_g_webhooks_1_1_modules_1_1_p_r_tagger_1_1_pull_request_labeller_module.html" title="IModule for auto labelling a PullRequest " alt="TGWebhooks.Modules.PRTagger.PullRequestLabellerModule" shape="rect" coords="1752,448,2180,472"/>
-<area href="class_t_g_webhooks_1_1_modules_1_1_review_manager_1_1_review_manager_module.html" title="IModule for managing maintainer reviews " alt="TGWebhooks.Modules.ReviewManager.ReviewManagerModule" shape="rect" coords="1752,504,2180,528"/>
-<area href="class_t_g_webhooks_1_1_modules_1_1_sign_off_1_1_sign_off_module.html" title="IModule containing the Maintainer Sign Off IMergeRequirement " alt="TGWebhooks.Modules.SignOff.SignOffModule" shape="rect" coords="1752,560,2180,584"/>
-<area href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module.html" title="IModule for the 24-Hour Rule IMergeRequirement " alt="TGWebhooks.Modules.TwentyFourHourRule.TwentyFourHourRuleModule" shape="rect" coords="1752,616,2180,640"/>
+<area href="interface_t_g_webhooks_1_1_models_1_1_i_database_context.html" title="Represents a database containing models " alt="TGWebhooks.Models.IDatabaseContext" shape="rect" coords="0,56,257,80"/>
+<area href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="IComponentProviderBase which requires initialization " alt="TGWebhooks.Modules.IComponentProvider" shape="rect" coords="267,56,524,80"/>
+<area href="class_t_g_webhooks_1_1_models_1_1_database_context.html" alt="TGWebhooks.Models.DatabaseContext" shape="rect" coords="0,112,257,136"/>
+<area href="interface_t_g_webhooks_1_1_core_1_1_i_module_manager.html" title="Manages webhook plugins " alt="TGWebhooks.Core.IModuleManager" shape="rect" coords="267,112,524,136"/>
+<area href="class_t_g_webhooks_1_1_core_1_1_module_manager.html" alt="TGWebhooks.Core.ModuleManager" shape="rect" coords="267,168,524,192"/>
 </map>
  </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:abbb485b3b5f17fc2c6040e5a97586182"><td class="memItemLeft" align="right" valign="top">Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_initializable.html#abbb485b3b5f17fc2c6040e5a97586182">Initialize</a> (CancellationToken cancellationToken)</td></tr>
-<tr class="memdesc:abbb485b3b5f17fc2c6040e5a97586182"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load components in the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components ">IComponentProvider</a>. Will be called before any other function  <a href="#abbb485b3b5f17fc2c6040e5a97586182">More...</a><br /></td></tr>
+<tr class="memdesc:abbb485b3b5f17fc2c6040e5a97586182"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asyncronously set up the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_initializable.html" title="Represents an object that requires initialization before use ">IInitializable</a>  <a href="#abbb485b3b5f17fc2c6040e5a97586182">More...</a><br /></td></tr>
 <tr class="separator:abbb485b3b5f17fc2c6040e5a97586182"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -151,7 +138,7 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Load components in the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components ">IComponentProvider</a>. Will be called before any other function </p>
+<p>Asyncronously set up the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_initializable.html" title="Represents an object that requires initialization before use ">IInitializable</a> </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">cancellationToken</td><td>The CancellationToken for the operation</td></tr>
@@ -160,9 +147,9 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A Task representing the running operation</dd></dl>
 
-<p>Implemented in <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_p_r_tagger_1_1_pull_request_labeller_module.html#aaf8f92943fbbab54bf79c81810e8d681">TGWebhooks.Modules.PRTagger.PullRequestLabellerModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_good_boy_points_1_1_good_boy_points_module.html#aad36100fe2caa4e9f7d853779cb7b6e5">TGWebhooks.Modules.GoodBoyPoints.GoodBoyPointsModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_sign_off_1_1_sign_off_module.html#a9845367bf29117833f08a23942ca6226">TGWebhooks.Modules.SignOff.SignOffModule</a>, <a class="el" href="class_t_g_webhooks_1_1_models_1_1_database_context.html#ad6e7998405bb39c32e7834440b202fec">TGWebhooks.Models.DatabaseContext</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_changelog_generator_1_1_changelog_generator_module.html#a8f5e5197e85e8e71b134dc3b366efc4e">TGWebhooks.Modules.ChangelogGenerator.ChangelogGeneratorModule</a>, <a class="el" href="class_t_g_webhooks_1_1_core_1_1_repository.html#ab5ab3188f107bdb82f9a881fac60fecd">TGWebhooks.Core.Repository</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_game_announcer_1_1_game_announcer_module.html#a9a2256ee11d8191a9bbeb80e44873469">TGWebhooks.Modules.GameAnnouncer.GameAnnouncerModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#a26dc5c5144b09ae1482334e1e382abe6">TGWebhooks.Modules.Highlander.HighlanderModule</a>, <a class="el" href="class_t_g_webhooks_1_1_core_1_1_module_manager.html#ae616eb3b8252dc4c5cae6a8a36bcc6e5">TGWebhooks.Core.ModuleManager</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_review_manager_1_1_review_manager_module.html#a87436ba4ae6a2837826c6ed90d0e7655">TGWebhooks.Modules.ReviewManager.ReviewManagerModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module.html#a9b740b01263e35998c8809746b0c1199">TGWebhooks.Modules.TwentyFourHourRule.TwentyFourHourRuleModule</a>, and <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#ae173bd8d9d0798fc3585b0e9cb45fee3">TGWebhooks.Modules.AutoDeleteBranch.AutoDeleteBranchModule</a>.</p>
+<p>Implemented in <a class="el" href="class_t_g_webhooks_1_1_models_1_1_database_context.html#ad6e7998405bb39c32e7834440b202fec">TGWebhooks.Models.DatabaseContext</a>, and <a class="el" href="class_t_g_webhooks_1_1_core_1_1_module_manager.html#ae616eb3b8252dc4c5cae6a8a36bcc6e5">TGWebhooks.Core.ModuleManager</a>.</p>
 
-<p>Referenced by <a class="el" href="_application_8cs_source.html#l00063">TGWebhooks.Core.Application.ConfigureServices()</a>, and <a class="el" href="_module_manager_8cs_source.html#l00062">TGWebhooks.Core.ModuleManager.Initialize()</a>.</p>
+<p>Referenced by <a class="el" href="_application_8cs_source.html#l00111">TGWebhooks.Core.Application.Configure()</a>.</p>
 
 </div>
 </div>

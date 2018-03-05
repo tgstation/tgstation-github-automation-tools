@@ -1,7 +1,6 @@
 var searchData=
 [
   ['testapplication_2ecs',['TestApplication.cs',['../_test_application_8cs.html',1,'']]],
-  ['testchangeloggeneratormodule_2ecs',['TestChangelogGeneratorModule.cs',['../_test_changelog_generator_module_8cs.html',1,'']]],
   ['testdatastorefactory_2ecs',['TestDataStoreFactory.cs',['../_test_data_store_factory_8cs.html',1,'']]],
   ['testgithubclientfactory_2ecs',['TestGitHubClientFactory.cs',['../_test_git_hub_client_factory_8cs.html',1,'']]],
   ['testmodule_2ecs',['TestModule.cs',['../_test_module_8cs.html',1,'']]],

@@ -92,7 +92,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="#properties">Properties</a> &#124;
 <a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -108,10 +107,9 @@ Inheritance diagram for TGWebhooks.Modules.Highlander.HighlanderModule:</div>
  <div class="center">
   <img src="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.png" usemap="#TGWebhooks.Modules.Highlander.HighlanderModule_map" alt=""/>
   <map id="TGWebhooks.Modules.Highlander.HighlanderModule_map" name="TGWebhooks.Modules.Highlander.HighlanderModule_map">
-<area href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html" title="Representation of a plugin for TGWebhooks " alt="TGWebhooks.Modules.IModule" shape="rect" coords="0,112,403,136"/>
-<area href="interface_t_g_webhooks_1_1_modules_1_1_i_payload_handler.html" alt="TGWebhooks.Modules.IPayloadHandler&lt; PullRequestEventPayload &gt;" shape="rect" coords="413,112,816,136"/>
-<area href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components " alt="TGWebhooks.Modules.IComponentProvider" shape="rect" coords="0,56,403,80"/>
-<area href="interface_t_g_webhooks_1_1_modules_1_1_i_initializable.html" title="Represents an object that requires initialization before use " alt="TGWebhooks.Modules.IInitializable" shape="rect" coords="0,0,403,24"/>
+<area href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html" title="Representation of a plugin for TGWebhooks " alt="TGWebhooks.Modules.IModule" shape="rect" coords="0,56,403,80"/>
+<area href="interface_t_g_webhooks_1_1_modules_1_1_i_payload_handler.html" alt="TGWebhooks.Modules.IPayloadHandler&lt; PullRequestEventPayload &gt;" shape="rect" coords="413,56,816,80"/>
+<area href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base.html" title="for providing access to webhook components " alt="TGWebhooks.Modules.IComponentProviderBase" shape="rect" coords="0,0,403,24"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -121,16 +119,16 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:aae85a66877a82b2281089e0ac862830d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html" title="Implements the One Per Person IModule ">HighlanderModule</a>  <a href="#aae85a66877a82b2281089e0ac862830d">More...</a><br /></td></tr>
 <tr class="separator:aae85a66877a82b2281089e0ac862830d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aefa427cc9fb936de24b812eb90e0c9bc"><td class="memItemLeft" align="right" valign="top">IEnumerable&lt; <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_payload_handler.html">IPayloadHandler</a>&lt; TPayload &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#aefa427cc9fb936de24b812eb90e0c9bc">GetPayloadHandlers&lt; TPayload &gt;</a> ()</td></tr>
-<tr class="memdesc:aefa427cc9fb936de24b812eb90e0c9bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IPayloadHandler&lt;TPayload&gt;s the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components ">IComponentProvider</a> contains   <a href="#aefa427cc9fb936de24b812eb90e0c9bc">More...</a><br /></td></tr>
+<tr class="memdesc:aefa427cc9fb936de24b812eb90e0c9bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IPayloadHandler&lt;TPayload&gt;s the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base.html" title="for providing access to webhook components ">IComponentProviderBase</a> contains   <a href="#aefa427cc9fb936de24b812eb90e0c9bc">More...</a><br /></td></tr>
 <tr class="separator:aefa427cc9fb936de24b812eb90e0c9bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a26dc5c5144b09ae1482334e1e382abe6"><td class="memItemLeft" align="right" valign="top">Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#a26dc5c5144b09ae1482334e1e382abe6">Initialize</a> (CancellationToken cancellationToken)</td></tr>
-<tr class="memdesc:a26dc5c5144b09ae1482334e1e382abe6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load components in the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components ">IComponentProvider</a>. Will be called before any other function   <a href="#a26dc5c5144b09ae1482334e1e382abe6">More...</a><br /></td></tr>
-<tr class="separator:a26dc5c5144b09ae1482334e1e382abe6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2eae4f9aad31d5f74e4b8e0799bbaad3"><td class="memItemLeft" align="right" valign="top">Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#a2eae4f9aad31d5f74e4b8e0799bbaad3">AddViewVars</a> (PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken)</td></tr>
-<tr class="memdesc:a2eae4f9aad31d5f74e4b8e0799bbaad3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds vars to the Microsoft.AspNetCore.Mvc.Controller.ViewBag of the <a class="el" href="class_t_g_webhooks_1_1_controllers_1_1_pull_request_controller.html" title="Main Octokit.PullRequest management interface ">Controllers.PullRequestController</a>   <a href="#a2eae4f9aad31d5f74e4b8e0799bbaad3">More...</a><br /></td></tr>
+<tr class="memdesc:a2eae4f9aad31d5f74e4b8e0799bbaad3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds vars to the Microsoft.AspNetCore.Mvc.Controller.ViewBag of the <a class="el" href="class_t_g_webhooks_1_1_controllers_1_1_pull_request_controller.html" title="Main PullRequest management interface ">Controllers.PullRequestController</a>   <a href="#a2eae4f9aad31d5f74e4b8e0799bbaad3">More...</a><br /></td></tr>
 <tr class="separator:a2eae4f9aad31d5f74e4b8e0799bbaad3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5623b6c52a3017bdae1b1eaddb928b0f"><td class="memItemLeft" align="right" valign="top">async Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#a5623b6c52a3017bdae1b1eaddb928b0f">ProcessPayload</a> (PullRequestEventPayload payload, CancellationToken cancellationToken)</td></tr>
 <tr class="separator:a5623b6c52a3017bdae1b1eaddb928b0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a792c5f7550c4e3089f22e810cbbb360a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#a792c5f7550c4e3089f22e810cbbb360a">SetEnabled</a> (bool <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#a7c0475542f1cf73e8bd1dee7a995f5c3">enabled</a>)</td></tr>
+<tr class="memdesc:a792c5f7550c4e3089f22e810cbbb360a"><td class="mdescLeft">&#160;</td><td class="mdescRight">If the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html" title="Representation of a plugin for TGWebhooks ">IModule</a> is enabled   <a href="#a792c5f7550c4e3089f22e810cbbb360a">More...</a><br /></td></tr>
+<tr class="separator:a792c5f7550c4e3089f22e810cbbb360a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_payload_handler"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_payload_handler')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_payload_handler.html">TGWebhooks.Modules.IPayloadHandler&lt; PullRequestEventPayload &gt;</a></td></tr>
 <tr class="memitem:a034739e9cfca6c61ae75bf5843ac68a4 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_payload_handler"><td class="memItemLeft" align="right" valign="top">Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_payload_handler.html#a034739e9cfca6c61ae75bf5843ac68a4">ProcessPayload</a> (TPayload payload, CancellationToken cancellationToken)</td></tr>
 <tr class="memdesc:a034739e9cfca6c61ae75bf5843ac68a4 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_payload_handler"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process a <em>TPayload</em>   <a href="#a034739e9cfca6c61ae75bf5843ac68a4">More...</a><br /></td></tr>
@@ -146,33 +144,6 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a74f7eef39cefab7c72e115150c969a89"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1dc6b8bf75f5dfdc12de63b2e2cdae22"><td class="memItemLeft" align="right" valign="top">IEnumerable&lt; <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html">IMergeRequirement</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#a1dc6b8bf75f5dfdc12de63b2e2cdae22">MergeRequirements</a> =&gt; Enumerable.Empty&lt;<a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html">IMergeRequirement</a>&gt;()</td></tr>
 <tr class="separator:a1dc6b8bf75f5dfdc12de63b2e2cdae22"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a46b62be3df4fc318daa5fc945223b99a"><td class="memItemLeft" align="right" valign="top">IEnumerable&lt; <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_hook.html">IMergeHook</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#a46b62be3df4fc318daa5fc945223b99a">MergeHooks</a> =&gt; Enumerable.Empty&lt;<a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_hook.html">IMergeHook</a>&gt;()</td></tr>
-<tr class="separator:a46b62be3df4fc318daa5fc945223b99a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="properties"></a>
-Properties</h2></td></tr>
-<tr class="memitem:ad2813a5d2b86bc2e96cdaaec206a4143"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#ad2813a5d2b86bc2e96cdaaec206a4143">Enabled</a><code> [get, set]</code></td></tr>
-<tr class="separator:ad2813a5d2b86bc2e96cdaaec206a4143"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td colspan="2" onclick="javascript:toggleInherit('properties_interface_t_g_webhooks_1_1_modules_1_1_i_module')"><img src="closed.png" alt="-"/>&#160;Properties inherited from <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html">TGWebhooks.Modules.IModule</a></td></tr>
-<tr class="memitem:ad4622560f54759765016d7d26c6ea8ad inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html#ad4622560f54759765016d7d26c6ea8ad">Enabled</a><code> [set]</code></td></tr>
-<tr class="memdesc:ad4622560f54759765016d7d26c6ea8ad inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="mdescLeft">&#160;</td><td class="mdescRight">If the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html" title="Representation of a plugin for TGWebhooks ">IModule</a> is enabled  <a href="#ad4622560f54759765016d7d26c6ea8ad">More...</a><br /></td></tr>
-<tr class="separator:ad4622560f54759765016d7d26c6ea8ad inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3e34caef91316be44f7030b96449a05a inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="memItemLeft" align="right" valign="top">Guid&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html#a3e34caef91316be44f7030b96449a05a">Uid</a><code> [get]</code></td></tr>
-<tr class="memdesc:a3e34caef91316be44f7030b96449a05a inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="mdescLeft">&#160;</td><td class="mdescRight">A unique <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html#a3e34caef91316be44f7030b96449a05a" title="A unique Uid for the IModule ">Uid</a> for the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html" title="Representation of a plugin for TGWebhooks ">IModule</a>  <a href="#a3e34caef91316be44f7030b96449a05a">More...</a><br /></td></tr>
-<tr class="separator:a3e34caef91316be44f7030b96449a05a inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a95ea8c877e3a9e3eb983a08a1a61a861 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html#a95ea8c877e3a9e3eb983a08a1a61a861">Name</a><code> [get]</code></td></tr>
-<tr class="memdesc:a95ea8c877e3a9e3eb983a08a1a61a861 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="mdescLeft">&#160;</td><td class="mdescRight">The name of the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html" title="Representation of a plugin for TGWebhooks ">IModule</a>  <a href="#a95ea8c877e3a9e3eb983a08a1a61a861">More...</a><br /></td></tr>
-<tr class="separator:a95ea8c877e3a9e3eb983a08a1a61a861 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3a13d6c7420dac13770b955459e02387 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html#a3a13d6c7420dac13770b955459e02387">Description</a><code> [get]</code></td></tr>
-<tr class="memdesc:a3a13d6c7420dac13770b955459e02387 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="mdescLeft">&#160;</td><td class="mdescRight">A verbose user-friendly description of the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html" title="Representation of a plugin for TGWebhooks ">IModule</a>  <a href="#a3a13d6c7420dac13770b955459e02387">More...</a><br /></td></tr>
-<tr class="separator:a3a13d6c7420dac13770b955459e02387 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider"><td colspan="2" onclick="javascript:toggleInherit('properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider')"><img src="closed.png" alt="-"/>&#160;Properties inherited from <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html">TGWebhooks.Modules.IComponentProvider</a></td></tr>
-<tr class="memitem:a5cd008e931b342b7eda63f28fc11d1fe inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider"><td class="memItemLeft" align="right" valign="top">IEnumerable&lt; <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html">IMergeRequirement</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html#a5cd008e931b342b7eda63f28fc11d1fe">MergeRequirements</a><code> [get]</code></td></tr>
-<tr class="memdesc:a5cd008e931b342b7eda63f28fc11d1fe inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html" title="Represents a bar on automatic merging of a pull request ">IMergeRequirement</a>s the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components ">IComponentProvider</a> contains  <a href="#a5cd008e931b342b7eda63f28fc11d1fe">More...</a><br /></td></tr>
-<tr class="separator:a5cd008e931b342b7eda63f28fc11d1fe inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aef489d80950b8fdd97663f6f5b484b53 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider"><td class="memItemLeft" align="right" valign="top">IEnumerable&lt; <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_hook.html">IMergeHook</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html#aef489d80950b8fdd97663f6f5b484b53">MergeHooks</a><code> [get]</code></td></tr>
-<tr class="memdesc:aef489d80950b8fdd97663f6f5b484b53 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_hook.html" title="Operations for modifying a PullRequest before it is merged ">IMergeHook</a>s the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components ">IComponentProvider</a> contains  <a href="#aef489d80950b8fdd97663f6f5b484b53">More...</a><br /></td></tr>
-<tr class="separator:aef489d80950b8fdd97663f6f5b484b53 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
 Private Attributes</h2></td></tr>
@@ -182,6 +153,26 @@ Private Attributes</h2></td></tr>
 <tr class="memitem:a802c8d13147c7442681199ffd6542881"><td class="memItemLeft" align="right" valign="top">readonly IStringLocalizer&lt; <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html">HighlanderModule</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#a802c8d13147c7442681199ffd6542881">stringLocalizer</a></td></tr>
 <tr class="memdesc:a802c8d13147c7442681199ffd6542881"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IStringLocalizer for the <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html" title="Implements the One Per Person IModule ">HighlanderModule</a>  <a href="#a802c8d13147c7442681199ffd6542881">More...</a><br /></td></tr>
 <tr class="separator:a802c8d13147c7442681199ffd6542881"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c0475542f1cf73e8bd1dee7a995f5c3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#a7c0475542f1cf73e8bd1dee7a995f5c3">enabled</a></td></tr>
+<tr class="memdesc:a7c0475542f1cf73e8bd1dee7a995f5c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Backing field for <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#a792c5f7550c4e3089f22e810cbbb360a" title="If the IModule is enabled  ">SetEnabled(bool)</a>  <a href="#a7c0475542f1cf73e8bd1dee7a995f5c3">More...</a><br /></td></tr>
+<tr class="separator:a7c0475542f1cf73e8bd1dee7a995f5c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td colspan="2" onclick="javascript:toggleInherit('properties_interface_t_g_webhooks_1_1_modules_1_1_i_module')"><img src="closed.png" alt="-"/>&#160;Properties inherited from <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html">TGWebhooks.Modules.IModule</a></td></tr>
+<tr class="memitem:a3e34caef91316be44f7030b96449a05a inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="memItemLeft" align="right" valign="top">Guid&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html#a3e34caef91316be44f7030b96449a05a">Uid</a><code> [get]</code></td></tr>
+<tr class="memdesc:a3e34caef91316be44f7030b96449a05a inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="mdescLeft">&#160;</td><td class="mdescRight">A unique <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html#a3e34caef91316be44f7030b96449a05a" title="A unique Uid for the IModule ">Uid</a> for the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html" title="Representation of a plugin for TGWebhooks ">IModule</a>  <a href="#a3e34caef91316be44f7030b96449a05a">More...</a><br /></td></tr>
+<tr class="separator:a3e34caef91316be44f7030b96449a05a inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95ea8c877e3a9e3eb983a08a1a61a861 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html#a95ea8c877e3a9e3eb983a08a1a61a861">Name</a><code> [get]</code></td></tr>
+<tr class="memdesc:a95ea8c877e3a9e3eb983a08a1a61a861 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="mdescLeft">&#160;</td><td class="mdescRight">The name of the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html" title="Representation of a plugin for TGWebhooks ">IModule</a>  <a href="#a95ea8c877e3a9e3eb983a08a1a61a861">More...</a><br /></td></tr>
+<tr class="separator:a95ea8c877e3a9e3eb983a08a1a61a861 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a13d6c7420dac13770b955459e02387 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html#a3a13d6c7420dac13770b955459e02387">Description</a><code> [get]</code></td></tr>
+<tr class="memdesc:a3a13d6c7420dac13770b955459e02387 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="mdescLeft">&#160;</td><td class="mdescRight">A verbose user-friendly description of the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html" title="Representation of a plugin for TGWebhooks ">IModule</a>  <a href="#a3a13d6c7420dac13770b955459e02387">More...</a><br /></td></tr>
+<tr class="separator:a3a13d6c7420dac13770b955459e02387 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_module"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base"><td colspan="2" onclick="javascript:toggleInherit('properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base')"><img src="closed.png" alt="-"/>&#160;Properties inherited from <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base.html">TGWebhooks.Modules.IComponentProviderBase</a></td></tr>
+<tr class="memitem:a1bfd6635fb57e61301df0f03cae8c945 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base"><td class="memItemLeft" align="right" valign="top">IEnumerable&lt; <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html">IMergeRequirement</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base.html#a1bfd6635fb57e61301df0f03cae8c945">MergeRequirements</a><code> [get]</code></td></tr>
+<tr class="memdesc:a1bfd6635fb57e61301df0f03cae8c945 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html" title="Represents a bar on automatic merging of a pull request ">IMergeRequirement</a>s the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base.html" title="for providing access to webhook components ">IComponentProviderBase</a> contains  <a href="#a1bfd6635fb57e61301df0f03cae8c945">More...</a><br /></td></tr>
+<tr class="separator:a1bfd6635fb57e61301df0f03cae8c945 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Implements the One Per Person <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html" title="Representation of a plugin for TGWebhooks ">IModule</a> </p>
@@ -221,9 +212,9 @@ Private Attributes</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_highlander_module_8cs_source.html#l00049">49</a> of file <a class="el" href="_highlander_module_8cs_source.html">HighlanderModule.cs</a>.</p>
-<div class="fragment"><div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        {</div><div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;            this.<a class="code" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#afb5a565d7a9472885db6357a4738ae97">gitHubManager</a> = <a class="code" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#afb5a565d7a9472885db6357a4738ae97">gitHubManager</a> ?? <span class="keywordflow">throw</span> <span class="keyword">new</span> ArgumentNullException(nameof(<a class="code" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#afb5a565d7a9472885db6357a4738ae97">gitHubManager</a>));</div><div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            this.<a class="code" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#a802c8d13147c7442681199ffd6542881">stringLocalizer</a> = <a class="code" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#a802c8d13147c7442681199ffd6542881">stringLocalizer</a> ?? <span class="keywordflow">throw</span> <span class="keyword">new</span> ArgumentNullException(nameof(<a class="code" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#a802c8d13147c7442681199ffd6542881">stringLocalizer</a>));</div><div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        }</div><div class="ttc" id="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module_html_afb5a565d7a9472885db6357a4738ae97"><div class="ttname"><a href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#afb5a565d7a9472885db6357a4738ae97">TGWebhooks.Modules.Highlander.HighlanderModule.gitHubManager</a></div><div class="ttdeci">readonly IGitHubManager gitHubManager</div><div class="ttdoc">The IGitHubManager for the HighlanderModule </div><div class="ttdef"><b>Definition:</b> <a href="_highlander_module_8cs_source.html#l00038">HighlanderModule.cs:38</a></div></div>
-<div class="ttc" id="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module_html_a802c8d13147c7442681199ffd6542881"><div class="ttname"><a href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#a802c8d13147c7442681199ffd6542881">TGWebhooks.Modules.Highlander.HighlanderModule.stringLocalizer</a></div><div class="ttdeci">readonly IStringLocalizer&lt; HighlanderModule &gt; stringLocalizer</div><div class="ttdoc">The IStringLocalizer for the HighlanderModule </div><div class="ttdef"><b>Definition:</b> <a href="_highlander_module_8cs_source.html#l00042">HighlanderModule.cs:42</a></div></div>
+<p>Definition at line <a class="el" href="_highlander_module_8cs_source.html#l00048">48</a> of file <a class="el" href="_highlander_module_8cs_source.html">HighlanderModule.cs</a>.</p>
+<div class="fragment"><div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        {</div><div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;            this.<a class="code" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#afb5a565d7a9472885db6357a4738ae97">gitHubManager</a> = <a class="code" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#afb5a565d7a9472885db6357a4738ae97">gitHubManager</a> ?? <span class="keywordflow">throw</span> <span class="keyword">new</span> ArgumentNullException(nameof(<a class="code" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#afb5a565d7a9472885db6357a4738ae97">gitHubManager</a>));</div><div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;            this.<a class="code" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#a802c8d13147c7442681199ffd6542881">stringLocalizer</a> = <a class="code" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#a802c8d13147c7442681199ffd6542881">stringLocalizer</a> ?? <span class="keywordflow">throw</span> <span class="keyword">new</span> ArgumentNullException(nameof(<a class="code" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#a802c8d13147c7442681199ffd6542881">stringLocalizer</a>));</div><div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        }</div><div class="ttc" id="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module_html_afb5a565d7a9472885db6357a4738ae97"><div class="ttname"><a href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#afb5a565d7a9472885db6357a4738ae97">TGWebhooks.Modules.Highlander.HighlanderModule.gitHubManager</a></div><div class="ttdeci">readonly IGitHubManager gitHubManager</div><div class="ttdoc">The IGitHubManager for the HighlanderModule </div><div class="ttdef"><b>Definition:</b> <a href="_highlander_module_8cs_source.html#l00032">HighlanderModule.cs:32</a></div></div>
+<div class="ttc" id="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module_html_a802c8d13147c7442681199ffd6542881"><div class="ttname"><a href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#a802c8d13147c7442681199ffd6542881">TGWebhooks.Modules.Highlander.HighlanderModule.stringLocalizer</a></div><div class="ttdeci">readonly IStringLocalizer&lt; HighlanderModule &gt; stringLocalizer</div><div class="ttdoc">The IStringLocalizer for the HighlanderModule </div><div class="ttdef"><b>Definition:</b> <a href="_highlander_module_8cs_source.html#l00036">HighlanderModule.cs:36</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -258,9 +249,9 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Adds vars to the Microsoft.AspNetCore.Mvc.Controller.ViewBag of the <a class="el" href="class_t_g_webhooks_1_1_controllers_1_1_pull_request_controller.html" title="Main Octokit.PullRequest management interface ">Controllers.PullRequestController</a>  </p>
+<p>Adds vars to the Microsoft.AspNetCore.Mvc.Controller.ViewBag of the <a class="el" href="class_t_g_webhooks_1_1_controllers_1_1_pull_request_controller.html" title="Main PullRequest management interface ">Controllers.PullRequestController</a>  </p>
 
-<p>Implements <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html#a234a12475747b9a361cf4e176a225ce5">TGWebhooks.Modules.IComponentProvider</a>.</p>
+<p>Implements <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base.html#a76e4219db16fe32931b48586b233d915">TGWebhooks.Modules.IComponentProviderBase</a>.</p>
 
 </div>
 </div>
@@ -277,9 +268,9 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>The IPayloadHandler&lt;TPayload&gt;s the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components ">IComponentProvider</a> contains  </p>
+<p>The IPayloadHandler&lt;TPayload&gt;s the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base.html" title="for providing access to webhook components ">IComponentProviderBase</a> contains  </p>
 
-<p>Implements <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html#afa191c6c95e62dd33703f9b825816b66">TGWebhooks.Modules.IComponentProvider</a>.</p>
+<p>Implements <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base.html#acf9d4b5c78b63f38c544e2ddc9cb2d36">TGWebhooks.Modules.IComponentProviderBase</a>.</p>
 <div class="typeconstraint">
 <dl><dt><b>Type Constraints</b></dt><dd>
 <table border="0" cellspacing="2" cellpadding="0">
@@ -289,29 +280,9 @@ Private Attributes</h2></td></tr>
 </dl>
 </div>
 
-<p>Definition at line <a class="el" href="_highlander_module_8cs_source.html#l00056">56</a> of file <a class="el" href="_highlander_module_8cs_source.html">HighlanderModule.cs</a>.</p>
-<div class="fragment"><div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                                                                                                    : <a class="code" href="class_activity_payload.html">ActivityPayload</a></div><div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        {</div><div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            <span class="keywordflow">if</span> (typeof(TPayload) == typeof(PullRequestEventPayload))</div><div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;                yield <span class="keywordflow">return</span> (IPayloadHandler&lt;TPayload&gt;)(object)<span class="keyword">this</span>;</div><div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        }</div><div class="ttc" id="class_activity_payload_html"><div class="ttname"><a href="class_activity_payload.html">ActivityPayload</a></div></div>
+<p>Definition at line <a class="el" href="_highlander_module_8cs_source.html#l00055">55</a> of file <a class="el" href="_highlander_module_8cs_source.html">HighlanderModule.cs</a>.</p>
+<div class="fragment"><div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;                                                                                                    : <a class="code" href="class_activity_payload.html">ActivityPayload</a></div><div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        {</div><div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;            <span class="keywordflow">if</span> (typeof(TPayload) == typeof(PullRequestEventPayload))</div><div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;                yield <span class="keywordflow">return</span> (IPayloadHandler&lt;TPayload&gt;)(object)<span class="keyword">this</span>;</div><div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        }</div><div class="ttc" id="class_activity_payload_html"><div class="ttname"><a href="class_activity_payload.html">ActivityPayload</a></div></div>
 </div><!-- fragment -->
-</div>
-</div>
-<a class="anchor" id="a26dc5c5144b09ae1482334e1e382abe6"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">Task TGWebhooks.Modules.Highlander.HighlanderModule.Initialize </td>
-          <td>(</td>
-          <td class="paramtype">CancellationToken&#160;</td>
-          <td class="paramname"><em>cancellationToken</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Load components in the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components ">IComponentProvider</a>. Will be called before any other function  </p>
-
-<p>Implements <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_initializable.html#abbb485b3b5f17fc2c6040e5a97586182">TGWebhooks.Modules.IInitializable</a>.</p>
-
 </div>
 </div>
 <a class="anchor" id="a5623b6c52a3017bdae1b1eaddb928b0f"></a>
@@ -340,14 +311,34 @@ Private Attributes</h2></td></tr>
 
 <p></p>
 
-<p>Definition at line <a class="el" href="_highlander_module_8cs_source.html#l00069">69</a> of file <a class="el" href="_highlander_module_8cs_source.html">HighlanderModule.cs</a>.</p>
-<div class="fragment"><div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        {</div><div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;            <span class="keywordflow">if</span> (payload == null)</div><div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;                <span class="keywordflow">throw</span> <span class="keyword">new</span> ArgumentNullException(nameof(payload));</div><div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            <span class="keywordflow">if</span> (payload.Action != <span class="stringliteral">&quot;opened&quot;</span>)</div><div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;                <span class="keywordflow">throw</span> <span class="keyword">new</span> NotSupportedException();</div><div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div><div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;            <span class="keywordflow">if</span> (await <a class="code" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#afb5a565d7a9472885db6357a4738ae97">gitHubManager</a>.<a class="code" href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a2d647d50e65cad13035823d0b054f422">UserHasWriteAccess</a>(payload.PullRequest.User).ConfigureAwait(<span class="keyword">false</span>))</div><div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;                <span class="keywordflow">return</span>;</div><div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div><div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;            var allPrs = await <a class="code" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#afb5a565d7a9472885db6357a4738ae97">gitHubManager</a>.<a class="code" href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a809dd7d9b34976f226e938e8feb2089c">GetOpenPullRequests</a>().ConfigureAwait(<span class="keyword">false</span>);</div><div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;            <span class="keywordtype">string</span> result = null;</div><div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;            <span class="keywordflow">foreach</span> (var I <span class="keywordflow">in</span> allPrs.Where(x =&gt; x.User.Id == payload.PullRequest.User.Id &amp;&amp; x.Id != payload.PullRequest.Id).Select(x =&gt; x.Number))</div><div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                result = (result != null) ? result + String.Format(CultureInfo.InvariantCulture, <span class="stringliteral">&quot;, #{0}&quot;</span>, I) : String.Format(CultureInfo.InvariantCulture, <span class="stringliteral">&quot;#{0}&quot;</span>, I);</div><div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div><div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;            <span class="keywordflow">if</span>(result != null)</div><div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;            {</div><div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;                await <a class="code" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#afb5a565d7a9472885db6357a4738ae97">gitHubManager</a>.<a class="code" href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a4f18977770c737ff7b08267e5aa8e0e9">CreateComment</a>(payload.PullRequest.Number, <a class="code" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#a802c8d13147c7442681199ffd6542881">stringLocalizer</a>[<span class="stringliteral">&quot;TooManyPRs&quot;</span>, result]);</div><div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                await <a class="code" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#afb5a565d7a9472885db6357a4738ae97">gitHubManager</a>.<a class="code" href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a0e0fa914ff9e464932ee9afb59857f88">Close</a>(payload.PullRequest.Number);</div><div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;            }</div><div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        }</div><div class="ttc" id="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager_html_a0e0fa914ff9e464932ee9afb59857f88"><div class="ttname"><a href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a0e0fa914ff9e464932ee9afb59857f88">TGWebhooks.Modules.IGitHubManager.Close</a></div><div class="ttdeci">Task Close(int number)</div><div class="ttdoc">Close the specified Issue </div></div>
+<p>Definition at line <a class="el" href="_highlander_module_8cs_source.html#l00065">65</a> of file <a class="el" href="_highlander_module_8cs_source.html">HighlanderModule.cs</a>.</p>
+<div class="fragment"><div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        {</div><div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;            <span class="keywordflow">if</span> (payload == null)</div><div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;                <span class="keywordflow">throw</span> <span class="keyword">new</span> ArgumentNullException(nameof(payload));</div><div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;            <span class="keywordflow">if</span> (payload.Action != <span class="stringliteral">&quot;opened&quot;</span>)</div><div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;                <span class="keywordflow">throw</span> <span class="keyword">new</span> NotSupportedException();</div><div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div><div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;            <span class="keywordflow">if</span> (await <a class="code" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#afb5a565d7a9472885db6357a4738ae97">gitHubManager</a>.<a class="code" href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a2d647d50e65cad13035823d0b054f422">UserHasWriteAccess</a>(payload.PullRequest.User).ConfigureAwait(<span class="keyword">false</span>))</div><div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;                <span class="keywordflow">return</span>;</div><div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div><div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;            var allPrs = await <a class="code" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#afb5a565d7a9472885db6357a4738ae97">gitHubManager</a>.<a class="code" href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a809dd7d9b34976f226e938e8feb2089c">GetOpenPullRequests</a>().ConfigureAwait(<span class="keyword">false</span>);</div><div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;            <span class="keywordtype">string</span> result = null;</div><div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            <span class="keywordflow">foreach</span> (var I <span class="keywordflow">in</span> allPrs.Where(x =&gt; x.User.Id == payload.PullRequest.User.Id &amp;&amp; x.Id != payload.PullRequest.Id).Select(x =&gt; x.Number))</div><div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                result = (result != null) ? result + String.Format(CultureInfo.InvariantCulture, <span class="stringliteral">&quot;, #{0}&quot;</span>, I) : String.Format(CultureInfo.InvariantCulture, <span class="stringliteral">&quot;#{0}&quot;</span>, I);</div><div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div><div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;            <span class="keywordflow">if</span>(result != null)</div><div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;            {</div><div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                await <a class="code" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#afb5a565d7a9472885db6357a4738ae97">gitHubManager</a>.<a class="code" href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a4f18977770c737ff7b08267e5aa8e0e9">CreateComment</a>(payload.PullRequest.Number, <a class="code" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#a802c8d13147c7442681199ffd6542881">stringLocalizer</a>[<span class="stringliteral">&quot;TooManyPRs&quot;</span>, result]).ConfigureAwait(<span class="keyword">false</span>);</div><div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                await <a class="code" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#afb5a565d7a9472885db6357a4738ae97">gitHubManager</a>.<a class="code" href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a0e0fa914ff9e464932ee9afb59857f88">Close</a>(payload.PullRequest.Number).ConfigureAwait(<span class="keyword">false</span>);</div><div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;            }</div><div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        }</div><div class="ttc" id="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager_html_a0e0fa914ff9e464932ee9afb59857f88"><div class="ttname"><a href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a0e0fa914ff9e464932ee9afb59857f88">TGWebhooks.Modules.IGitHubManager.Close</a></div><div class="ttdeci">Task Close(int number)</div><div class="ttdoc">Close the specified Issue </div></div>
 <div class="ttc" id="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager_html_a2d647d50e65cad13035823d0b054f422"><div class="ttname"><a href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a2d647d50e65cad13035823d0b054f422">TGWebhooks.Modules.IGitHubManager.UserHasWriteAccess</a></div><div class="ttdeci">Task&lt; bool &gt; UserHasWriteAccess(User user)</div><div class="ttdoc">Check if a user  has write access to the configured repository </div></div>
-<div class="ttc" id="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module_html_afb5a565d7a9472885db6357a4738ae97"><div class="ttname"><a href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#afb5a565d7a9472885db6357a4738ae97">TGWebhooks.Modules.Highlander.HighlanderModule.gitHubManager</a></div><div class="ttdeci">readonly IGitHubManager gitHubManager</div><div class="ttdoc">The IGitHubManager for the HighlanderModule </div><div class="ttdef"><b>Definition:</b> <a href="_highlander_module_8cs_source.html#l00038">HighlanderModule.cs:38</a></div></div>
+<div class="ttc" id="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module_html_afb5a565d7a9472885db6357a4738ae97"><div class="ttname"><a href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#afb5a565d7a9472885db6357a4738ae97">TGWebhooks.Modules.Highlander.HighlanderModule.gitHubManager</a></div><div class="ttdeci">readonly IGitHubManager gitHubManager</div><div class="ttdoc">The IGitHubManager for the HighlanderModule </div><div class="ttdef"><b>Definition:</b> <a href="_highlander_module_8cs_source.html#l00032">HighlanderModule.cs:32</a></div></div>
 <div class="ttc" id="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager_html_a4f18977770c737ff7b08267e5aa8e0e9"><div class="ttname"><a href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a4f18977770c737ff7b08267e5aa8e0e9">TGWebhooks.Modules.IGitHubManager.CreateComment</a></div><div class="ttdeci">Task CreateComment(int number, string body)</div><div class="ttdoc">Creates a comment on the specified Issue </div></div>
-<div class="ttc" id="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module_html_a802c8d13147c7442681199ffd6542881"><div class="ttname"><a href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#a802c8d13147c7442681199ffd6542881">TGWebhooks.Modules.Highlander.HighlanderModule.stringLocalizer</a></div><div class="ttdeci">readonly IStringLocalizer&lt; HighlanderModule &gt; stringLocalizer</div><div class="ttdoc">The IStringLocalizer for the HighlanderModule </div><div class="ttdef"><b>Definition:</b> <a href="_highlander_module_8cs_source.html#l00042">HighlanderModule.cs:42</a></div></div>
+<div class="ttc" id="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module_html_a802c8d13147c7442681199ffd6542881"><div class="ttname"><a href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#a802c8d13147c7442681199ffd6542881">TGWebhooks.Modules.Highlander.HighlanderModule.stringLocalizer</a></div><div class="ttdeci">readonly IStringLocalizer&lt; HighlanderModule &gt; stringLocalizer</div><div class="ttdoc">The IStringLocalizer for the HighlanderModule </div><div class="ttdef"><b>Definition:</b> <a href="_highlander_module_8cs_source.html#l00036">HighlanderModule.cs:36</a></div></div>
 <div class="ttc" id="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager_html_a809dd7d9b34976f226e938e8feb2089c"><div class="ttname"><a href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a809dd7d9b34976f226e938e8feb2089c">TGWebhooks.Modules.IGitHubManager.GetOpenPullRequests</a></div><div class="ttdeci">Task&lt; IReadOnlyList&lt; PullRequest &gt; &gt; GetOpenPullRequests()</div><div class="ttdoc">Gets all open PullRequests </div></div>
 </div><!-- fragment -->
+</div>
+</div>
+<a class="anchor" id="a792c5f7550c4e3089f22e810cbbb360a"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void TGWebhooks.Modules.Highlander.HighlanderModule.SetEnabled </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>enabled</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>If the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html" title="Representation of a plugin for TGWebhooks ">IModule</a> is enabled  </p>
+
+<p>Implements <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html#a3cbc5bdb5ff39a22903e6e4c79a6c7de">TGWebhooks.Modules.IModule</a>.</p>
+
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
@@ -363,7 +354,31 @@ Private Attributes</h2></td></tr>
 
 <p></p>
 
-<p>Definition at line <a class="el" href="_highlander_module_8cs_source.html#l00027">27</a> of file <a class="el" href="_highlander_module_8cs_source.html">HighlanderModule.cs</a>.</p>
+<p>Definition at line <a class="el" href="_highlander_module_8cs_source.html#l00024">24</a> of file <a class="el" href="_highlander_module_8cs_source.html">HighlanderModule.cs</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a7c0475542f1cf73e8bd1dee7a995f5c3"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool TGWebhooks.Modules.Highlander.HighlanderModule.enabled</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Backing field for <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#a792c5f7550c4e3089f22e810cbbb360a" title="If the IModule is enabled  ">SetEnabled(bool)</a> </p>
+
+<p>Definition at line <a class="el" href="_highlander_module_8cs_source.html#l00041">41</a> of file <a class="el" href="_highlander_module_8cs_source.html">HighlanderModule.cs</a>.</p>
 
 </div>
 </div>
@@ -387,23 +402,7 @@ Private Attributes</h2></td></tr>
 
 <p>The <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html" title="Access to the GitHub API ">IGitHubManager</a> for the <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html" title="Implements the One Per Person IModule ">HighlanderModule</a> </p>
 
-<p>Definition at line <a class="el" href="_highlander_module_8cs_source.html#l00038">38</a> of file <a class="el" href="_highlander_module_8cs_source.html">HighlanderModule.cs</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a46b62be3df4fc318daa5fc945223b99a"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">IEnumerable&lt;<a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_hook.html">IMergeHook</a>&gt; TGWebhooks.Modules.Highlander.HighlanderModule.MergeHooks =&gt; Enumerable.Empty&lt;<a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_hook.html">IMergeHook</a>&gt;()</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p></p>
-
-<p>Definition at line <a class="el" href="_highlander_module_8cs_source.html#l00033">33</a> of file <a class="el" href="_highlander_module_8cs_source.html">HighlanderModule.cs</a>.</p>
+<p>Definition at line <a class="el" href="_highlander_module_8cs_source.html#l00032">32</a> of file <a class="el" href="_highlander_module_8cs_source.html">HighlanderModule.cs</a>.</p>
 
 </div>
 </div>
@@ -419,7 +418,7 @@ Private Attributes</h2></td></tr>
 
 <p></p>
 
-<p>Definition at line <a class="el" href="_highlander_module_8cs_source.html#l00030">30</a> of file <a class="el" href="_highlander_module_8cs_source.html">HighlanderModule.cs</a>.</p>
+<p>Definition at line <a class="el" href="_highlander_module_8cs_source.html#l00027">27</a> of file <a class="el" href="_highlander_module_8cs_source.html">HighlanderModule.cs</a>.</p>
 
 </div>
 </div>
@@ -435,7 +434,7 @@ Private Attributes</h2></td></tr>
 
 <p></p>
 
-<p>Definition at line <a class="el" href="_highlander_module_8cs_source.html#l00024">24</a> of file <a class="el" href="_highlander_module_8cs_source.html">HighlanderModule.cs</a>.</p>
+<p>Definition at line <a class="el" href="_highlander_module_8cs_source.html#l00021">21</a> of file <a class="el" href="_highlander_module_8cs_source.html">HighlanderModule.cs</a>.</p>
 
 </div>
 </div>
@@ -459,7 +458,7 @@ Private Attributes</h2></td></tr>
 
 <p>The IStringLocalizer for the <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html" title="Implements the One Per Person IModule ">HighlanderModule</a> </p>
 
-<p>Definition at line <a class="el" href="_highlander_module_8cs_source.html#l00042">42</a> of file <a class="el" href="_highlander_module_8cs_source.html">HighlanderModule.cs</a>.</p>
+<p>Definition at line <a class="el" href="_highlander_module_8cs_source.html#l00036">36</a> of file <a class="el" href="_highlander_module_8cs_source.html">HighlanderModule.cs</a>.</p>
 
 </div>
 </div>
@@ -471,31 +470,6 @@ Private Attributes</h2></td></tr>
           <td class="memname">Guid TGWebhooks.Modules.Highlander.HighlanderModule.Uid =&gt; new Guid(&quot;ec74d6d5-c0ac-46d2-bcec-f52494e2e8c6&quot;)</td>
         </tr>
       </table>
-</div><div class="memdoc">
-
-<p></p>
-
-<p>Definition at line <a class="el" href="_highlander_module_8cs_source.html#l00021">21</a> of file <a class="el" href="_highlander_module_8cs_source.html">HighlanderModule.cs</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Property Documentation</h2>
-<a class="anchor" id="ad2813a5d2b86bc2e96cdaaec206a4143"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool TGWebhooks.Modules.Highlander.HighlanderModule.Enabled</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">get</span><span class="mlabel">set</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p></p>

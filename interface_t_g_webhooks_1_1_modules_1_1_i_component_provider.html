@@ -90,15 +90,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#properties">Properties</a> &#124;
 <a href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">TGWebhooks.Modules.IComponentProvider Interface Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>for providing access to webhook components  
+<p><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base.html" title="for providing access to webhook components ">IComponentProviderBase</a> which requires initialization  
  <a href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html#details">More...</a></p>
 <div class="dynheader">
 Inheritance diagram for TGWebhooks.Modules.IComponentProvider:</div>
@@ -106,171 +104,36 @@ Inheritance diagram for TGWebhooks.Modules.IComponentProvider:</div>
  <div class="center">
   <img src="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.png" usemap="#TGWebhooks.Modules.IComponentProvider_map" alt=""/>
   <map id="TGWebhooks.Modules.IComponentProvider_map" name="TGWebhooks.Modules.IComponentProvider_map">
-<area href="interface_t_g_webhooks_1_1_modules_1_1_i_initializable.html" title="Represents an object that requires initialization before use " alt="TGWebhooks.Modules.IInitializable" shape="rect" coords="219,0,647,24"/>
-<area href="interface_t_g_webhooks_1_1_core_1_1_i_module_manager.html" title="Manages webhook plugins " alt="TGWebhooks.Core.IModuleManager" shape="rect" coords="0,112,428,136"/>
-<area href="interface_t_g_webhooks_1_1_modules_1_1_i_module.html" title="Representation of a plugin for TGWebhooks " alt="TGWebhooks.Modules.IModule" shape="rect" coords="438,112,866,136"/>
-<area href="class_t_g_webhooks_1_1_core_1_1_module_manager.html" alt="TGWebhooks.Core.ModuleManager" shape="rect" coords="0,168,428,192"/>
-<area href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html" title="Contains the IPayloadHandler&lt;TPayload&gt; to delete merged branches " alt="TGWebhooks.Modules.AutoDeleteBranch.AutoDeleteBranchModule" shape="rect" coords="876,168,1304,192"/>
-<area href="class_t_g_webhooks_1_1_modules_1_1_changelog_generator_1_1_changelog_generator_module.html" title="Generates changelog .yaml files " alt="TGWebhooks.Modules.ChangelogGenerator.ChangelogGeneratorModule" shape="rect" coords="876,224,1304,248"/>
-<area href="class_t_g_webhooks_1_1_modules_1_1_game_announcer_1_1_game_announcer_module.html" title="Implements the game announcer IModule " alt="TGWebhooks.Modules.GameAnnouncer.GameAnnouncerModule" shape="rect" coords="876,280,1304,304"/>
-<area href="class_t_g_webhooks_1_1_modules_1_1_good_boy_points_1_1_good_boy_points_module.html" title="Implements the Good Boy Points tracking " alt="TGWebhooks.Modules.GoodBoyPoints.GoodBoyPointsModule" shape="rect" coords="876,336,1304,360"/>
-<area href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html" title="Implements the One Per Person IModule " alt="TGWebhooks.Modules.Highlander.HighlanderModule" shape="rect" coords="876,392,1304,416"/>
-<area href="class_t_g_webhooks_1_1_modules_1_1_p_r_tagger_1_1_pull_request_labeller_module.html" title="IModule for auto labelling a PullRequest " alt="TGWebhooks.Modules.PRTagger.PullRequestLabellerModule" shape="rect" coords="876,448,1304,472"/>
-<area href="class_t_g_webhooks_1_1_modules_1_1_review_manager_1_1_review_manager_module.html" title="IModule for managing maintainer reviews " alt="TGWebhooks.Modules.ReviewManager.ReviewManagerModule" shape="rect" coords="876,504,1304,528"/>
-<area href="class_t_g_webhooks_1_1_modules_1_1_sign_off_1_1_sign_off_module.html" title="IModule containing the Maintainer Sign Off IMergeRequirement " alt="TGWebhooks.Modules.SignOff.SignOffModule" shape="rect" coords="876,560,1304,584"/>
-<area href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module.html" title="IModule for the 24-Hour Rule IMergeRequirement " alt="TGWebhooks.Modules.TwentyFourHourRule.TwentyFourHourRuleModule" shape="rect" coords="876,616,1304,640"/>
+<area href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base.html" title="for providing access to webhook components " alt="TGWebhooks.Modules.IComponentProviderBase" shape="rect" coords="0,0,285,24"/>
+<area href="interface_t_g_webhooks_1_1_modules_1_1_i_initializable.html" title="Represents an object that requires initialization before use " alt="TGWebhooks.Modules.IInitializable" shape="rect" coords="295,0,580,24"/>
+<area href="interface_t_g_webhooks_1_1_core_1_1_i_module_manager.html" title="Manages webhook plugins " alt="TGWebhooks.Core.IModuleManager" shape="rect" coords="147,112,432,136"/>
+<area href="class_t_g_webhooks_1_1_core_1_1_module_manager.html" alt="TGWebhooks.Core.ModuleManager" shape="rect" coords="147,168,432,192"/>
 </map>
  </div></div>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
-Public Member Functions</h2></td></tr>
-<tr class="memitem:afa191c6c95e62dd33703f9b825816b66"><td class="memItemLeft" align="right" valign="top">IEnumerable&lt; <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_payload_handler.html">IPayloadHandler</a>&lt; TPayload &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html#afa191c6c95e62dd33703f9b825816b66">GetPayloadHandlers&lt; TPayload &gt;</a> ()</td></tr>
-<tr class="memdesc:afa191c6c95e62dd33703f9b825816b66"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IPayloadHandler&lt;TPayload&gt;s the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components ">IComponentProvider</a> contains  <a href="#afa191c6c95e62dd33703f9b825816b66">More...</a><br /></td></tr>
-<tr class="separator:afa191c6c95e62dd33703f9b825816b66"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a234a12475747b9a361cf4e176a225ce5"><td class="memItemLeft" align="right" valign="top">Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html#a234a12475747b9a361cf4e176a225ce5">AddViewVars</a> (PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken)</td></tr>
-<tr class="memdesc:a234a12475747b9a361cf4e176a225ce5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds vars to the Microsoft.AspNetCore.Mvc.Controller.ViewBag of the <a class="el" href="class_t_g_webhooks_1_1_controllers_1_1_pull_request_controller.html" title="Main Octokit.PullRequest management interface ">Controllers.PullRequestController</a>  <a href="#a234a12475747b9a361cf4e176a225ce5">More...</a><br /></td></tr>
-<tr class="separator:a234a12475747b9a361cf4e176a225ce5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base.html">TGWebhooks.Modules.IComponentProviderBase</a></td></tr>
+<tr class="memitem:acf9d4b5c78b63f38c544e2ddc9cb2d36 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base"><td class="memItemLeft" align="right" valign="top">IEnumerable&lt; <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_payload_handler.html">IPayloadHandler</a>&lt; TPayload &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base.html#acf9d4b5c78b63f38c544e2ddc9cb2d36">GetPayloadHandlers&lt; TPayload &gt;</a> ()</td></tr>
+<tr class="memdesc:acf9d4b5c78b63f38c544e2ddc9cb2d36 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">The IPayloadHandler&lt;TPayload&gt;s the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base.html" title="for providing access to webhook components ">IComponentProviderBase</a> contains  <a href="#acf9d4b5c78b63f38c544e2ddc9cb2d36">More...</a><br /></td></tr>
+<tr class="separator:acf9d4b5c78b63f38c544e2ddc9cb2d36 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76e4219db16fe32931b48586b233d915 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base"><td class="memItemLeft" align="right" valign="top">Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base.html#a76e4219db16fe32931b48586b233d915">AddViewVars</a> (PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken)</td></tr>
+<tr class="memdesc:a76e4219db16fe32931b48586b233d915 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds vars to the Microsoft.AspNetCore.Mvc.Controller.ViewBag of the <a class="el" href="class_t_g_webhooks_1_1_controllers_1_1_pull_request_controller.html" title="Main PullRequest management interface ">Controllers.PullRequestController</a>  <a href="#a76e4219db16fe32931b48586b233d915">More...</a><br /></td></tr>
+<tr class="separator:a76e4219db16fe32931b48586b233d915 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_initializable"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_initializable')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_initializable.html">TGWebhooks.Modules.IInitializable</a></td></tr>
 <tr class="memitem:abbb485b3b5f17fc2c6040e5a97586182 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_initializable"><td class="memItemLeft" align="right" valign="top">Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_initializable.html#abbb485b3b5f17fc2c6040e5a97586182">Initialize</a> (CancellationToken cancellationToken)</td></tr>
-<tr class="memdesc:abbb485b3b5f17fc2c6040e5a97586182 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_initializable"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load components in the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components ">IComponentProvider</a>. Will be called before any other function  <a href="#abbb485b3b5f17fc2c6040e5a97586182">More...</a><br /></td></tr>
+<tr class="memdesc:abbb485b3b5f17fc2c6040e5a97586182 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_initializable"><td class="mdescLeft">&#160;</td><td class="mdescRight">Asyncronously set up the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_initializable.html" title="Represents an object that requires initialization before use ">IInitializable</a>  <a href="#abbb485b3b5f17fc2c6040e5a97586182">More...</a><br /></td></tr>
 <tr class="separator:abbb485b3b5f17fc2c6040e5a97586182 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_initializable"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="properties"></a>
-Properties</h2></td></tr>
-<tr class="memitem:a5cd008e931b342b7eda63f28fc11d1fe"><td class="memItemLeft" align="right" valign="top">IEnumerable&lt; <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html">IMergeRequirement</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html#a5cd008e931b342b7eda63f28fc11d1fe">MergeRequirements</a><code> [get]</code></td></tr>
-<tr class="memdesc:a5cd008e931b342b7eda63f28fc11d1fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html" title="Represents a bar on automatic merging of a pull request ">IMergeRequirement</a>s the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components ">IComponentProvider</a> contains  <a href="#a5cd008e931b342b7eda63f28fc11d1fe">More...</a><br /></td></tr>
-<tr class="separator:a5cd008e931b342b7eda63f28fc11d1fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aef489d80950b8fdd97663f6f5b484b53"><td class="memItemLeft" align="right" valign="top">IEnumerable&lt; <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_hook.html">IMergeHook</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html#aef489d80950b8fdd97663f6f5b484b53">MergeHooks</a><code> [get]</code></td></tr>
-<tr class="memdesc:aef489d80950b8fdd97663f6f5b484b53"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_hook.html" title="Operations for modifying a PullRequest before it is merged ">IMergeHook</a>s the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components ">IComponentProvider</a> contains  <a href="#aef489d80950b8fdd97663f6f5b484b53">More...</a><br /></td></tr>
-<tr class="separator:aef489d80950b8fdd97663f6f5b484b53"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base"><td colspan="2" onclick="javascript:toggleInherit('properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base')"><img src="closed.png" alt="-"/>&#160;Properties inherited from <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base.html">TGWebhooks.Modules.IComponentProviderBase</a></td></tr>
+<tr class="memitem:a1bfd6635fb57e61301df0f03cae8c945 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base"><td class="memItemLeft" align="right" valign="top">IEnumerable&lt; <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html">IMergeRequirement</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base.html#a1bfd6635fb57e61301df0f03cae8c945">MergeRequirements</a><code> [get]</code></td></tr>
+<tr class="memdesc:a1bfd6635fb57e61301df0f03cae8c945 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html" title="Represents a bar on automatic merging of a pull request ">IMergeRequirement</a>s the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base.html" title="for providing access to webhook components ">IComponentProviderBase</a> contains  <a href="#a1bfd6635fb57e61301df0f03cae8c945">More...</a><br /></td></tr>
+<tr class="separator:a1bfd6635fb57e61301df0f03cae8c945 inherit properties_interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>for providing access to webhook components </p>
+<div class="textblock"><p><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider_base.html" title="for providing access to webhook components ">IComponentProviderBase</a> which requires initialization </p>
 
-<p>Definition at line <a class="el" href="_i_component_provider_8cs_source.html#l00011">11</a> of file <a class="el" href="_i_component_provider_8cs_source.html">IComponentProvider.cs</a>.</p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a234a12475747b9a361cf4e176a225ce5"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">Task TGWebhooks.Modules.IComponentProvider.AddViewVars </td>
-          <td>(</td>
-          <td class="paramtype">PullRequest&#160;</td>
-          <td class="paramname"><em>pullRequest</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">dynamic&#160;</td>
-          <td class="paramname"><em>viewBag</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">CancellationToken&#160;</td>
-          <td class="paramname"><em>cancellationToken</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Adds vars to the Microsoft.AspNetCore.Mvc.Controller.ViewBag of the <a class="el" href="class_t_g_webhooks_1_1_controllers_1_1_pull_request_controller.html" title="Main Octokit.PullRequest management interface ">Controllers.PullRequestController</a> </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">pullRequest</td><td>The PullRequest being reviewed</td></tr>
-    <tr><td class="paramname">viewBag</td><td>The Microsoft.AspNetCore.Mvc.Controller.ViewBag</td></tr>
-    <tr><td class="paramname">cancellationToken</td><td>The CancellationToken for the operation</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A Task representing the running operation</dd></dl>
-
-<p>Implemented in <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_p_r_tagger_1_1_pull_request_labeller_module.html#a053a34208614409cc6733897f08f9caa">TGWebhooks.Modules.PRTagger.PullRequestLabellerModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_good_boy_points_1_1_good_boy_points_module.html#a9985bb0a1d9dafe88128312aa99aa8d9">TGWebhooks.Modules.GoodBoyPoints.GoodBoyPointsModule</a>, <a class="el" href="class_t_g_webhooks_1_1_core_1_1_module_manager.html#a1cc860a5d76fa38ce9179fcb6c80a369">TGWebhooks.Core.ModuleManager</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_sign_off_1_1_sign_off_module.html#a2411a645a8e6747b05dc8b27380f10ee">TGWebhooks.Modules.SignOff.SignOffModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_changelog_generator_1_1_changelog_generator_module.html#aec1e0d0ccbdccfb277ba1ebfd61b0f34">TGWebhooks.Modules.ChangelogGenerator.ChangelogGeneratorModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_game_announcer_1_1_game_announcer_module.html#ac83a57861524bd04468d1fc4872d8de5">TGWebhooks.Modules.GameAnnouncer.GameAnnouncerModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#af6550a53a9fb9ff149c88a0e30982e27">TGWebhooks.Modules.AutoDeleteBranch.AutoDeleteBranchModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#a2eae4f9aad31d5f74e4b8e0799bbaad3">TGWebhooks.Modules.Highlander.HighlanderModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_review_manager_1_1_review_manager_module.html#a2e021556b87a3d53453995289df54118">TGWebhooks.Modules.ReviewManager.ReviewManagerModule</a>, and <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module.html#a3896c21399c55344bea9a3b212cec3ee">TGWebhooks.Modules.TwentyFourHourRule.TwentyFourHourRuleModule</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="afa191c6c95e62dd33703f9b825816b66"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">IEnumerable&lt;<a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_payload_handler.html">IPayloadHandler</a>&lt;TPayload&gt; &gt; TGWebhooks.Modules.IComponentProvider.GetPayloadHandlers&lt; TPayload &gt; </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>The IPayloadHandler&lt;TPayload&gt;s the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components ">IComponentProvider</a> contains </p>
-
-<p>Implemented in <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_p_r_tagger_1_1_pull_request_labeller_module.html#a6bb5663c9bfa1bf386a67b9f221448ea">TGWebhooks.Modules.PRTagger.PullRequestLabellerModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_good_boy_points_1_1_good_boy_points_module.html#aaa7714021a8ef792f5f5090fbfcac2e5">TGWebhooks.Modules.GoodBoyPoints.GoodBoyPointsModule</a>, <a class="el" href="class_t_g_webhooks_1_1_core_1_1_module_manager.html#a629e0ad37188b16016e01b8d313bb034">TGWebhooks.Core.ModuleManager</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_sign_off_1_1_sign_off_module.html#abdb4a60a2be52d010d06d7430c96ea3f">TGWebhooks.Modules.SignOff.SignOffModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_game_announcer_1_1_game_announcer_module.html#a89472ce66bddd3b60bebadeb7041c275">TGWebhooks.Modules.GameAnnouncer.GameAnnouncerModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_highlander_1_1_highlander_module.html#aefa427cc9fb936de24b812eb90e0c9bc">TGWebhooks.Modules.Highlander.HighlanderModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_review_manager_1_1_review_manager_module.html#a84cafdc427cb41c58b9ff72e0912ad98">TGWebhooks.Modules.ReviewManager.ReviewManagerModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_auto_delete_branch_1_1_auto_delete_branch_module.html#a26e2eba6342dbc218d3e4e8972e98ea8">TGWebhooks.Modules.AutoDeleteBranch.AutoDeleteBranchModule</a>, <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_twenty_four_hour_rule_module.html#aaab7702502edb69abf3ea314d849b077">TGWebhooks.Modules.TwentyFourHourRule.TwentyFourHourRuleModule</a>, and <a class="el" href="class_t_g_webhooks_1_1_modules_1_1_changelog_generator_1_1_changelog_generator_module.html#a72c703b473041c17b2773f40e2be1a76">TGWebhooks.Modules.ChangelogGenerator.ChangelogGeneratorModule</a>.</p>
-<div class="typeconstraint">
-<dl><dt><b>Type Constraints</b></dt><dd>
-<table border="0" cellspacing="2" cellpadding="0">
-<tr><td valign="top"><em>TPayload</em></td><td>&#160;:</td><td valign="top"><em><a class="el" href="class_activity_payload.html">ActivityPayload</a></em></td><td>&#160;</td></tr>
-</table>
-</dd>
-</dl>
-</div>
-
-</div>
-</div>
-<h2 class="groupheader">Property Documentation</h2>
-<a class="anchor" id="aef489d80950b8fdd97663f6f5b484b53"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">IEnumerable&lt;<a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_hook.html">IMergeHook</a>&gt; TGWebhooks.Modules.IComponentProvider.MergeHooks</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">get</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>The <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_hook.html" title="Operations for modifying a PullRequest before it is merged ">IMergeHook</a>s the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components ">IComponentProvider</a> contains </p>
-
-<p>Definition at line <a class="el" href="_i_component_provider_8cs_source.html#l00021">21</a> of file <a class="el" href="_i_component_provider_8cs_source.html">IComponentProvider.cs</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a5cd008e931b342b7eda63f28fc11d1fe"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">IEnumerable&lt;<a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html">IMergeRequirement</a>&gt; TGWebhooks.Modules.IComponentProvider.MergeRequirements</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">get</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>The <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_merge_requirement.html" title="Represents a bar on automatic merging of a pull request ">IMergeRequirement</a>s the <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_component_provider.html" title="for providing access to webhook components ">IComponentProvider</a> contains </p>
-
-<p>Definition at line <a class="el" href="_i_component_provider_8cs_source.html#l00016">16</a> of file <a class="el" href="_i_component_provider_8cs_source.html">IComponentProvider.cs</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this interface was generated from the following file:<ul>
+<p>Definition at line <a class="el" href="_i_component_provider_8cs_source.html#l00006">6</a> of file <a class="el" href="_i_component_provider_8cs_source.html">IComponentProvider.cs</a>.</p>
+</div><hr/>The documentation for this interface was generated from the following file:<ul>
 <li>TGWebhooks/Modules/<a class="el" href="_i_component_provider_8cs_source.html">IComponentProvider.cs</a></li>
 </ul>
 </div><!-- contents -->

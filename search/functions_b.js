@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['normalizeanddelete',['NormalizeAndDelete',['../class_t_g_webhooks_1_1_core_1_1_default_i_o_manager.html#a6a081a9b78ef5c85e5f7cc7a139a5d31',1,'TGWebhooks::Core::DefaultIOManager']]]
+  ['onconfiguring',['OnConfiguring',['../class_t_g_webhooks_1_1_models_1_1_database_context.html#a88a1af892da0ac709823d3fda0686d40',1,'TGWebhooks::Models::DatabaseContext']]],
+  ['onmodelcreating',['OnModelCreating',['../class_t_g_webhooks_1_1_models_1_1_database_context.html#a59a24ffaa6524a3920c37329465b8f5a',1,'TGWebhooks::Models::DatabaseContext']]]
 ];

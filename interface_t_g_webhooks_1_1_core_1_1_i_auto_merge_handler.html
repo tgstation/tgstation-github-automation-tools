@@ -90,6 +90,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="interface_t_g_webhooks_1_1_core_1_1_i_auto_merge_handler-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">TGWebhooks.Core.IAutoMergeHandler Interface Reference</div>  </div>
@@ -109,8 +110,11 @@ Inheritance diagram for TGWebhooks.Core.IAutoMergeHandler:</div>
 </map>
  </div></div>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
-Additional Inherited Members</h2></td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a770cfa1e5a445bb6f15e2b67c15c744b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_core_1_1_i_auto_merge_handler.html#a770cfa1e5a445bb6f15e2b67c15c744b">RecheckPullRequest</a> (int prNumber)</td></tr>
+<tr class="memdesc:a770cfa1e5a445bb6f15e2b67c15c744b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Schedule a recheck of a given <em>prNumber</em>   <a href="#a770cfa1e5a445bb6f15e2b67c15c744b">More...</a><br /></td></tr>
+<tr class="separator:a770cfa1e5a445bb6f15e2b67c15c744b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_payload_handler"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_payload_handler')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_payload_handler.html">TGWebhooks.Modules.IPayloadHandler&lt; PullRequestEventPayload &gt;</a></td></tr>
 <tr class="memitem:a034739e9cfca6c61ae75bf5843ac68a4 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_payload_handler"><td class="memItemLeft" align="right" valign="top">Task&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="interface_t_g_webhooks_1_1_modules_1_1_i_payload_handler.html#a034739e9cfca6c61ae75bf5843ac68a4">ProcessPayload</a> (TPayload payload, CancellationToken cancellationToken)</td></tr>
 <tr class="memdesc:a034739e9cfca6c61ae75bf5843ac68a4 inherit pub_methods_interface_t_g_webhooks_1_1_modules_1_1_i_payload_handler"><td class="mdescLeft">&#160;</td><td class="mdescRight">Process a <em>TPayload</em>   <a href="#a034739e9cfca6c61ae75bf5843ac68a4">More...</a><br /></td></tr>
@@ -120,7 +124,34 @@ Additional Inherited Members</h2></td></tr>
 <div class="textblock"><p>Manages the automatic merge process for PullRequests </p>
 
 <p>Definition at line <a class="el" href="_i_auto_merge_handler_8cs_source.html#l00009">9</a> of file <a class="el" href="_i_auto_merge_handler_8cs_source.html">IAutoMergeHandler.cs</a>.</p>
-</div><hr/>The documentation for this interface was generated from the following file:<ul>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a770cfa1e5a445bb6f15e2b67c15c744b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void TGWebhooks.Core.IAutoMergeHandler.RecheckPullRequest </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>prNumber</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Schedule a recheck of a given <em>prNumber</em>  </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">prNumber</td><td>The PullRequest.Number to recheck</td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implemented in <a class="el" href="class_t_g_webhooks_1_1_core_1_1_auto_merge_handler.html#afd759f016a38d98bcc8a3c7ba22ec099">TGWebhooks.Core.AutoMergeHandler</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this interface was generated from the following file:<ul>
 <li>TGWebhooks/Core/<a class="el" href="_i_auto_merge_handler_8cs_source.html">IAutoMergeHandler.cs</a></li>
 </ul>
 </div><!-- contents -->

@@ -1,19 +1,5 @@
 var searchData=
 [
-  ['tagpr',['TagPR',['../class_t_g_webhooks_1_1_modules_1_1_p_r_tagger_1_1_pull_request_labeller_module.html#ac8a6ea925c4d87c9ef306110123d1c2b',1,'TGWebhooks::Modules::PRTagger::PullRequestLabellerModule']]],
-  ['test',['Test',['../class_t_g_webhooks_1_1_core_1_1_tests_1_1_test_data_store_factory.html#a1568cf6a962770887f585ab36d238940',1,'TGWebhooks::Core::Tests::TestDataStoreFactory']]],
-  ['testapprovalchecking',['TestApprovalChecking',['../class_t_g_webhooks_1_1_modules_1_1_review_manager_1_1_tests_1_1_test_review_manager_module.html#ab1c59d106b2c5de785415996233bb7dd',1,'TGWebhooks::Modules::ReviewManager::Tests::TestReviewManagerModule']]],
-  ['testconfigureservices',['TestConfigureServices',['../class_t_g_webhooks_1_1_core_1_1_tests_1_1_test_application.html#a0e07d7a0d848e9348042b83224bdbcc4',1,'TGWebhooks::Core::Tests::TestApplication']]],
-  ['testevaluate',['TestEvaluate',['../class_t_g_webhooks_1_1_modules_1_1_changelog_generator_1_1_tests_1_1_test_changelog_generator_module.html#a2d781bfa6977462b715955e9361d217b',1,'TGWebhooks::Modules::ChangelogGenerator::Tests::TestChangelogGeneratorModule']]],
-  ['testgenericcreate',['TestGenericCreate',['../class_t_g_webhooks_1_1_core_1_1_tests_1_1_test_git_hub_client_factory.html#af0bc6a57bc11421a7b54ae7423f27705',1,'TGWebhooks::Core::Tests::TestGitHubClientFactory']]],
-  ['testhours',['TestHours',['../class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_tests_1_1_test_twenty_four_hour_rule_module.html#a1ef267cb486e8b1d0ce6ef22615ffbb1',1,'TGWebhooks::Modules::TwentyFourHourRule::Tests::TestTwentyFourHourRuleModule']]],
-  ['testinstatiation',['TestInstatiation',['../class_t_g_webhooks_1_1_core_1_1_tests_1_1_test_application.html#a16fc097424528d0d7b2c7c230f2b4ec8',1,'TGWebhooks::Core::Tests::TestApplication']]],
-  ['testinvalid',['TestInvalid',['../class_t_g_webhooks_1_1_modules_1_1_twenty_four_hour_rule_1_1_tests_1_1_test_twenty_four_hour_rule_module.html#a380192feba1b3e25d406a13a8ed27121',1,'TGWebhooks::Modules::TwentyFourHourRule::Tests::TestTwentyFourHourRuleModule']]],
-  ['testmodule',['TestModule',['../class_t_g_webhooks_1_1_modules_1_1_tests_1_1_test_module.html#acd8d88e531d6a35321e64858c3d28ca0',1,'TGWebhooks::Modules::Tests::TestModule']]],
-  ['testmodulebasics',['TestModuleBasics',['../class_t_g_webhooks_1_1_modules_1_1_tests_1_1_test_module.html#af2a67265029d8ad3358adf39d04b1ba2',1,'TGWebhooks::Modules::Tests::TestModule']]],
-  ['testnullargument',['TestNullArgument',['../class_t_g_webhooks_1_1_core_1_1_tests_1_1_test_git_hub_client_factory.html#aae85a00693d3af0a99eae40bc5165e21',1,'TGWebhooks::Core::Tests::TestGitHubClientFactory']]],
-  ['testyamlgeneration',['TestYamlGeneration',['../class_t_g_webhooks_1_1_modules_1_1_changelog_generator_1_1_tests_1_1_test_changelog_generator_module.html#ad8d29aa9c8f46ab0b5a8ff340be9ada0',1,'TGWebhooks::Modules::ChangelogGenerator::Tests::TestChangelogGeneratorModule']]],
-  ['tohexstring',['ToHexString',['../class_t_g_webhooks_1_1_controllers_1_1_payloads_controller.html#a448330b88f6430a0d1492f146c7a88a3',1,'TGWebhooks::Controllers::PayloadsController']]],
-  ['traviscontinuousintegration',['TravisContinuousIntegration',['../class_t_g_webhooks_1_1_core_1_1_travis_continuous_integration.html#a81aa0079d90e15ed78f3c9d7d132afe8',1,'TGWebhooks::Core::TravisContinuousIntegration']]],
-  ['triggerjobrestart',['TriggerJobRestart',['../class_t_g_webhooks_1_1_core_1_1_travis_continuous_integration.html#a76417c16197f09febe692f2c8fba9fd6',1,'TGWebhooks.Core.TravisContinuousIntegration.TriggerJobRestart()'],['../interface_t_g_webhooks_1_1_modules_1_1_i_continuous_integration.html#a466667f71c3564fac5a43993b318c49b',1,'TGWebhooks.Modules.IContinuousIntegration.TriggerJobRestart()']]]
+  ['update',['Update',['../class_t_g_webhooks_1_1_controllers_1_1_modules_controller.html#a9106f014d4cc86470088648fbdf9a503',1,'TGWebhooks::Controllers::ModulesController']]],
+  ['userhaswriteaccess',['UserHasWriteAccess',['../class_t_g_webhooks_1_1_core_1_1_git_hub_manager.html#af21e51819c805889a1d8cc8da6582f2b',1,'TGWebhooks.Core.GitHubManager.UserHasWriteAccess()'],['../interface_t_g_webhooks_1_1_modules_1_1_i_git_hub_manager.html#a2d647d50e65cad13035823d0b054f422',1,'TGWebhooks.Modules.IGitHubManager.UserHasWriteAccess()']]]
 ];
