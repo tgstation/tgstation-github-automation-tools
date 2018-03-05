@@ -46,9 +46,9 @@ namespace TGWebhooks.Core
 				await discordClient.LoginAsync(TokenType.Bot, discordConfiguration.BotToken).ConfigureAwait(false);
 				await discordClient.StartAsync().ConfigureAwait(false);
 				var tcs = new TaskCompletionSource<object>();
+				discordClient.Ready += () => { tcs.TrySetResult(null); return Task.CompletedTask; };
 				using (cancellationToken.Register(() => tcs.SetCanceled()))
-					discordClient.Ready += () => { tcs.TrySetResult(null); return Task.CompletedTask; };
-				await tcs.Task.ConfigureAwait(false);
+					await tcs.Task.ConfigureAwait(false);
 			}
 
 			async Task SendDeMessage(SocketTextChannel socketTextChannel)
