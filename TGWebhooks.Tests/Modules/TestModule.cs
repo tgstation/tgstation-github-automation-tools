@@ -3,10 +3,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Octokit;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 using TGWebhooks.Configuration;
 
 namespace TGWebhooks.Modules.Tests

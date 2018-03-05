@@ -4,10 +4,10 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
     <NeutralLanguage></NeutralLanguage>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <LangVersion>latest</LangVersion>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningsAsErrors>NU1605</WarningsAsErrors>
     <OutputPath>bin\Debug\</OutputPath>
@@ -18,7 +18,6 @@
     <WarningsAsErrors></WarningsAsErrors>
     <DocumentationFile>\bin\Release\netcoreapp2.0\TGWebhooks.Core.xml</DocumentationFile>
     <OutputPath>bin\Release\netcoreapp2.0\</OutputPath>
-    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

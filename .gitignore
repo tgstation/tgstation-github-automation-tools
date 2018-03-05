@@ -261,3 +261,4 @@ __pycache__/
 *.pyc
 /TGWebhooks/App_Data/
 /TGWebhooks/appsettings.Development.json
+*.pubxml
