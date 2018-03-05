@@ -66,6 +66,7 @@ namespace TGWebhooks.Core
 			services.Configure<GitHubConfiguration>(configuration.GetSection(GitHubConfiguration.Section));
 			services.Configure<TravisConfiguration>(configuration.GetSection(TravisConfiguration.Section));
 			services.Configure<ServerConfiguration>(configuration.GetSection(ServerConfiguration.Section));
+			services.Configure<DiscordConfiguration>(configuration.GetSection(DiscordConfiguration.Section));
 			services.Configure<DatabaseConfiguration>(dbConfigSection);
 
 			services.Configure<MvcOptions>(options => options.Filters.Add(new RequireHttpsAttribute()));
@@ -91,6 +92,7 @@ namespace TGWebhooks.Core
 			services.AddScoped<IComponentProvider>(x => x.GetRequiredService<IModuleManager>());
 			services.AddModules();
 
+			services.AddSingleton<IChatMessenger, DiscordMessenger>();
 			services.AddSingleton<IWebRequestManager, WebRequestManager>();
 			services.AddSingleton<IAutoMergeHandler, AutoMergeHandler>();
 			services.AddSingleton<IByondTopicSender, ByondTopicSender>();	//note the send/recieve timeouts are configured by the GameAnnouncerModule
