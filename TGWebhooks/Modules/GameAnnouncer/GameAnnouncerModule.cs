@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using TGWebhooks.Configuration;
+using TGWebhooks.Core;
 
 namespace TGWebhooks.Modules.GameAnnouncer
 {
@@ -19,9 +20,6 @@ namespace TGWebhooks.Modules.GameAnnouncer
 	/// </summary>
 	sealed class GameAnnouncerModule : IModule, IPayloadHandler<PullRequestEventPayload>
 	{
-		/// <inheritdoc />
-		public bool Enabled { get; set; }
-
 		/// <inheritdoc />
 		public Guid Uid => new Guid("a52b2545-94e3-4d74-bb8a-bb9ca94194c3");
 
@@ -33,9 +31,6 @@ namespace TGWebhooks.Modules.GameAnnouncer
 
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => Enumerable.Empty<IMergeRequirement>();
-
-		/// <inheritdoc />
-		public IEnumerable<IMergeHook> MergeHooks => Enumerable.Empty<IMergeHook>();
 
 		/// <summary>
 		/// The <see cref="IByondTopicSender"/> for the <see cref="GameAnnouncerModule"/>
@@ -49,12 +44,29 @@ namespace TGWebhooks.Modules.GameAnnouncer
 		/// The <see cref="IStringLocalizer"/>s for the <see cref="GameAnnouncerModule"/>
 		/// </summary>
 		readonly IStringLocalizer<GameAnnouncerModule> stringLocalizer;
+		/// <summary>
+		/// The <see cref="IChatMessenger"/> for the <see cref="GameAnnouncerModule"/>
+		/// </summary>
+		readonly IChatMessenger chatMessenger;
 
-		public GameAnnouncerModule(IByondTopicSender byondTopicSender, IOptions<ServerConfiguration> serverConfigurationOptions, IStringLocalizer<GameAnnouncerModule> stringLocalizer)
+		/// <summary>
+		/// Backing field for <see cref="SetEnabled(bool)"/>
+		/// </summary>
+		bool enabled;
+
+		/// <summary>
+		/// Construct a <see cref="GameAnnouncerModule"/>
+		/// </summary>
+		/// <param name="byondTopicSender">The value of <see cref="byondTopicSender"/></param>
+		/// <param name="serverConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the value of <see cref="serverConfiguration"/></param>
+		/// <param name="stringLocalizer">The value of <see cref="stringLocalizer"/></param>
+		/// <param name="chatMessenger">The value of <see cref="chatMessenger"/></param>
+		public GameAnnouncerModule(IByondTopicSender byondTopicSender, IOptions<ServerConfiguration> serverConfigurationOptions, IStringLocalizer<GameAnnouncerModule> stringLocalizer, IChatMessenger chatMessenger)
 		{
 			this.byondTopicSender = byondTopicSender ?? throw new ArgumentNullException(nameof(byondTopicSender));
-			this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
 			serverConfiguration = serverConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(serverConfigurationOptions));
+			this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
+			this.chatMessenger = chatMessenger ?? throw new ArgumentNullException(nameof(chatMessenger));
 
 			byondTopicSender.SendTimeout = serverConfiguration.SendTimeout;
 			byondTopicSender.ReceiveTimeout = serverConfiguration.ReceiveTimeout;
@@ -66,9 +78,6 @@ namespace TGWebhooks.Modules.GameAnnouncer
 			if (typeof(TPayload) == typeof(PullRequestEventPayload))
 				yield return (IPayloadHandler<TPayload>)(object)this;
 		}
-
-		/// <inheritdoc />
-		public Task Initialize(CancellationToken cancellationToken) => Task.CompletedTask;
 
 		/// <inheritdoc />
 		public Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken) => Task.CompletedTask;
@@ -89,15 +98,21 @@ namespace TGWebhooks.Modules.GameAnnouncer
 					json = byondTopicSender.SanitizeString(json);
 					const string innerAnnouncementFormatter = "#{0} {1} - {2}";
 
-					var announcement = String.Format(CultureInfo.CurrentCulture, innerAnnouncementFormatter, payload.PullRequest.Number, payload.PullRequest.User.Login, payload.PullRequest.Title);
-					announcement = HttpUtility.HtmlEncode(announcement);
-					var announcmentFormatter = stringLocalizer["AnnouncementFormatter"];// "[{0}] Pull Request {1} by {2}: <a href='{3}'>{4}</a>";
-					announcement = String.Format(CultureInfo.CurrentCulture, announcmentFormatter, payload.Repository.FullName, payload.PullRequest.Merged ? stringLocalizer["Merged"] : payload.Action, payload.Sender.Login, payload.PullRequest.HtmlUrl, announcement);
+					var innerAnnouncement = String.Format(CultureInfo.CurrentCulture, innerAnnouncementFormatter, payload.PullRequest.Number, payload.PullRequest.User.Login, payload.PullRequest.Title);
+					var announcement = HttpUtility.HtmlEncode(innerAnnouncement);
+					var actionString = payload.PullRequest.Merged ? "merged" : payload.Action;
+					announcement = stringLocalizer["AnnouncementFormatterGame", payload.Repository.FullName, actionString, payload.Sender.Login, payload.PullRequest.HtmlUrl, announcement];// "[{0}] Pull Request {1} by {2}: <a href='{3}'>{4}</a>";
 					announcement = byondTopicSender.SanitizeString(announcement);
 
 					var startingQuery = String.Format(CultureInfo.InvariantCulture, "?announce={0}&payload={1}&key=", json, announcement);
 
-					var tasks = new List<Task>();
+					var chatAnnouncement = stringLocalizer["AnnouncementFormatterChat", payload.Repository.FullName, actionString, payload.Sender.Login, payload.PullRequest.HtmlUrl, innerAnnouncement];
+
+					var tasks = new List<Task>
+					{
+						//send it to the chats
+						chatMessenger.SendMessage(chatAnnouncement, cancellationToken)
+					};
 					foreach (var I in serverConfiguration.Entries)
 					{
 						var final = startingQuery + byondTopicSender.SanitizeString(I.CommsKey);
@@ -107,5 +122,8 @@ namespace TGWebhooks.Modules.GameAnnouncer
 			}
 			throw new NotSupportedException();
 		}
+
+		/// <inheritdoc />
+		public void SetEnabled(bool enabled) => this.enabled = enabled;
 	}
 }

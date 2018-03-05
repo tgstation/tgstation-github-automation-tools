@@ -1,14 +1,17 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
 using Octokit;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Configuration;
 using TGWebhooks.Modules;
-using Microsoft.Extensions.Logging;
 
 namespace TGWebhooks.Core
 {
@@ -19,8 +22,10 @@ namespace TGWebhooks.Core
 	sealed class TravisContinuousIntegration : IContinuousIntegration
 #pragma warning restore CA1812
 	{
-		/// <inheritdoc />
-		public string Name => "Travis-CI";
+		/// <summary>
+		/// Travis build api URL
+		/// </summary>
+		const string BaseBuildUrl = "https://api.travis-ci.org/build";
 
 		/// <summary>
 		/// The <see cref="ILogger{TCategoryName}"/> for the <see cref="TravisContinuousIntegration"/>
@@ -40,13 +45,28 @@ namespace TGWebhooks.Core
 		readonly TravisConfiguration travisConfiguration;
 
 		/// <summary>
-		/// Checks if a given <paramref name="commitStatus"/> is for Travis-CI
+		/// Runs a <paramref name="handler"/> for each travis status on a given <paramref name="pullRequest"/>. Does not run in paralled
 		/// </summary>
-		/// <param name="commitStatus">The <see cref="CommitStatus"/> to check</param>
-		/// <returns><see langword="true"/> if the <paramref name="commitStatus"/> is for Travis-CI, <see langword="false"/> otherwise</returns>
-		static bool IsTravisStatus(CommitStatus commitStatus)
+		/// <param name="pullRequest">The <see cref="PullRequest"/> to check for statuses</param>
+		/// <param name="handler">A function taking a <see cref="CommitState"/> and travis build id <see cref="string"/> and returning <see langword="true"/> to continue, <see langword="false"/> to cancel</param>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		async Task NonParallelForEachBuild(PullRequest pullRequest, Func<CommitState, string, bool> handler)
 		{
-			return commitStatus.TargetUrl.StartsWith("https://travis-ci.org/", StringComparison.InvariantCultureIgnoreCase);
+			var statuses = await gitHubManager.GetLatestCommitStatus(pullRequest).ConfigureAwait(false);
+			var buildNumberRegex = new Regex(@"/builds/([1-9][0-9]*)\?");
+			foreach (var I in statuses.Statuses)
+			{
+				if (!I.TargetUrl.StartsWith("https://travis-ci.org/", StringComparison.InvariantCultureIgnoreCase))
+				{
+					logger.LogTrace("Skipping status #{0} as it is not a travis status", I.Id);
+					continue;
+				}
+
+				var buildNumber = buildNumberRegex.Match(I.TargetUrl).Groups[1].Value;
+
+				if (!handler(I.State.Value, buildNumber))
+					break;
+			}
 		}
 
 		/// <summary>
@@ -70,7 +90,7 @@ namespace TGWebhooks.Core
 		/// <returns>A <see cref="List{T}"/> of <see cref="string"/> headers required to use the Travis API</returns>
 		List<string> GetRequestHeaders()
 		{
-			return new List<string> { String.Format(CultureInfo.InvariantCulture, "User-Agent: {0}", Application.UserAgent), String.Format(CultureInfo.InvariantCulture, "Authorization: token {0}", travisConfiguration.APIToken) };
+			return new List<string> { String.Format(CultureInfo.InvariantCulture, "User-Agent: {0}", Application.UserAgent), String.Format(CultureInfo.InvariantCulture, "Authorization: token {0}", travisConfiguration.APIToken), "Travis-API-Version: 3" };
 		}
 
 		/// <summary>
@@ -82,14 +102,19 @@ namespace TGWebhooks.Core
 		async Task RestartBuild(string buildNumber, CancellationToken cancellationToken)
 		{
 			logger.LogDebug("Restarting build #{0}", buildNumber);
-			const string baseBuildURL = "https://api.travis-ci.org/build";
-			var baseUrl = String.Join('/', baseBuildURL, buildNumber);
-			Task DoBuildPost(string method)
+			var baseUrl = String.Join('/', BaseBuildUrl, buildNumber);
+			Task DoBuildPost(string method) => requestManager.RunRequest(new Uri(String.Join('/', baseUrl, method)), String.Empty, GetRequestHeaders(), RequestMethod.POST, cancellationToken);
+			try
 			{
-				return requestManager.RunRequest(new Uri(String.Join('/', baseUrl, method)), String.Empty, GetRequestHeaders(), RequestMethod.POST, cancellationToken);
+				//first ensure it's over
+				await DoBuildPost("cancel").ConfigureAwait(false);
 			}
-			//first ensure it's over
-			await DoBuildPost("cancel").ConfigureAwait(false);
+			catch (WebException e)
+			{
+				//409 is what happens if the build isn't already running
+				if (e.Status != WebExceptionStatus.ProtocolError || !(e.Response is HttpWebResponse response) || response.StatusCode != HttpStatusCode.Conflict)
+					throw;					
+			}
 			//then restart it
 			await DoBuildPost("restart").ConfigureAwait(false);
 		}
@@ -100,24 +125,73 @@ namespace TGWebhooks.Core
 			if (pullRequest == null)
 				throw new ArgumentNullException(nameof(pullRequest));
 			logger.LogTrace("Getting job status for pull request #{0}", pullRequest.Number);
-			var statuses = await gitHubManager.GetLatestCommitStatus(pullRequest).ConfigureAwait(false);
 			var result = ContinuousIntegrationStatus.NotPresent;
-			foreach(var I in statuses.Statuses)
-			{
-				if (!IsTravisStatus(I))
+			var tasks = new List<Task<bool>>();
+
+			var cts = new CancellationTokenSource();
+			var innerToken = cts.Token;
+			using (cancellationToken.Register(() => cts.Cancel())) {
+
+				await NonParallelForEachBuild(pullRequest, (state, buildNumber) => {
+					if (state == CommitState.Failure)
+					{
+						result = ContinuousIntegrationStatus.Failed;
+						return false;
+					}
+					if (state == CommitState.Error)
+					{
+						result = ContinuousIntegrationStatus.Errored;
+						return false;
+					}
+
+					if (state == CommitState.Success)
+					{
+						//now determine if base is up to date
+						result = ContinuousIntegrationStatus.Passed;
+
+						async Task<bool> BuildIsUpToDate()
+						{
+							//https://developer.travis-ci.org/resource/build#Build
+							var build = String.Join('/', BaseBuildUrl, buildNumber);
+							var json = await requestManager.RunRequest(new Uri(build), null, GetRequestHeaders(), RequestMethod.GET, innerToken).ConfigureAwait(false);
+							var jsonObj = JObject.Parse(json);
+							var commitObj = (JObject)jsonObj["commit"];
+							var sha = (string)commitObj["sha"];
+							if (sha == pullRequest.MergeCommitSha)
+								return true;
+
+							//so because of gender questioning memes, travis doesn't update the commit sha in the api when you restart the build
+							//even though the correct build DID run
+							//so now we gotta compare the creation time of the build to the creation time of the merge commit sha to make sure this plumber isn't lying to us
+
+							var commit = await gitHubManager.GetCommit(pullRequest.MergeCommitSha).ConfigureAwait(false);
+
+							var buildStartedAt = DateTimeOffset.Parse((string)jsonObj["started_at"], CultureInfo.InvariantCulture);
+
+							return commit.Committer.Date < buildStartedAt;
+						};
+
+						tasks.Add(BuildIsUpToDate());
+					}
+					else if (state == CommitState.Pending)
+						result = ContinuousIntegrationStatus.Pending;
+					return true;
+				}).ConfigureAwait(false);
+
+				try
 				{
-					logger.LogTrace("Skipping status #{0} as it is not a travis status", I.Id);
-					continue;
+					await Task.WhenAll(tasks).ConfigureAwait(false);
+				}
+				catch (OperationCanceledException)
+				{
+					cancellationToken.ThrowIfCancellationRequested();
 				}
 
-				if (result == ContinuousIntegrationStatus.NotPresent)
-					result = ContinuousIntegrationStatus.Passed;
-				if (I.State == "error")
-					return ContinuousIntegrationStatus.Failed;
-				if (I.State == "pending")
-					result = ContinuousIntegrationStatus.Pending;
+				if (result == ContinuousIntegrationStatus.Passed && tasks.Any(x => !x.Result))
+					result = ContinuousIntegrationStatus.PassedOutdated;
+
+				return result;
 			}
-			return result;
 		}
 
 		/// <inheritdoc />
@@ -126,17 +200,11 @@ namespace TGWebhooks.Core
 			if (pullRequest == null)
 				throw new ArgumentNullException(nameof(pullRequest));
 			logger.LogDebug("Restarting jobs for pull request #{0}", pullRequest.Number);
-			var statuses = await gitHubManager.GetLatestCommitStatus(pullRequest).ConfigureAwait(false);
-			var buildNumberRegex = new Regex(@"/builds/([1-9][0-9]*)\?");
 			var tasks = new List<Task>();
-			foreach (var I in statuses.Statuses)
-			{
-				if (!IsTravisStatus(I))
-					continue;
-				var buildNumber = buildNumberRegex.Match(I.TargetUrl).Groups[1].Value;
-
+			await NonParallelForEachBuild(pullRequest, (status, buildNumber) => {
 				tasks.Add(RestartBuild(buildNumber, cancellationToken));
-			}
+				return true;
+			}).ConfigureAwait(false);
 			await Task.WhenAll(tasks).ConfigureAwait(false);
 		}
 	}

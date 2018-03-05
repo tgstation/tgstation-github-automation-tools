@@ -1,42 +1,33 @@
 ﻿using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
 using Octokit;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TGWebhooks.Modules;
 
 namespace TGWebhooks.Modules.SignOff
 {
 	/// <summary>
 	/// <see cref="IModule"/> containing the Maintainer Sign Off <see cref="IMergeRequirement"/>
 	/// </summary>
-	sealed class SignOffModule : IModule, IMergeRequirement, IPayloadHandler<PullRequestEventPayload>
+	public sealed class SignOffModule : IModule, IMergeRequirement, IPayloadHandler<PullRequestEventPayload>
 	{
-		/// <inheritdoc />
-		public bool Enabled { get; set; }
-
-		/// <summary>
-		/// The key in <see cref="dataStore"/> where <see cref="PullRequestSignOffs"/>s are stored
-		/// </summary>
-		const string SignOffDataKey = "Signoffs";
-
 		/// <inheritdoc />
 		public Guid Uid => new Guid("bde81200-a275-4e93-b855-13865f3629fe");
 
 		/// <inheritdoc />
-		public string Name => "Maintainer Sign Off";
+		public string Name => stringLocalizer["Name"];
 
 		/// <inheritdoc />
-		public string Description => "Require maintainers approving the 'idea' of a Pull Request aside from code. Sign offs are automatically dissmissed if the pull request body or title changes";
+		public string Description => stringLocalizer["Description"];
+
+		/// <inheritdoc />
+		public string RequirementDescription => stringLocalizer["RequirementDescription"];
 
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => new List<IMergeRequirement> { this };
-
-		/// <inheritdoc />
-		public IEnumerable<IMergeHook> MergeHooks => Enumerable.Empty<IMergeHook>();
 
 		/// <summary>
 		/// The <see cref="IGitHubManager"/> for the <see cref="SignOffModule"/>
@@ -50,6 +41,11 @@ namespace TGWebhooks.Modules.SignOff
 		/// The <see cref="IStringLocalizer"/> for the <see cref="SignOffModule"/>
 		/// </summary>
 		readonly IStringLocalizer<SignOffModule> stringLocalizer;
+
+		/// <summary>
+		/// Backing field for <see cref="SetEnabled(bool)"/>
+		/// </summary>
+		bool enabled;
 
 		/// <summary>
 		/// Construct a <see cref="SignOffModule"/>
@@ -69,16 +65,18 @@ namespace TGWebhooks.Modules.SignOff
 		{
 			if (pullRequest == null)
 				throw new ArgumentNullException(nameof(pullRequest));
-			var signOff = await dataStore.ReadData<PullRequestSignOffs>(SignOffDataKey, cancellationToken).ConfigureAwait(false);
+			var signOff = await dataStore.ReadData<PullRequestSignOff>(pullRequest.Number.ToString(CultureInfo.InvariantCulture), cancellationToken).ConfigureAwait(false);
 
-			var result = new AutoMergeStatus() { RequiredProgress = 1 };
-			if (signOff.Entries.TryGetValue(pullRequest.Number, out List<string> signers) && signers.Count > 0)
-			{
-				result.Progress = signers.Count;
-				result.Notes.AddRange(signers.Select(x => (string)stringLocalizer["Signer", x]));
+			var result = new AutoMergeStatus() {
+				RequiredProgress = 1,
+				Progress = signOff.AccessToken != null ? 1 : 0,
+				MergerAccessToken = signOff.AccessToken
+			};
+
+			if (signOff.AccessToken != null) {
+				var user = await gitHubManager.GetUserLogin(signOff.AccessToken, cancellationToken).ConfigureAwait(false);
+				result.Notes.Add(stringLocalizer["Signer", user.Login]);
 			}
-			else
-				result.Notes.Add(stringLocalizer["NoSignOffs"]);
 			return result;
 		}
 
@@ -90,10 +88,88 @@ namespace TGWebhooks.Modules.SignOff
 		}
 
 		/// <inheritdoc />
-		public Task Initialize(CancellationToken cancellationToken) => Task.CompletedTask;
+		public async Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken)
+		{
+			if (pullRequest == null)
+				throw new ArgumentNullException(nameof(pullRequest));
+			if (viewBag == null)
+				throw new ArgumentNullException(nameof(viewBag));
 
-		/// <inheritdoc />
-		public Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken) => Task.CompletedTask;
+			if (!viewBag.IsMaintainer)
+				return;
+
+#if !ENABLE_SELF_SIGN
+			if (viewBag.UserIsAuthor)
+				return;
+#endif
+
+			//take priority
+			((IList<string>)viewBag.ModuleViews).Insert(0, "/Modules/SignOff/Views/SignOff.cshtml");
+
+			viewBag.SignOffHeader = stringLocalizer["SignOffHeader"];
+			viewBag.SignOffLabel = stringLocalizer["SignOffLabel"];
+			viewBag.VetoLabel = stringLocalizer["VetoLabel"];
+			viewBag.SignedBy = stringLocalizer["SignedBy"];
+			viewBag.SignOffDisclaimer = stringLocalizer["Disclaimer"];
+
+			var signer = await dataStore.ReadData<PullRequestSignOff>(pullRequest.Number.ToString(CultureInfo.InvariantCulture), cancellationToken).ConfigureAwait(false);
+			if (signer.AccessToken != null)
+				viewBag.Signer = (await gitHubManager.GetUserLogin(signer.AccessToken, cancellationToken).ConfigureAwait(false)).Login;
+			else
+				viewBag.Signer = null;
+		}
+
+		/// <summary>
+		/// Vetos the <see cref="PullRequestSignOff"/> for a given <paramref name="pullRequest"/>
+		/// </summary>
+		/// <param name="pullRequest">The <see cref="PullRequest"/> to veto</param>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		public Task VetoSignOff(PullRequest pullRequest, CancellationToken cancellationToken) => EraseAndDismissReviews(pullRequest, stringLocalizer["SignOffVetod"], cancellationToken);
+
+		/// <summary>
+		/// Adds the <see cref="PullRequestSignOff"/> for a given <paramref name="pullRequest"/>
+		/// </summary>
+		/// <param name="pullRequest">The <see cref="PullRequest"/> to sign off</param>
+		/// <param name="user">The <see cref="User"/> doing the signing</param>
+		/// <param name="token">The api token for <paramref name="user"/></param>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		public async Task SignOff(PullRequest pullRequest, User user, string token, CancellationToken cancellationToken)
+		{
+			if (pullRequest == null)
+				throw new ArgumentNullException(nameof(pullRequest));
+			if (user == null)
+				throw new ArgumentNullException(nameof(user));
+			if (token == null)
+				throw new ArgumentNullException(nameof(token));
+			await dataStore.WriteData(pullRequest.Number.ToString(CultureInfo.InvariantCulture), new PullRequestSignOff { AccessToken = token }, cancellationToken).ConfigureAwait(false);
+			await gitHubManager.ApprovePullRequest(pullRequest, stringLocalizer["SignerTag", user.Login]).ConfigureAwait(false);
+		}
+
+		/// <summary>
+		/// Erases the sign off and dismisses the 'approved' reviews
+		/// </summary>
+		/// <param name="pullRequest">The <see cref="PullRequest"/> to un-sign</param>
+		/// <param name="message">The dismissal message</param>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		async Task EraseAndDismissReviews(PullRequest pullRequest, string message, CancellationToken cancellationToken)
+		{
+			var reviewsTask = gitHubManager.GetPullRequestReviews(pullRequest);
+			var botLoginTask = gitHubManager.GetUserLogin(null, cancellationToken);
+			await dataStore.WriteData(pullRequest.Number.ToString(CultureInfo.InvariantCulture), new PullRequestSignOff(), cancellationToken).ConfigureAwait(false);
+			var reviews = await reviewsTask.ConfigureAwait(false);
+			var botLogin = await botLoginTask.ConfigureAwait(false);
+
+			await Task.WhenAll(
+				reviews.Where(
+					x => x.User.Id == botLogin.Id
+					&& x.State.Value == PullRequestReviewState.Approved
+				).Select(
+					x => gitHubManager.DismissReview(pullRequest, x, message)
+				)).ConfigureAwait(false);
+		}
 
 		/// <inheritdoc />
 		public async Task ProcessPayload(PullRequestEventPayload payload, CancellationToken cancellationToken)
@@ -104,24 +180,15 @@ namespace TGWebhooks.Modules.SignOff
 			if(payload.Action != "edited")
 				throw new NotSupportedException();
 
-			var signOff = await dataStore.ReadData<PullRequestSignOffs>(SignOffDataKey, cancellationToken).ConfigureAwait(false);
+			var signOff = await dataStore.ReadData<PullRequestSignOff>(payload.PullRequest.Number.ToString(CultureInfo.InvariantCulture), cancellationToken).ConfigureAwait(false);
 
-			if (!signOff.Entries.Remove(payload.PullRequest.Number))
+			if (signOff.AccessToken == null)
 				return;
-
-			await dataStore.WriteData(SignOffDataKey, signOff, cancellationToken).ConfigureAwait(false);
-
-			var botLoginTask = gitHubManager.GetUserLogin(null, cancellationToken);
-			var reviews = await gitHubManager.GetPullRequestReviews(payload.PullRequest).ConfigureAwait(false);
-			var botLogin = await botLoginTask.ConfigureAwait(false);
 			
-			await Task.WhenAll(
-				reviews.Where(
-					x => x.User.Id == botLogin.Id 
-					&& x.State.Value == PullRequestReviewState.Approved
-				).Select(
-					x => gitHubManager.DismissReview(payload.PullRequest, x, stringLocalizer["SignOffNulled"])
-				));
+			await EraseAndDismissReviews(payload.PullRequest, stringLocalizer["SignOffNulled"], cancellationToken).ConfigureAwait(false);
 		}
+
+		/// <inheritdoc />
+		public void SetEnabled(bool enabled) => this.enabled = enabled;
 	}
 }

@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
 using Octokit;
 using System;
 using System.Collections.Generic;
@@ -20,25 +19,41 @@ namespace TGWebhooks.Modules.TwentyFourHourRule
 		const int HoursRequired = 24;
 
 		/// <inheritdoc />
-		public bool Enabled { get; set; }
-
-		/// <inheritdoc />
 		public Guid Uid => new Guid("78544889-5447-47f2-b300-3fb7b703c3cc");
 
 		/// <inheritdoc />
-		public string Name => "24-Hour Rule";
+		public string Name => stringLocalizer["Name"];
 
 		/// <inheritdoc />
-		public string Description => "Require 24 hours to pass since the pull request was originally opened";
+		public string Description => stringLocalizer["Description"];
+
+		/// <inheritdoc />
+		public string RequirementDescription => stringLocalizer["RequirementDescription"];
 
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => new List<IMergeRequirement> { this };
 
 		/// <inheritdoc />
-		public IEnumerable<IMergeHook> MergeHooks => Enumerable.Empty<IMergeHook>();
-
-		/// <inheritdoc />
 		public IEnumerable<IPayloadHandler<TPayload>> GetPayloadHandlers<TPayload>() where TPayload : ActivityPayload => Enumerable.Empty<IPayloadHandler<TPayload>>();
+
+		/// <summary>
+		/// The <see cref="IStringLocalizer"/> for the <see cref="TwentyFourHourRuleModule"/>
+		/// </summary>
+		readonly IStringLocalizer<TwentyFourHourRuleModule> stringLocalizer;
+
+		/// <summary>
+		/// Backing field for <see cref="SetEnabled(bool)"/>
+		/// </summary>
+		bool enabled;
+
+		/// <summary>
+		/// Construct a <see cref="TwentyFourHourRuleModule"/>
+		/// </summary>
+		/// <param name="stringLocalizer">The value of <see cref="stringLocalizer"/></param>
+		public TwentyFourHourRuleModule(IStringLocalizer<TwentyFourHourRuleModule> stringLocalizer)
+		{
+			this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
+		}
 
 		/// <inheritdoc />
 		public Task<AutoMergeStatus> EvaluateFor(PullRequest pullRequest, CancellationToken cancellationToken)
@@ -58,9 +73,9 @@ namespace TGWebhooks.Modules.TwentyFourHourRule
 		}
 
 		/// <inheritdoc />
-		public Task Initialize(CancellationToken cancellationToken) => Task.CompletedTask;
+		public Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken) => Task.CompletedTask;
 
 		/// <inheritdoc />
-		public Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken) => Task.CompletedTask;
+		public void SetEnabled(bool enabled) => this.enabled = enabled;
 	}
 }

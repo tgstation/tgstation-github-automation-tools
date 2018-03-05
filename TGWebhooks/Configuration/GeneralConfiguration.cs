@@ -26,5 +26,20 @@ namespace TGWebhooks.Configuration
 		/// If changelogs are required by default, can also be adjusted on a per <see cref="Octokit.PullRequest"/> basis
 		/// </summary>
 		public bool DefaultChangelogRequired { get; set; }
+
+		/// <summary>
+		/// Time in minutes to schedule first CI recheck
+		/// </summary>
+		public int CIRecheckInitial { get; set; }
+
+		/// <summary>
+		/// Time in minutes to schedule successive CI rechecks
+		/// </summary>
+		public int CIRecheckInterval { get; set; }
+
+		/// <summary>
+		/// If the actual merge command will come from the <see cref="Core.Application"/>
+		/// </summary>
+		public bool EnableAutoMerging { get; set; }
 	}
 }

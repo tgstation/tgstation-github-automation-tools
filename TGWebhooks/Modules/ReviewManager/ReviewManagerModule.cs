@@ -15,21 +15,19 @@ namespace TGWebhooks.Modules.ReviewManager
 	public sealed class ReviewManagerModule : IModule, IMergeRequirement
 	{
 		/// <inheritdoc />
-		public bool Enabled { get; set; }
-		/// <inheritdoc />
 		public Guid Uid => new Guid("8d8122d0-ad0d-4a91-977f-204d617efd04");
 
 		/// <inheritdoc />
-		public string Name => "Review Manager";
+		public string Name => stringLocalizer["Name"];
 
 		/// <inheritdoc />
-		public string Description => "Manages auto-dismissal and tagging of maintainer reviews";
+		public string Description => stringLocalizer["Description"];
+
+		/// <inheritdoc />
+		public string RequirementDescription => stringLocalizer["RequirementDescription"];
 
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => new List<IMergeRequirement> { this };
-
-		/// <inheritdoc />
-		public IEnumerable<IMergeHook> MergeHooks => Enumerable.Empty<IMergeHook>();
 
 		/// <summary>
 		/// The <see cref="IGitHubManager"/> for the <see cref="ReviewManagerModule"/>
@@ -39,6 +37,11 @@ namespace TGWebhooks.Modules.ReviewManager
 		/// The <see cref="IStringLocalizer"/> for the <see cref="ReviewManagerModule"/>
 		/// </summary>
 		readonly IStringLocalizer<ReviewManagerModule> stringLocalizer;
+
+		/// <summary>
+		/// Backing field for <see cref="SetEnabled(bool)"/>
+		/// </summary>
+		bool enabled;
 
 		/// <summary>
 		/// Construct a <see cref="ReviewManagerModule"/>
@@ -56,9 +59,6 @@ namespace TGWebhooks.Modules.ReviewManager
 		{
 			return Enumerable.Empty<IPayloadHandler<TPayload>>();
 		}
-
-		/// <inheritdoc />
-		public Task Initialize(CancellationToken cancellationToken) => Task.CompletedTask;
 
 		/// <inheritdoc />
 		public Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken) => Task.CompletedTask;
@@ -85,11 +85,13 @@ namespace TGWebhooks.Modules.ReviewManager
 				}
 				if (I.State.Value == PullRequestReviewState.Approved)
 				{
+					critics.RemoveAll(x => x.Id == I.User.Id);
 					approvers.Add(I.User);
 					CheckupUser();
 				}
 				else if (I.State.Value == PullRequestReviewState.ChangesRequested)
 				{
+					approvers.RemoveAll(x => x.Id == I.User.Id);
 					critics.Add(I.User);
 					CheckupUser();
 				}
@@ -105,7 +107,11 @@ namespace TGWebhooks.Modules.ReviewManager
 					continue;
 
 				++result.Progress;
+				result.Notes.Add(stringLocalizer["ApprovedBy", I.Login]);
 			}
+
+			if(result.Progress == 0)
+				result.Notes.Add(stringLocalizer["NoApproval"]);
 
 			result.RequiredProgress = result.Progress;
 
@@ -122,5 +128,8 @@ namespace TGWebhooks.Modules.ReviewManager
 
 			return result;
 		}
+
+		/// <inheritdoc />
+		public void SetEnabled(bool enabled) => this.enabled = enabled;
 	}
 }

@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Configuration;
+using ZNetCS.AspNetCore.Logging.EntityFrameworkCore;
 
 namespace TGWebhooks.Models
 {
@@ -18,11 +20,19 @@ namespace TGWebhooks.Models
 		public DbSet<KeyValuePair> KeyValuePairs { get; set; }
 		/// <inheridoc />
 		public DbSet<ModuleMetadata> ModuleMetadatas { get; set; }
+		/// <summary>
+		/// The <see cref="DbSet{TEntity}"/> for <see cref="Log"/>s
+		/// </summary>
+		public DbSet<Log> Logs { get; set; }
 
 		/// <summary>
 		/// The <see cref="DatabaseConfiguration"/> for the <see cref="DatabaseContext"/>
 		/// </summary>
 		readonly DatabaseConfiguration databaseConfiguration;
+		/// <summary>
+		/// The <see cref="ILoggerFactory"/> for the <see cref="DatabaseContext"/>
+		/// </summary>
+		readonly ILoggerFactory loggerFactory;
 
 		/// <summary>
 		/// Helper for calling different <see cref="Action{T}"/>s with <see cref="DatabaseConfiguration.ConnectionString"/> based on <see cref="DatabaseConfiguration.DatabaseType"/>
@@ -62,27 +72,36 @@ namespace TGWebhooks.Models
 		/// </summary>
 		/// <param name="options">The <see cref="DbContextOptions{TContext}"/> for the <see cref="DatabaseContext"/></param>
 		/// <param name="databaseConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the value of <see cref="databaseConfiguration"/></param>
-		public DatabaseContext(DbContextOptions<DatabaseContext> options, IOptions<DatabaseConfiguration> databaseConfigurationOptions) : base(options)
+		/// <param name="loggerFactory">The value of <see cref="loggerFactory"/></param>
+		public DatabaseContext(DbContextOptions<DatabaseContext> options, IOptions<DatabaseConfiguration> databaseConfigurationOptions, ILoggerFactory loggerFactory) : base(options)
 		{
 			databaseConfiguration = databaseConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(databaseConfigurationOptions));
+			this.loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
+		}
+
+		/// <inheridoc />
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
+		{
+			base.OnModelCreating(modelBuilder);
+
+			// build default model.
+			LogModelBuilderHelper.Build(modelBuilder.Entity<Log>());
+
+			// real relation database can map table:
+			modelBuilder.Entity<Log>().ToTable(nameof(Log));
 		}
 
 		/// <inheridoc />
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
 			SelectDatabaseType(databaseConfiguration, x => optionsBuilder.UseSqlServer(x), x => optionsBuilder.UseMySQL(x), x => optionsBuilder.UseSqlite(x));
+			optionsBuilder.UseLoggerFactory(loggerFactory);
 		}
 
 		/// <inheridoc />
-		public Task Save(CancellationToken cancellationToken)
-		{
-			return SaveChangesAsync(cancellationToken);
-		}
+		public Task Save(CancellationToken cancellationToken) => SaveChangesAsync(cancellationToken);
 
 		/// <inheridoc />
-		public Task Initialize(CancellationToken cancellationToken)
-		{
-			return Database.EnsureCreatedAsync(cancellationToken);
-		}
+		public Task Initialize(CancellationToken cancellationToken) => Database.EnsureCreatedAsync(cancellationToken);
 	}
 }

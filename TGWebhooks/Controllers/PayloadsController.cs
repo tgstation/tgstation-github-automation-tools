@@ -30,7 +30,7 @@ namespace TGWebhooks.Controllers
 		/// </summary>
 		readonly GitHubConfiguration gitHubConfiguration;
 		/// <summary>
-		/// The <see cref="IModuleManager"/> for the <see cref="PayloadsController"/>
+		/// The <see cref="IComponentProvider"/> for the <see cref="PayloadsController"/>
 		/// </summary>
 		readonly IComponentProvider componentProvider;
 		/// <summary>
@@ -69,9 +69,7 @@ namespace TGWebhooks.Controllers
 		/// <param name="backgroundJobClient">The value of <see cref="backgroundJobClient"/></param>
 		public PayloadsController(IOptions<GitHubConfiguration> gitHubConfigurationOptions, ILogger<PayloadsController> logger, IComponentProvider componentProvider, IAutoMergeHandler autoMergeHandler, IBackgroundJobClient backgroundJobClient)
 		{
-			if (gitHubConfigurationOptions == null)
-				throw new ArgumentNullException(nameof(gitHubConfigurationOptions));
-			gitHubConfiguration = gitHubConfigurationOptions.Value;
+			gitHubConfiguration = gitHubConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(gitHubConfigurationOptions));
 			this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
 			this.componentProvider = componentProvider ?? throw new ArgumentNullException(nameof(componentProvider));
 			this.autoMergeHandler = autoMergeHandler ?? throw new ArgumentNullException(nameof(autoMergeHandler));
@@ -110,7 +108,8 @@ namespace TGWebhooks.Controllers
 		/// <param name="json">The JSON <see cref="string"/> of the <typeparamref name="TPayload"/> to process</param>
 		/// <param name="jobCancellationToken">The <see cref="IJobCancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running handlers</returns>
-		async Task InvokeHandlers<TPayload>(string json, IJobCancellationToken jobCancellationToken) where TPayload : ActivityPayload
+		[AutomaticRetry(Attempts = 0)]
+		public async Task InvokeHandlers<TPayload>(string json, IJobCancellationToken jobCancellationToken) where TPayload : ActivityPayload
 		{
 			logger.LogTrace("Beginning payload processing job: {0}");
 			var cancellationToken = jobCancellationToken.ShutdownToken;
@@ -138,15 +137,15 @@ namespace TGWebhooks.Controllers
 				}
 			};
 
+			await componentProvider.Initialize(cancellationToken).ConfigureAwait(false);
 			foreach (var handler in componentProvider.GetPayloadHandlers<TPayload>())
 				tasks.Add(RunHandler(handler));
 
 			await Task.WhenAll(tasks).ConfigureAwait(false);
 
-			if (typeof(IPayloadHandler<TPayload>).IsAssignableFrom(autoMergeHandler.GetType()))
+			if (autoMergeHandler is IPayloadHandler<TPayload> asHandler)
 			{
 				logger.LogTrace("Running auto merge payload handler.");
-				var asHandler = (IPayloadHandler<TPayload>)autoMergeHandler;
 				try
 				{
 					await asHandler.ProcessPayload(payload, cancellationToken).ConfigureAwait(false);

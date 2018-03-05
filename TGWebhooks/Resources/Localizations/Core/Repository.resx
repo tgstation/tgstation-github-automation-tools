@@ -117,10 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ChangelogMalformed" xml:space="preserve">
-    <value>The changelog is malformed</value>
+  <data name="CommitStatusError" xml:space="preserve">
+    <value>An error occurred while evaluating mergeability: {0}</value>
   </data>
-  <data name="NeedsChangelog" xml:space="preserve">
-    <value>A changelog is required</value>
+  <data name="CommitStatusFail" xml:space="preserve">
+    <value>The pull request does not meet standards: {0}</value>
+  </data>
+  <data name="CommitStatusPending" xml:space="preserve">
+    <value>Evaluating pull request...</value>
+  </data>
+  <data name="CommitStatusSuccess" xml:space="preserve">
+    <value>The pull request is compliant with standards</value>
+  </data>
+  <data name="FetchLogMessage" xml:space="preserve">
+    <value>Fetch for: {0}</value>
+  </data>
+  <data name="MergeProcessInterruption" xml:space="preserve">
+    <value>Merge process interupted! Error:\n```\n{0}\n``` your old HEAD commit was {1}</value>
   </data>
 </root>

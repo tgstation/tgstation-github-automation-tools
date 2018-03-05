@@ -1,0 +1,64 @@
+﻿<h3>@ViewBag.SignOffHeader:</h3>
+<p>@ViewBag.SignOffDisclaimer</p>
+<div class="row">
+    <h4 id="signOffLabel" style="@(ViewBag.Signer == null ? "display: none" : null)">@ViewBag.SignedBy: @ViewBag.Signer</h4>
+    <button id="signOffButton" type="button" class="btn btn-@(ViewBag.Signer == null ? "primary" : "danger")">@(ViewBag.Signer != null ? ViewBag.VetoLabel : ViewBag.SignOffLabel)</button>
+    <i class="fa fa-spinner" id="signOffSpinner" style="display: none"></i>
+    <script type="text/javascript">
+        $(function () {
+            $('#signOffButton').click(function () {
+                $('#signOffSpinner').addClass("fa-spinner");
+                $('#signOffSpinner').addClass("fa-spin");
+                $('#signOffSpinner').css("color", "");
+                $('#signOffSpinner').removeClass("fa-check");
+                $('#signOffSpinner').removeClass("fa-times");
+                $('#signOffSpinner').show();
+                $('#signOffButton').prop('disabled', true);
+                var label = $('#signOffLabel');
+                var isVeto = label.is(":visible");
+                var soUrl = '@Url.Action("SignOff", "SignOff", new { prNumber = ViewBag.PullRequestNumber})';
+                var vtUrl = '@Url.Action("Veto", "SignOff", new { prNumber = ViewBag.PullRequestNumber})';
+                $.ajax({
+                    type: 'POST',
+                    url: isVeto ? vtUrl : soUrl,
+                    contentType: "application/json",
+                    success: function () {
+                        $('#signOffSpinner').removeClass("fa-spin");
+                        $('#signOffSpinner').removeClass("fa-spinner");
+                        $('#signOffSpinner').css("color", "green");
+                        $('#signOffSpinner').addClass("fa-check");
+                        $('#signOffButton').prop('disabled', false);
+                        //HACK ALERT, these indexes should NOT be hardcoded
+                        var circle = $('#PBC-2');
+                        var check = $('#PB-2');
+                        var notes = $('#NT-2');
+                        if (isVeto) {
+                            label.hide();
+                            $('#signOffButton').removeClass('btn-danger');
+                            $('#signOffButton').addClass('btn-primary');
+                            $('#signOffButton').text('@ViewBag.SignOffLabel');
+                            circle.svgDraw(.5);
+                            notes.hide();
+                            check.removeClass('success');
+                        } else {
+                            label.show();
+                            label.text('@ViewBag.SignedBy: @ViewBag.UserLogin');
+                            $('#signOffButton').addClass('btn-danger');
+                            $('#signOffButton').removeClass('btn-primary');
+                            $('#signOffButton').text('@ViewBag.VetoLabel');
+                            circle.svgDraw(1);
+                            notes.text('@ViewBag.SignedBy: @ViewBag.UserLogin');
+                            notes.show();
+                            check.addClass('success');
+                        }
+                    },
+                    error: function () {
+                        $('#signOffSpinner').removeClass("fa-spin");
+                        $('#signOffSpinner').removeClass("fa-spinner");
+                        $('#signOffSpinner').css("color", "red");
+                        $('#signOffSpinner').addClass("fa-times");
+                }});
+            });
+        });
+    </script>
+</div>

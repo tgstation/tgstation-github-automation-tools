@@ -7,6 +7,8 @@
 
     <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 </head>
 <body>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
@@ -19,6 +21,7 @@
             crossorigin="anonymous"
             integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
     </script>
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     @RenderSection("Scripts", required: false)
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
@@ -38,13 +41,13 @@
                         <li><a asp-controller="Modules" asp-action="Index">@ViewBag.Modules</a></li>
                     </ul>
                 }
-                <ul class="nav navbar-nav">
+                <ul class="nav navbar-nav pull-right">
                     <li><a href="@ViewBag.AuthHref">@ViewBag.AuthTitle</a></li>
                 </ul>
             </div>
         </div>
     </nav>
-    <div class="container body-content" style="padding-top: 70px">
+    <div class="container body-content" style="padding-top: 70px;margin-bottom: 90px;">
         @RenderBody()
     </div>
 </body>

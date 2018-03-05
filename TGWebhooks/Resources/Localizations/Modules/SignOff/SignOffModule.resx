@@ -117,13 +117,40 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="NoSignOffs" xml:space="preserve">
-    <value>No maintainers have signed off on this pull request</value>
-  </data>
   <data name="Signer" xml:space="preserve">
     <value>Signed off by: {0}</value>
   </data>
   <data name="SignOffNulled" xml:space="preserve">
     <value>Sign off nullified due to edit of original post</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Require maintainers approving the 'idea' of a Pull Request aside from code. Sign offs are automatically dismissed if the pull request body or title changes</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Sign Off</value>
+  </data>
+  <data name="RequirementDescription" xml:space="preserve">
+    <value>A maintainer must sign off on the pull request</value>
+  </data>
+  <data name="SignedBy" xml:space="preserve">
+    <value>Signed off by</value>
+  </data>
+  <data name="SignOffHeader" xml:space="preserve">
+    <value>Sign Off On Pull Request</value>
+  </data>
+  <data name="SignOffLabel" xml:space="preserve">
+    <value>Sign Off</value>
+  </data>
+  <data name="VetoLabel" xml:space="preserve">
+    <value>Veto</value>
+  </data>
+  <data name="SignerTag" xml:space="preserve">
+    <value>Signed off by: @{0}</value>
+  </data>
+  <data name="SignOfVetod" xml:space="preserve">
+    <value>Sign off vetoed by @{0}</value>
+  </data>
+  <data name="Disclaimer" xml:space="preserve">
+    <value>Remember, this is equivalent to merging the pull request if and when it meets all other criteria</value>
   </data>
 </root>

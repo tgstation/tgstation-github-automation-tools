@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.Extensions.Localization;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using TGWebhooks.Models;
@@ -19,7 +20,8 @@ namespace TGWebhooks.Core.Tests
 			var mockDBContext = new Mock<IDatabaseContext>();
 			var fac = new DataStoreFactory<TwentyFourHourRuleModule>(mockDBContext.Object);
 			Assert.ThrowsException<ArgumentNullException>(() => fac.CreateDataStore(null));
-			Assert.IsNotNull(fac.CreateDataStore(new TwentyFourHourRuleModule()));
+			var mockStringLocalizer = new Mock<IStringLocalizer<TwentyFourHourRuleModule>>();
+			Assert.IsNotNull(fac.CreateDataStore(new TwentyFourHourRuleModule(mockStringLocalizer.Object)));
 		}
 	}
 }

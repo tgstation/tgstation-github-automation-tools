@@ -9,8 +9,8 @@
 		/// <summary>
 		/// Create a <see cref="IDataStore"/>
 		/// </summary>
-		/// <param name="module">The <typeparamref name="TModule"/> that will use the <see cref="IDataStore"/></param>
+		/// <param name="ownerModule">The <typeparamref name="TModule"/> that will use the <see cref="IDataStore"/></param>
 		/// <returns>A new <see cref="IDataStore"/></returns>
-		IDataStore CreateDataStore(TModule module);
+		IDataStore CreateDataStore(TModule ownerModule);
     }
 }

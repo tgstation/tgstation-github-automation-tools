@@ -5,13 +5,8 @@ namespace TGWebhooks.Modules
 	/// <summary>
 	/// Representation of a plugin for <see cref="TGWebhooks"/>
 	/// </summary>
-	public interface IModule : IComponentProvider
+	public interface IModule : IComponentProviderBase
 	{
-		/// <summary>
-		/// If the <see cref="IModule"/> is enabled
-		/// </summary>
-		bool Enabled { set; }
-
 		/// <summary>
 		/// A unique <see cref="Uid"/> for the <see cref="IModule"/>
 		/// </summary>
@@ -26,5 +21,10 @@ namespace TGWebhooks.Modules
 		/// A verbose user-friendly description of the <see cref="IModule"/>
 		/// </summary>
 		string Description { get; }
+
+		/// <summary>
+		/// If the <see cref="IModule"/> is enabled
+		/// </summary>
+		void SetEnabled(bool enabled);
 	}
 }

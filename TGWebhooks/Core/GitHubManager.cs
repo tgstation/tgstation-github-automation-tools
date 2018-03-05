@@ -12,6 +12,7 @@ using TGWebhooks.Modules;
 using TGWebhooks.Configuration;
 using TGWebhooks.Controllers;
 using TGWebhooks.Models;
+using System.Diagnostics;
 
 namespace TGWebhooks.Core
 {
@@ -85,7 +86,7 @@ namespace TGWebhooks.Core
 		/// <param name="_databaseContext">The value of <see cref="databaseContext"/></param>
 		/// <param name="_logger">The value of <see cref="logger"/></param>
 		/// <param name="_gitHubClientFactory">The value of <see cref="gitHubClientFactory"/></param>
-		public GitHubManager(IOptions<GeneralConfiguration> generalConfigurationOptions, IOptions<GitHubConfiguration> gitHubConfigurationOptions, DatabaseContext _databaseContext, ILogger<GitHubManager> _logger, IGitHubClientFactory _gitHubClientFactory)
+		public GitHubManager(IOptions<GeneralConfiguration> generalConfigurationOptions, IOptions<GitHubConfiguration> gitHubConfigurationOptions, IDatabaseContext _databaseContext, ILogger<GitHubManager> _logger, IGitHubClientFactory _gitHubClientFactory)
 		{
 			gitHubConfiguration = gitHubConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(gitHubConfigurationOptions));
 			generalConfiguration = generalConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(generalConfigurationOptions));
@@ -162,14 +163,18 @@ namespace TGWebhooks.Core
 		}
 
 		/// <inheritdoc />
-		public Task MergePullRequest(PullRequest pullRequest, string accessToken)
+		public Task MergePullRequest(PullRequest pullRequest, string accessToken, string sha)
 		{
+			Debugger.Break();
+
 			if (pullRequest == null)
 				throw new ArgumentNullException(nameof(pullRequest));
 			if (accessToken == null)
 				throw new ArgumentNullException(nameof(accessToken));
+			if (sha == null)
+				throw new ArgumentNullException(nameof(sha));
 
-			logger.LogTrace("Merge #{0}", pullRequest.Number);
+			logger.LogInformation("Merging pull request #{0} - {1}", pullRequest.Number, pullRequest.Title);
 			var mergerClient = new GitHubClient(new ProductHeaderValue(Application.UserAgent))
 			{
 				Credentials = new Credentials(accessToken)
@@ -177,10 +182,10 @@ namespace TGWebhooks.Core
 
 			return mergerClient.PullRequest.Merge(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, pullRequest.Number, new MergePullRequest
 			{
-				CommitTitle = String.Format(CultureInfo.InvariantCulture, "{0} (#{1})", pullRequest.Title, pullRequest.Body),
+				CommitTitle = String.Format(CultureInfo.InvariantCulture, "{0} - #{1}", pullRequest.Title, pullRequest.Number),
 				CommitMessage = pullRequest.Body,
-				MergeMethod = PullRequestMergeMethod.Merge,
-				Sha = pullRequest.Head.Sha
+				MergeMethod = PullRequestMergeMethod.Squash,
+				Sha = sha
 			});
 		}
 
@@ -367,7 +372,7 @@ namespace TGWebhooks.Core
 				Context = String.Concat(Application.UserAgent, '/', "status"),
 				Description = description,
 				State = commitState,
-				TargetUrl = String.Concat(generalConfiguration.RootURL, PullRequestController.Route)
+				TargetUrl = String.Join('/', generalConfiguration.RootURL, PullRequestController.Route, pullRequest.Number)
 			});
 		}
 
@@ -409,5 +414,11 @@ namespace TGWebhooks.Core
 
 		/// <inheritdoc />
 		public Task DeleteBranch(string branchName) => gitHubClient.Git.Reference.Delete(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, branchName);
+
+		/// <inheritdoc />
+		public Task CreateFile(string branchName, string commitMessage, string path, string content) => gitHubClient.Repository.Content.CreateFile(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, path, new CreateFileRequest(commitMessage, content, branchName, true));
+
+		/// <inheritdoc />
+		public Task<Commit> GetCommit(string reference) => gitHubClient.Git.Commit.Get(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, reference);
 	}
 }

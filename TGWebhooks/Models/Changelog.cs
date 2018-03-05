@@ -32,23 +32,47 @@ namespace TGWebhooks.Models
 		{
 			string author = null;
 			List<ChangelogEntry> entries = null;
-			foreach (var line in pullRequest?.Body?.Split('\n') ?? throw new ArgumentNullException(nameof(pullRequest)))
+			if (pullRequest == null)
+				throw new ArgumentNullException(nameof(pullRequest));
+			if (pullRequest.Body == null)
+			{
+				malformed = false;
+				return null;
+			}
+			foreach (var line in pullRequest.Body.Split('\n') ?? throw new ArgumentNullException(nameof(pullRequest)))
 			{
 				if (String.IsNullOrWhiteSpace(line))
 					continue;
-				var foundTag = line.StartsWith(":cl:") || line.StartsWith("🆑");
+				const StringComparison ComparisonCulture = StringComparison.InvariantCulture;	//could potentially ignore case here
+				var foundStartTag = line.StartsWith(":cl:", ComparisonCulture) || line.StartsWith("🆑", ComparisonCulture);
+				var foundEndTag = line.StartsWith("/:cl:", ComparisonCulture) || line.StartsWith("/🆑", ComparisonCulture);
 				if (author == null)
 				{
-					if (foundTag)
+					if (foundEndTag)
 					{
-						author = line.Replace(":cl:", String.Empty).Replace("🆑", String.Empty).Trim();
-						if (String.IsNullOrWhiteSpace(author) || author == "optional name here")
+						malformed = true;
+						return null;
+					}
+					if (foundStartTag)
+					{
+						author = line.Replace(":cl:", String.Empty, ComparisonCulture).Replace("🆑", String.Empty, ComparisonCulture).Trim();
+						if (String.IsNullOrWhiteSpace(author))
 							author = pullRequest.User.Login;
+						else if (author == "optional name here")
+						{
+							malformed = true;
+							return null;
+						}
 						entries = new List<ChangelogEntry>();
 					}
 					continue;
 				}
-				if (foundTag)
+				if (foundStartTag)
+				{
+					malformed = true;
+					return null;
+				}
+				if (foundEndTag)
 				{
 					if (entries.Count == 0)
 					{
@@ -65,60 +89,60 @@ namespace TGWebhooks.Models
 					return null;
 				}
 
-				var header = line.Substring(0, firstColon).ToLowerInvariant();
+				var header = line.Substring(0, firstColon).ToUpperInvariant();
 				var body = line.Substring(firstColon + 1, line.Length - firstColon - 1).Trim();
 				ChangelogEntryType entryType;
 				switch (header)
 				{
-					case "fix":
-					case "fixes":
-					case "bugfix":
+					case "FIX":
+					case "FIXES":
+					case "BUGFIX":
 						entryType = ChangelogEntryType.BugFix;
 						break;
-					case "rsctweak":
-					case "tweaks":
-					case "tweak":
+					case "RSCTWEAK":
+					case "TWEAKS":
+					case "TWEAK":
 						entryType = ChangelogEntryType.Tweak;
 						break;
-					case "soundadd":
+					case "SOUNDADD":
 						entryType = ChangelogEntryType.SoundAdd;
 						break;
-					case "sounddel":
+					case "SOUNDDEL":
 						entryType = ChangelogEntryType.SoundDel;
 						break;
-					case "add":
-					case "adds":
-					case "rscadd":
+					case "ADD":
+					case "ADDS":
+					case "RSCADD":
 						entryType = ChangelogEntryType.RscAdd;
 						break;
-					case "imageadd":
+					case "IMAGEADD":
 						entryType = ChangelogEntryType.ImageAdd;
 						break;
-					case "imagedel":
+					case "IMAGEDEL":
 						entryType = ChangelogEntryType.ImageDel;
 						break;
-					case "type":
-					case "spellcheck":
+					case "TYPE":
+					case "SPELLCHECK":
 						entryType = ChangelogEntryType.SpellCheck;
 						break;
-					case "balance":
-					case "rebalance":
+					case "BALANCE":
+					case "REBALANCE":
 						entryType = ChangelogEntryType.Balance;
 						break;
-					case "code_imp":
-					case "code":
+					case "CODE_IMP":
+					case "CODE":
 						entryType = ChangelogEntryType.Code_Imp;
 						break;
-					case "config":
+					case "CONFIG":
 						entryType = ChangelogEntryType.Config;
 						break;
-					case "admin":
+					case "ADMIN":
 						entryType = ChangelogEntryType.Admin;
 						break;
-					case "server":
+					case "SERVER":
 						entryType = ChangelogEntryType.Server;
 						break;
-					case "refactor":
+					case "REFACTOR":
 						entryType = ChangelogEntryType.Refactor;
 						break;
 					default:

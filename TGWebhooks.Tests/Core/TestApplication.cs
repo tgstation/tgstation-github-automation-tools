@@ -20,12 +20,8 @@ namespace TGWebhooks.Core.Tests
 		public void TestInstatiation()
 		{
 			var mockConfig = new Mock<IConfiguration>();
-			var mockHostingEnvironment = new Mock<IHostingEnvironment>();
-			mockHostingEnvironment.SetupGet(x => x.ContentRootPath).Returns(String.Empty);
-			Assert.ThrowsException<ArgumentNullException>(() => new Application(null, null));
-			Assert.ThrowsException<ArgumentNullException>(() => new Application(mockConfig.Object, null));
-			Assert.ThrowsException<ArgumentNullException>(() => new Application(null, mockHostingEnvironment.Object));
-			new Application(mockConfig.Object, mockHostingEnvironment.Object);
+			Assert.ThrowsException<ArgumentNullException>(() => new Application(null));
+			var app = new Application(mockConfig.Object);
 		}
 
 		[TestMethod]
@@ -34,9 +30,7 @@ namespace TGWebhooks.Core.Tests
 			var mockConfig = new Mock<IConfiguration>();
 			var mockConfigSection = new Mock<IConfigurationSection>();
 			mockConfig.Setup(x => x.GetSection(It.IsAny<string>())).Returns(mockConfigSection.Object);
-			var mockHostingEnvironment = new Mock<IHostingEnvironment>();
-			mockHostingEnvironment.SetupGet(x => x.ContentRootPath).Returns(String.Empty);
-			var app = new Application(mockConfig.Object, mockHostingEnvironment.Object);
+			var app = new Application(mockConfig.Object);
 			Assert.ThrowsException<ArgumentNullException>(() => app.ConfigureServices(null));
 
 			var mockServiceCollection = new Mock<IServiceCollection>();

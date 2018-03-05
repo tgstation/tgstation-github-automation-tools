@@ -65,9 +65,10 @@ namespace TGWebhooks.Modules
 		/// Squashes and merges the given <see cref="PullRequest"/> with it's current <see cref="PullRequest.Title"/>, <see cref="PullRequest.Number"/>, and <see cref="PullRequest.Body"/> as the log message
 		/// </summary>
 		/// <param name="pullRequest">The <see cref="PullRequest"/> to merge</param>
-		/// <param name="overrideAccessToken">The access token to merge with</param>
+		/// <param name="accessToken">The access token to merge with</param>
+		/// <param name="sha">The <see cref="GitReference.Sha"/> to accept the merge of</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
-		Task MergePullRequest(PullRequest pullRequest, string overrideAccessToken);
+		Task MergePullRequest(PullRequest pullRequest, string accessToken, string sha);
 
 		/// <summary>
 		/// Get all <see cref="PullRequestReview"/>s for a given <paramref name="pullRequest"/>
@@ -140,6 +141,13 @@ namespace TGWebhooks.Modules
 		Task CreateComment(int number, string body);
 
 		/// <summary>
+		/// Gets a specified <see cref="Commit"/>
+		/// </summary>
+		/// <param name="sha">The <see cref="GitReference.Ref"/> of the <see cref="Commit"/></param>
+		/// <returns>A <see cref="Task{TResult}"/> resulting in the <see cref="Commit"/></returns>
+		Task<Commit> GetCommit(string sha);
+
+		/// <summary>
 		/// Creates an "Approved" review on <paramref name="pullRequest"/>
 		/// </summary>
 		/// <param name="pullRequest">The <see cref="PullRequest"/> to approve</param>
@@ -155,6 +163,16 @@ namespace TGWebhooks.Modules
 		/// <param name="dismissMessage">The message to dismiss with</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
 		Task DismissReview(PullRequest pullRequest, PullRequestReview pullRequestReview, string dismissMessage);
+
+		/// <summary>
+		/// Creates a file on a given <paramref name="branch"/> at a given <paramref name="path"/>
+		/// </summary>
+		/// <param name="branch">The branch to push to</param>
+		/// <param name="commitMessage">The commit message for the push</param>
+		/// <param name="path">The path in the <see cref="Repository"/> to create the file at</param>
+		/// <param name="content">The content of the file</param>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		Task CreateFile(string branch, string commitMessage, string path, string content);
 
 		/// <summary>
 		/// Get the GitHub <see cref="User"/> of either the configured or specified <paramref name="accessToken"/>

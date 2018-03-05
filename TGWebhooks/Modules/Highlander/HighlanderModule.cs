@@ -15,9 +15,6 @@ namespace TGWebhooks.Modules.Highlander
 	sealed class HighlanderModule : IModule, IPayloadHandler<PullRequestEventPayload>
 	{
 		/// <inheritdoc />
-		public bool Enabled { get; set; }
-
-		/// <inheritdoc />
 		public Guid Uid => new Guid("ec74d6d5-c0ac-46d2-bcec-f52494e2e8c6");
 
 		/// <inheritdoc />
@@ -29,9 +26,6 @@ namespace TGWebhooks.Modules.Highlander
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => Enumerable.Empty<IMergeRequirement>();
 
-		/// <inheritdoc />
-		public IEnumerable<IMergeHook> MergeHooks => Enumerable.Empty<IMergeHook>();
-
 		/// <summary>
 		/// The <see cref="IGitHubManager"/> for the <see cref="HighlanderModule"/>
 		/// </summary>
@@ -40,6 +34,11 @@ namespace TGWebhooks.Modules.Highlander
 		/// The <see cref="IStringLocalizer"/> for the <see cref="HighlanderModule"/>
 		/// </summary>
 		readonly IStringLocalizer<HighlanderModule> stringLocalizer;
+
+		/// <summary>
+		/// Backing field for <see cref="SetEnabled(bool)"/>
+		/// </summary>
+		bool enabled;
 
 		/// <summary>
 		/// Construct a <see cref="HighlanderModule"/>
@@ -58,9 +57,6 @@ namespace TGWebhooks.Modules.Highlander
 			if (typeof(TPayload) == typeof(PullRequestEventPayload))
 				yield return (IPayloadHandler<TPayload>)(object)this;
 		}
-
-		/// <inheritdoc />
-		public Task Initialize(CancellationToken cancellationToken) => Task.CompletedTask;
 
 		/// <inheritdoc />
 		public Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken) => Task.CompletedTask;
@@ -83,9 +79,12 @@ namespace TGWebhooks.Modules.Highlander
 
 			if(result != null)
 			{
-				await gitHubManager.CreateComment(payload.PullRequest.Number, stringLocalizer["TooManyPRs", result]);
-				await gitHubManager.Close(payload.PullRequest.Number);
+				await gitHubManager.CreateComment(payload.PullRequest.Number, stringLocalizer["TooManyPRs", result]).ConfigureAwait(false);
+				await gitHubManager.Close(payload.PullRequest.Number).ConfigureAwait(false);
 			}
 		}
+
+		/// <inheritdoc />
+		public void SetEnabled(bool enabled) => this.enabled = enabled;
 	}
 }

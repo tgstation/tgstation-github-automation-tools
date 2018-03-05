@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System;
-using System.Linq;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Modules;
@@ -44,8 +44,9 @@ namespace TGWebhooks.Controllers
 		{
 			if (await gitHubManager.CheckAuthorization(Request.Cookies, cancellationToken).ConfigureAwait(false) != null)
 				return RedirectToAction("ReviewPullRequest", "PullRequest", new { number = prNumber });
-			var redirectURI = new Uri(generalConfiguration.RootURL, Url.Action(nameof(Complete), prNumber));
-			return Redirect(String.Concat(gitHubManager.GetAuthorizationURL(redirectURI).ToString()));
+			
+			var redirectURI = Url.Action(nameof(Complete), new { prNumber });
+			return Redirect(gitHubManager.GetAuthorizationURL(new Uri(String.Format(CultureInfo.InvariantCulture, "https://{0}{1}", Request.Host, redirectURI))).ToString());
 		}
 
 		/// <summary>
@@ -74,11 +75,22 @@ namespace TGWebhooks.Controllers
 		/// </summary>
 		/// <param name="prNumber">The <see cref="Octokit.PullRequest.Number"/> to redirect to, defaults to the first open pull request</param>
 		/// <returns>An <see cref="RedirectToActionResult"/></returns>
-		[HttpGet("SignOut/{prNumber = 0}")]
-		public async Task<IActionResult> SignOut(int prNumber = 0)
+		[HttpGet("SignOut/{prNumber}")]
+		public async Task<IActionResult> SignOut(int prNumber)
 		{
 			gitHubManager.ExpireAuthorization(Response.Cookies);
-			return RedirectToAction("ReviewPullRequest", "PullRequest", new{ number = prNumber > 0 ? prNumber : (await gitHubManager.GetOpenPullRequests().ConfigureAwait(false)).First().Number });
+			return RedirectToAction("ReviewPullRequest", "PullRequest", new { number = prNumber > 0 ? prNumber : (await gitHubManager.GetOpenPullRequests().ConfigureAwait(false))[0].Number });
+		}
+
+		/// <summary>
+		/// Signs out the user and closes their window
+		/// </summary>
+		/// <returns>An <see cref="RedirectToActionResult"/></returns>
+		[HttpGet("SignOut")]
+		public async Task<IActionResult> SignOut()
+		{
+			gitHubManager.ExpireAuthorization(Response.Cookies);
+			return RedirectToAction("ReviewPullRequest", "PullRequest", new { number = (await gitHubManager.GetOpenPullRequests().ConfigureAwait(false))[0].Number });
 		}
 	}
 }

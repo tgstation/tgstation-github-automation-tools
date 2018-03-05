@@ -117,14 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CloseMessage" xml:space="preserve">
+    <value>This pull request is closed/merged</value>
+  </data>
   <data name="ManageModules" xml:space="preserve">
     <value>Manage Modules</value>
+  </data>
+  <data name="MergeRequirements" xml:space="preserve">
+    <value>Merge Requirements</value>
   </data>
   <data name="PullRequest" xml:space="preserve">
     <value>Pull Request #{0}</value>
   </data>
   <data name="SignIn" xml:space="preserve">
-    <value>Sign In With GitHub</value>
+    <value>Maintainer Sign In With GitHub</value>
   </data>
   <data name="SignOut" xml:space="preserve">
     <value>Log Out - {0}</value>

@@ -1,5 +1,4 @@
 ﻿using Byond.TopicSender;
-using Cyberboss.AspNetCore.AsyncInitializer;
 using Hangfire;
 using Hangfire.MySql;
 using Hangfire.SQLite;
@@ -10,16 +9,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Threading;
 using TGWebhooks.Configuration;
 using TGWebhooks.Modules;
 using TGWebhooks.Models;
+using ZNetCS.AspNetCore.Logging.EntityFrameworkCore;
+using Microsoft.ApplicationInsights.Extensibility;
 
 namespace TGWebhooks.Core
 {
@@ -36,11 +36,6 @@ namespace TGWebhooks.Core
 		public const string UserAgent = "tgstation-github-automation-tools";
 
 		/// <summary>
-		/// The path to the directory the <see cref="Application"/> should use for data files
-		/// </summary>
-		public static string DataDirectory { get; private set; }
-
-		/// <summary>
 		/// The <see cref="IConfiguration"/> for the <see cref="Application"/>
 		/// </summary>
 		readonly IConfiguration configuration;
@@ -48,12 +43,10 @@ namespace TGWebhooks.Core
 		/// <summary>
 		/// Construct an <see cref="Application"/>
 		/// </summary>
-		/// <param name="_configuration">The value of <see cref="configuration"/></param>
-		/// <param name="hostingEnvironment">The <see cref="IHostingEnvironment"/> used to determin the <see cref="DataDirectory"/></param>
-		public Application(IConfiguration _configuration, IHostingEnvironment hostingEnvironment)
+		/// <param name="configuration">The value of <see cref="configuration"/></param>
+		public Application(IConfiguration configuration)
 		{
-			configuration = _configuration ?? throw new ArgumentNullException(nameof(_configuration));
-			DataDirectory = Path.Combine(hostingEnvironment?.ContentRootPath ?? throw new ArgumentNullException(nameof(hostingEnvironment)), "App_Data");
+			this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 		}
 
 		/// <summary>
@@ -67,10 +60,13 @@ namespace TGWebhooks.Core
 
 			var dbConfigSection = configuration.GetSection(DatabaseConfiguration.Section);
 
+			services.Configure<IISOptions>((options) => options.ForwardClientCertificate = false);
+
 			services.Configure<GeneralConfiguration>(configuration.GetSection(GeneralConfiguration.Section));
 			services.Configure<GitHubConfiguration>(configuration.GetSection(GitHubConfiguration.Section));
 			services.Configure<TravisConfiguration>(configuration.GetSection(TravisConfiguration.Section));
 			services.Configure<ServerConfiguration>(configuration.GetSection(ServerConfiguration.Section));
+			services.Configure<DiscordConfiguration>(configuration.GetSection(DiscordConfiguration.Section));
 			services.Configure<DatabaseConfiguration>(dbConfigSection);
 
 			services.Configure<MvcOptions>(options => options.Filters.Add(new RequireHttpsAttribute()));
@@ -84,39 +80,48 @@ namespace TGWebhooks.Core
 			services.AddMvc();
 			services.AddOptions();
 
-			services.AddDbContext<DatabaseContext>(ServiceLifetime.Singleton);
+			services.AddDbContext<DatabaseContext>();
 
-			services.AddSingleton<IDatabaseContext>(x => x.GetRequiredService<DatabaseContext>());
-			services.AddSingleton(typeof(IDataStoreFactory<>), typeof(DataStoreFactory<>));
-			services.AddSingleton<IModuleManager, ModuleManager>();
-			services.AddSingleton<IComponentProvider>(x => x.GetRequiredService<IModuleManager>());
-			services.AddSingleton<IGitHubClientFactory, GitHubClientFactory>();
-			services.AddSingleton<IGitHubManager, GitHubManager>();
-			services.AddSingleton<IRepository, Repository>();
-			services.AddSingleton<IIOManager, DefaultIOManager>();
+			services.AddScoped<IDatabaseContext>(x => x.GetRequiredService<DatabaseContext>());
+			services.AddScoped(typeof(IDataStoreFactory<>), typeof(DataStoreFactory<>));
+			services.AddScoped<IGitHubClientFactory, GitHubClientFactory>();
+			services.AddScoped<IGitHubManager, GitHubManager>();
+			services.AddScoped<IContinuousIntegration, TravisContinuousIntegration>();
+
+			services.AddScoped<IModuleManager, ModuleManager>();
+			services.AddScoped<IComponentProvider>(x => x.GetRequiredService<IModuleManager>());
+			services.AddModules();
+
+			services.AddSingleton<IChatMessenger, DiscordMessenger>();
 			services.AddSingleton<IWebRequestManager, WebRequestManager>();
-			services.AddSingleton<IContinuousIntegration, TravisContinuousIntegration>();
 			services.AddSingleton<IAutoMergeHandler, AutoMergeHandler>();
 			services.AddSingleton<IByondTopicSender, ByondTopicSender>();	//note the send/recieve timeouts are configured by the GameAnnouncerModule
 			//I'll probably hate myself for that later
-
-			services.AddModules();
 		}
 
-#pragma warning disable CA1822 // Mark members as static
 		/// <summary>
 		/// Configure the <see cref="Application"/>
 		/// </summary>
 		/// <param name="app">The <see cref="IApplicationBuilder"/> to configure</param>
 		/// <param name="env">The <see cref="IHostingEnvironment"/> of the <see cref="Application"/></param>
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+		/// <param name="loggerFactory">The <see cref="ILoggerFactory"/> to configure</param>
+		/// <param name="databaseContext">The <see cref="IDatabaseContext"/> to configure</param>
+		/// <param name="applicationLifetime">The <see cref="IApplicationLifetime"/> to use <see cref="System.Threading.CancellationToken"/>s from</param>
+#pragma warning disable CA1822 // Mark members as static
+		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime applicationLifetime, IDatabaseContext databaseContext)
 #pragma warning restore CA1822 // Mark members as static
 		{
 			if (app == null)
 				throw new ArgumentNullException(nameof(app));
 			if (env == null)
 				throw new ArgumentNullException(nameof(env));
-			app.ApplicationServices.GetRequiredService<IIOManager>().CreateDirectory(DataDirectory, CancellationToken.None).GetAwaiter().GetResult();
+
+			//prevent telemetry from polluting the debug log
+			TelemetryConfiguration.Active.DisableTelemetry = true;
+
+			databaseContext.Initialize(applicationLifetime.ApplicationStopping).GetAwaiter().GetResult();
+
+			loggerFactory.AddEntityFramework<DatabaseContext>(app.ApplicationServices);
 
 			if (env.IsDevelopment())
 				app.UseDeveloperExceptionPage();
@@ -146,9 +151,6 @@ namespace TGWebhooks.Core
 				SupportedUICultures = supportedCultures,
 			};
 			app.UseRequestLocalization(options);
-			
-			app.UseAsyncInitialization<IModuleManager>((pluginManager, cancellationToken) => pluginManager.Initialize(cancellationToken));
-			app.UseAsyncInitialization<IRepository>((repository, cancellationToken) => repository.Initialize(cancellationToken));
 
 			app.UseHangfireServer();
 

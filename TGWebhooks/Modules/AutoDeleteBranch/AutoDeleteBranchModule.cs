@@ -13,9 +13,6 @@ namespace TGWebhooks.Modules.AutoDeleteBranch
 	sealed class AutoDeleteBranchModule : IModule, IPayloadHandler<PullRequestEventPayload>
 	{
 		/// <inheritdoc />
-		public bool Enabled { get; set; }
-
-		/// <inheritdoc />
 		public Guid Uid => new Guid("d4235804-4cb8-4e81-bc7f-f08f8c2918d6");
 
 		/// <inheritdoc />
@@ -27,13 +24,15 @@ namespace TGWebhooks.Modules.AutoDeleteBranch
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => Enumerable.Empty<IMergeRequirement>();
 
-		/// <inheritdoc />
-		public IEnumerable<IMergeHook> MergeHooks => Enumerable.Empty<IMergeHook>();
-
 		/// <summary>
 		/// The <see cref="IGitHubClient"/> for the <see cref="AutoDeleteBranchModule"/>
 		/// </summary>
 		readonly IGitHubManager gitHubManager;
+
+		/// <summary>
+		/// Backing field for <see cref="SetEnabled(bool)"/>
+		/// </summary>
+		bool enabled;
 
 		/// <summary>
 		/// Construct an <see cref="AutoDeleteBranchModule"/>
@@ -52,9 +51,6 @@ namespace TGWebhooks.Modules.AutoDeleteBranch
 		}
 
 		/// <inheritdoc />
-		public Task Initialize(CancellationToken cancellationToken) => Task.CompletedTask;
-
-		/// <inheritdoc />
 		public async Task ProcessPayload(PullRequestEventPayload payload, CancellationToken cancellationToken)
 		{
 			if (payload == null)
@@ -66,10 +62,13 @@ namespace TGWebhooks.Modules.AutoDeleteBranch
 			if (payload.PullRequest.Base.Repository.Id != payload.PullRequest.Head.Repository.Id)
 				return;
 
-			await gitHubManager.DeleteBranch(payload.PullRequest.Head.Ref);
+			await gitHubManager.DeleteBranch(payload.PullRequest.Head.Ref).ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
 		public Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken) => Task.CompletedTask;
+
+		/// <inheritdoc />
+		public void SetEnabled(bool enabled) => this.enabled = enabled;
 	}
 }

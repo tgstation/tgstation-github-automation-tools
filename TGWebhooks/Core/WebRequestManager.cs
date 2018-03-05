@@ -35,8 +35,10 @@ namespace TGWebhooks.Core
 		{
 			if (url == null)
 				throw new ArgumentNullException(nameof(url));
-			if (body == null)
+			if (body == null && requestMethod == RequestMethod.POST)
 				throw new ArgumentNullException(nameof(body));
+			else if (body != null && requestMethod == RequestMethod.GET)
+				throw new ArgumentOutOfRangeException(nameof(body), body, "Body must be null for GET requests");
 			if (headers == null)
 				throw new ArgumentNullException(nameof(headers));
 
@@ -48,10 +50,12 @@ namespace TGWebhooks.Core
 			foreach (var I in headers)
 				request.Headers.Add(I);
 
-			using (var requestStream = await request.GetRequestStreamAsync().ConfigureAwait(false)) {
-				var data = Encoding.UTF8.GetBytes(body);
-				await requestStream.WriteAsync(data, 0, data.Length, cancellationToken).ConfigureAwait(false);
-			}
+			if (requestMethod == RequestMethod.POST)
+				using (var requestStream = await request.GetRequestStreamAsync().ConfigureAwait(false))
+				{
+					var data = Encoding.UTF8.GetBytes(body);
+					await requestStream.WriteAsync(data, 0, data.Length, cancellationToken).ConfigureAwait(false);
+				}
 
 			try
 			{

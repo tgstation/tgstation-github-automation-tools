@@ -37,7 +37,7 @@ namespace TGWebhooks.Modules.TwentyFourHourRule.Tests
 
 		protected override TwentyFourHourRuleModule Instantiate()
 		{
-			return new TwentyFourHourRuleModule();
+			return new TwentyFourHourRuleModule(MockStringLocalizer.Object);
 		}
 	}
 }

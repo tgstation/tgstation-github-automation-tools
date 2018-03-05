@@ -1,4 +1,5 @@
-﻿using Octokit;
+﻿using Microsoft.Extensions.Localization;
+using Octokit;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -8,43 +9,52 @@ using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Models;
 
-namespace TGWebhooks.Modules.PRTagger
+namespace TGWebhooks.Modules.PullRequestLabeller
 {
 	/// <summary>
 	/// <see cref="IModule"/> for auto labelling a <see cref="PullRequest"/>
 	/// </summary>
-	public sealed class PullRequestLabellerModule : IModule, IPayloadHandler<PullRequestEventPayload>
+	public sealed class PullRequestLabellerModule : IModule, IPayloadHandler<PullRequestEventPayload>, IMergeRequirement
 	{
-		/// <inheritdoc />
-		public bool Enabled { get; set; }
 
 		/// <inheritdoc />
 		public Guid Uid => new Guid("3a6dd37c-3dee-4a7a-a016-885a4a775968");
 
 		/// <inheritdoc />
-		public string Name => "Pull Request Tagger";
+		public string Name => stringLocalizer["Name"];
 
 		/// <inheritdoc />
-		public string Description => "Automatically labels pull requests based on certain criteria";
+		public string Description => stringLocalizer["Description"];
 
 		/// <inheritdoc />
-		public IEnumerable<IMergeRequirement> MergeRequirements => Enumerable.Empty<IMergeRequirement>();
+		public IEnumerable<IMergeRequirement> MergeRequirements => new List<IMergeRequirement> { this };
 
 		/// <inheritdoc />
-		public IEnumerable<IMergeHook> MergeHooks => Enumerable.Empty<IMergeHook>();
+		public string RequirementDescription => stringLocalizer["RequirementDescription"];
 
 		/// <summary>
 		/// The <see cref="IGitHubManager"/> for the <see cref="PullRequestLabellerModule"/>
 		/// </summary>
 		readonly IGitHubManager gitHubManager;
+		/// <summary>
+		/// The <see cref="IGitHubManager"/> for the <see cref="PullRequestLabellerModule"/>
+		/// </summary>
+		readonly IStringLocalizer<PullRequestLabellerModule> stringLocalizer;
+
+		/// <summary>
+		/// Backing field for <see cref="SetEnabled(bool)"/>
+		/// </summary>
+		bool enabled;
 
 		/// <summary>
 		/// Construct a <see cref="PullRequestLabellerModule"/>
 		/// </summary>
-		/// <param name="gitHubManager">The valus of <see cref="gitHubManager"/></param>
-		public PullRequestLabellerModule(IGitHubManager gitHubManager)
+		/// <param name="gitHubManager">The value of <see cref="gitHubManager"/></param>
+		/// <param name="stringLocalizer">The value of <see cref="stringLocalizer"/></param>
+		public PullRequestLabellerModule(IGitHubManager gitHubManager, IStringLocalizer<PullRequestLabellerModule> stringLocalizer)
 		{
 			this.gitHubManager = gitHubManager ?? throw new ArgumentNullException(nameof(gitHubManager));
+			this.stringLocalizer = stringLocalizer ?? throw new ArgumentNullException(nameof(stringLocalizer));
 		}
 
 		/// <summary>
@@ -135,7 +145,7 @@ namespace TGWebhooks.Modules.PRTagger
 				UniqueAdd("Fix");
 
 			//run through the changelog
-			var changelog = Changelog.GetChangelog(payload.PullRequest, out bool malformed);
+			var changelog = Models.Changelog.GetChangelog(payload.PullRequest, out bool malformed);
 			if(changelog != null)
 				foreach(var I in changelog.Changes.Select(x => x.Type))
 					switch (I)
@@ -239,9 +249,6 @@ namespace TGWebhooks.Modules.PRTagger
 		}
 
 		/// <inheritdoc />
-		public Task Initialize(CancellationToken cancellationToken) => Task.CompletedTask;
-
-		/// <inheritdoc />
 		public IEnumerable<IPayloadHandler<TPayload>> GetPayloadHandlers<TPayload>() where TPayload : ActivityPayload
 		{
 			if (gitHubManager == null)
@@ -271,5 +278,37 @@ namespace TGWebhooks.Modules.PRTagger
 
 		/// <inheritdoc />
 		public Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken) => Task.CompletedTask;
+
+		/// <inheritdoc />
+		public void SetEnabled(bool enabled) => this.enabled = enabled;
+
+		/// <inheritdoc />
+		public async Task<AutoMergeStatus> EvaluateFor(PullRequest pullRequest, CancellationToken cancellationToken)
+		{
+			if (pullRequest == null)
+				throw new ArgumentNullException(nameof(pullRequest));
+
+			var labels = await gitHubManager.GetIssueLabels(pullRequest.Number).ConfigureAwait(false);
+
+			var result = new AutoMergeStatus
+			{
+				RequiredProgress = 2,
+				Progress = 2
+			};
+
+			foreach (var I in labels)
+			{
+				void CheckLabelDeny(string label) {
+					if (I.Name == label)
+					{
+						--result.Progress;
+						result.Notes.Add(stringLocalizer["LabelDeny", label]);
+					}
+				};
+				CheckLabelDeny("Work In Progress");
+				CheckLabelDeny("Do Not Merge");
+			}
+			return result;
+		}
 	}
 }
