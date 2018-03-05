@@ -13,8 +13,8 @@ namespace TGWebhooks.Core
 	/// <summary>
 	/// <see cref="IChatMessenger"/> for Discord
 	/// </summary>
-    sealed class DiscordMessenger : IChatMessenger, IDisposable
-    {
+	sealed class DiscordMessenger : IChatMessenger, IDisposable
+	{
 		/// <summary>
 		/// The <see cref="DiscordConfiguration"/> for the <see cref="DiscordMessenger"/>
 		/// </summary>
@@ -67,5 +67,5 @@ namespace TGWebhooks.Core
 
 			await Task.WhenAll(discordClient.Guilds.SelectMany(x => x.TextChannels).Select(x => SendDeMessage(x))).ConfigureAwait(false);
 		}
-    }
+	}
 }
