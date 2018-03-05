@@ -14,7 +14,9 @@ namespace TGWebhooks.Core
 		/// <summary>
 		/// All <see cref="IModule"/>s and their enabled status
 		/// </summary>
-		IDictionary<IModule, bool> ModuleStatuses { get; }
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task{TResult}"/> resulting in all <see cref="IModule"/>s and their enabled status</returns>
+		Task<IDictionary<IModule, bool>> ModuleStatuses(CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Enable or disable a <see cref="IModule"/>

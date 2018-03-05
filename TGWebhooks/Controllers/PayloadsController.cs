@@ -5,7 +5,6 @@ using Microsoft.Extensions.Primitives;
 using Octokit;
 using Octokit.Internal;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
@@ -30,10 +29,6 @@ namespace TGWebhooks.Controllers
 		/// </summary>
 		readonly GitHubConfiguration gitHubConfiguration;
 		/// <summary>
-		/// The <see cref="IComponentProvider"/> for the <see cref="PayloadsController"/>
-		/// </summary>
-		readonly IComponentProvider componentProvider;
-		/// <summary>
 		/// The <see cref="ILogger{TCategoryName}"/> for the <see cref="PayloadsController"/>
 		/// </summary>
 		readonly ILogger<PayloadsController> logger;
@@ -41,10 +36,6 @@ namespace TGWebhooks.Controllers
 		/// The <see cref="IAutoMergeHandler"/> for the <see cref="PayloadsController"/>
 		/// </summary>
 		readonly IAutoMergeHandler autoMergeHandler;
-		/// <summary>
-		/// The <see cref="IBackgroundJobClient"/> for the <see cref="PayloadsController"/>
-		/// </summary>
-		readonly IBackgroundJobClient backgroundJobClient;
 
 		/// <summary>
 		/// Convert some <paramref name="bytes"/> to a hex string
@@ -64,16 +55,12 @@ namespace TGWebhooks.Controllers
 		/// </summary>
 		/// <param name="gitHubConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing value of <see cref="gitHubConfiguration"/></param>
 		/// <param name="logger">The value of <see cref="logger"/></param>
-		/// <param name="componentProvider">The value of <see cref="componentProvider"/></param>
 		/// <param name="autoMergeHandler">The value of <see cref="autoMergeHandler"/></param>
-		/// <param name="backgroundJobClient">The value of <see cref="backgroundJobClient"/></param>
-		public PayloadsController(IOptions<GitHubConfiguration> gitHubConfigurationOptions, ILogger<PayloadsController> logger, IComponentProvider componentProvider, IAutoMergeHandler autoMergeHandler, IBackgroundJobClient backgroundJobClient)
+		public PayloadsController(IOptions<GitHubConfiguration> gitHubConfigurationOptions, ILogger<PayloadsController> logger, IAutoMergeHandler autoMergeHandler)
 		{
 			gitHubConfiguration = gitHubConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(gitHubConfigurationOptions));
 			this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-			this.componentProvider = componentProvider ?? throw new ArgumentNullException(nameof(componentProvider));
 			this.autoMergeHandler = autoMergeHandler ?? throw new ArgumentNullException(nameof(autoMergeHandler));
-			this.backgroundJobClient = backgroundJobClient ?? throw new ArgumentNullException(nameof(backgroundJobClient));
 		}
 
 		/// <summary>
@@ -99,64 +86,6 @@ namespace TGWebhooks.Controllers
 			var expectedHash = ToHexString(hash);
 			logger.LogTrace("Expect: {0}. Received: {1}", expectedHash, signature);
 			return expectedHash == signature;
-		}
-
-		/// <summary>
-		/// Invoke the active <see cref="IPayloadHandler{TPayload}"/> for a given <typeparamref name="TPayload"/>
-		/// </summary>
-		/// <typeparam name="TPayload">The payload type to invoke</typeparam>
-		/// <param name="json">The JSON <see cref="string"/> of the <typeparamref name="TPayload"/> to process</param>
-		/// <param name="jobCancellationToken">The <see cref="IJobCancellationToken"/> for the operation</param>
-		/// <returns>A <see cref="Task"/> representing the running handlers</returns>
-		[AutomaticRetry(Attempts = 0)]
-		public async Task InvokeHandlers<TPayload>(string json, IJobCancellationToken jobCancellationToken) where TPayload : ActivityPayload
-		{
-			logger.LogTrace("Beginning payload processing job: {0}");
-			var cancellationToken = jobCancellationToken.ShutdownToken;
-
-			var payload = new SimpleJsonSerializer().Deserialize<TPayload>(json);
-			var tasks = new List<Task>();
-			async Task RunHandler(IPayloadHandler<TPayload> payloadHandler)
-			{
-				try
-				{
-					await payloadHandler.ProcessPayload(payload, cancellationToken).ConfigureAwait(false);
-				}
-				//To be expected
-				catch (OperationCanceledException e)
-				{
-					logger.LogDebug(e, "Payload handler processing cancelled!");
-				}
-				catch (NotSupportedException e)
-				{
-					logger.LogTrace(e, "Payload handler does not support payload!");
-				}
-				catch (Exception e)
-				{
-					logger.LogError(e, "Payload handler threw exception!");
-				}
-			};
-
-			await componentProvider.Initialize(cancellationToken).ConfigureAwait(false);
-			foreach (var handler in componentProvider.GetPayloadHandlers<TPayload>())
-				tasks.Add(RunHandler(handler));
-
-			await Task.WhenAll(tasks).ConfigureAwait(false);
-
-			if (autoMergeHandler is IPayloadHandler<TPayload> asHandler)
-			{
-				logger.LogTrace("Running auto merge payload handler.");
-				try
-				{
-					await asHandler.ProcessPayload(payload, cancellationToken).ConfigureAwait(false);
-				}
-				catch (Exception e)
-				{
-					logger.LogError(e, "Failed running auto merge handler!");
-				}
-			}
-			else
-				logger.LogTrace("Not running auto merge handler to to payload type of {0}.", typeof(TPayload).FullName);
 		}
 
 		/// <summary>
@@ -212,8 +141,7 @@ namespace TGWebhooks.Controllers
 
 				logger.LogTrace("Queuing payload processing job.");
 				//we pass in json because of the limitations of background job
-				var jobName = backgroundJobClient.Enqueue(() => InvokeHandlers<TPayload>(json, JobCancellationToken.Null));
-				logger.LogTrace("Started background job for payload: {0}", jobName);
+				autoMergeHandler.InvokeHandlers<TPayload>(json);
 				return Ok();
 			};
 

@@ -83,7 +83,7 @@ namespace TGWebhooks.Controllers
 			ViewBag.Modules = ViewBag.Title;
 			ViewBag.AuthHref = String.Concat(generalConfiguration.RootURL.ToString(), "Authorize/SignOut");
 			ViewBag.AuthTitle = stringLocalizer["SignOut", user.Login];
-			ViewBag.ModulesMap = moduleManager.ModuleStatuses;
+			ViewBag.ModulesMap = await moduleManager.ModuleStatuses(cancellationToken).ConfigureAwait(false);
 			ViewBag.IsMaintainer = true;
 			return View();
 		}

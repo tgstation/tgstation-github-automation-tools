@@ -17,9 +17,6 @@ namespace TGWebhooks.Core
 	{
 		/// <inheritdoc />
 		public IEnumerable<IMergeRequirement> MergeRequirements => modulesAndEnabledStatus.Where(x => x.Value).SelectMany(x => x.Key.MergeRequirements);
-
-		/// <inheritdoc />
-		public IDictionary<IModule, bool> ModuleStatuses => modulesAndEnabledStatus;
 		
 		/// <summary>
 		/// The <see cref="ILogger{TCategoryName}"/> for the <see cref="ModuleManager"/>
@@ -122,6 +119,7 @@ namespace TGWebhooks.Core
 		/// <inheritdoc />
 		public async Task SetModuleEnabled(Guid uid, bool enabled, CancellationToken cancellationToken)
 		{
+			await Initialize(cancellationToken).ConfigureAwait(false);
 			var module = modulesAndEnabledStatus.Keys.First(x => x.Uid == uid);
 			if (modulesAndEnabledStatus[module] == enabled)
 			{
@@ -147,7 +145,12 @@ namespace TGWebhooks.Core
 				tasks.Add(I.AddViewVars(pullRequest, (object)viewBag, cancellationToken));
 			return Task.WhenAll(tasks);
 		}
+
 		/// <inheritdoc />
-		public bool ModuleEnabled<TModule>() where TModule : IModule => modulesAndEnabledStatus.Where(x => x.Key is TModule).Select(x => x.Value).First();
+		public async Task<IDictionary<IModule, bool>> ModuleStatuses(CancellationToken cancellationToken)
+		{
+			await Initialize(cancellationToken).ConfigureAwait(false);
+			return modulesAndEnabledStatus;
+		}
 	}
 }

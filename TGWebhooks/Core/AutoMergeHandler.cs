@@ -4,10 +4,12 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Octokit;
+using Octokit.Internal;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Configuration;
@@ -237,6 +239,92 @@ namespace TGWebhooks.Core
 				throw new ArgumentNullException(nameof(payload));
 
 			return CheckMergePullRequest(payload.PullRequest.Number, cancellationToken);
+		}
+
+		/// <summary>
+		/// Invoke the active <see cref="IPayloadHandler{TPayload}"/> for a given <typeparamref name="TPayload"/>
+		/// </summary>
+		/// <typeparam name="TPayload">The payload type to invoke</typeparam>
+		/// <param name="json">The JSON <see cref="string"/> of the <typeparamref name="TPayload"/> to process</param>
+		/// <param name="jobCancellationToken">The <see cref="IJobCancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task"/> representing the running handlers</returns>
+		[AutomaticRetry(Attempts = 0)]
+		public Task InvokeHandlers(string json, Type payloadType, IJobCancellationToken jobCancellationToken)
+		{
+			//reflection shennanigans bc of a hangfire bug
+			var method = GetType().GetMethod(nameof(InternalInvokeHandlers), BindingFlags.NonPublic | BindingFlags.Instance);
+			var genMethod = method.MakeGenericMethod(payloadType);
+			return (Task)genMethod.Invoke(this, new object[] { json, jobCancellationToken });
+		}
+
+		/// <inheritdoc />
+		public void InvokeHandlers<TPayload>(string json) where TPayload : ActivityPayload
+		{
+			if (json == null)
+				throw new ArgumentNullException(nameof(json));
+			var jobName = backgroundJobClient.Enqueue(() => InvokeHandlers(json, typeof(TPayload), JobCancellationToken.Null));
+			logger.LogTrace("Started background job for payload: {0}", jobName);
+		}
+
+		/// <summary>
+		/// Invoke the active <see cref="IPayloadHandler{TPayload}"/> for a given <typeparamref name="TPayload"/>
+		/// </summary>
+		/// <typeparam name="TPayload">The payload type to invoke</typeparam>
+		/// <param name="json">The JSON <see cref="string"/> of the <typeparamref name="TPayload"/> to process</param>
+		/// <param name="jobCancellationToken">The <see cref="IJobCancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task"/> representing the running handlers</returns>
+		async Task InternalInvokeHandlers<TPayload>(string json, IJobCancellationToken jobCancellationToken) where TPayload : ActivityPayload
+		{
+			logger.LogTrace("Beginning payload processing job: {0}");
+			var cancellationToken = jobCancellationToken.ShutdownToken;
+
+			var payload = new SimpleJsonSerializer().Deserialize<TPayload>(json);
+			var tasks = new List<Task>();
+			async Task RunHandler(IPayloadHandler<TPayload> payloadHandler)
+			{
+				try
+				{
+					await payloadHandler.ProcessPayload(payload, cancellationToken).ConfigureAwait(false);
+				}
+				//To be expected
+				catch (OperationCanceledException e)
+				{
+					logger.LogDebug(e, "Payload handler processing cancelled!");
+				}
+				catch (NotSupportedException e)
+				{
+					logger.LogTrace(e, "Payload handler does not support payload!");
+				}
+				catch (Exception e)
+				{
+					logger.LogError(e, "Payload handler threw exception!");
+				}
+			};
+
+			using (serviceProvider.CreateScope())
+			{
+				var componentProvider = serviceProvider.GetRequiredService<IComponentProvider>();
+				await componentProvider.Initialize(cancellationToken).ConfigureAwait(false);
+				foreach (var handler in componentProvider.GetPayloadHandlers<TPayload>())
+					tasks.Add(RunHandler(handler));
+
+				await Task.WhenAll(tasks).ConfigureAwait(false);
+			}
+
+			if (this is IPayloadHandler<TPayload> asHandler)
+			{
+				logger.LogTrace("Running auto merge payload handler.");
+				try
+				{
+					await asHandler.ProcessPayload(payload, cancellationToken).ConfigureAwait(false);
+				}
+				catch (Exception e)
+				{
+					logger.LogError(e, "Failed running auto merge handler!");
+				}
+			}
+			else
+				logger.LogTrace("Not running auto merge handler to to payload type of {0}.", typeof(TPayload).FullName);
 		}
 	}
 }

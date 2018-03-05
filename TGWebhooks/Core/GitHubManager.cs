@@ -413,7 +413,7 @@ namespace TGWebhooks.Core
 		}
 
 		/// <inheritdoc />
-		public Task DeleteBranch(string branchName) => gitHubClient.Git.Reference.Delete(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, branchName);
+		public Task DeleteBranch(string branchName) => gitHubClient.Git.Reference.Delete(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, String.Format(CultureInfo.InvariantCulture, "heads/{0}", branchName));
 
 		/// <inheritdoc />
 		public Task CreateFile(string branchName, string commitMessage, string path, string content) => gitHubClient.Repository.Content.CreateFile(gitHubConfiguration.RepoOwner, gitHubConfiguration.RepoName, path, new CreateFileRequest(commitMessage, content, branchName, true));
