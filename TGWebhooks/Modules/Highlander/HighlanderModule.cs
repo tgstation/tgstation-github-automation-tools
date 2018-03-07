@@ -69,18 +69,18 @@ namespace TGWebhooks.Modules.Highlander
 			if (payload.Action != "opened")
 				throw new NotSupportedException();
 
-			if (await gitHubManager.UserHasWriteAccess(payload.PullRequest.User).ConfigureAwait(false))
+			if (await gitHubManager.UserHasWriteAccess(payload.PullRequest.Base.Repository.Owner.Login, payload.PullRequest.Base.Repository.Name, payload.PullRequest.User, cancellationToken).ConfigureAwait(false))
 				return;
 
-			var allPrs = await gitHubManager.GetOpenPullRequests().ConfigureAwait(false);
+			var allPrs = await gitHubManager.GetOpenPullRequests(payload.PullRequest.Base.Repository.Owner.Login, payload.PullRequest.Base.Repository.Name, cancellationToken).ConfigureAwait(false);
 			string result = null;
 			foreach (var I in allPrs.Where(x => x.User.Id == payload.PullRequest.User.Id && x.Id != payload.PullRequest.Id).Select(x => x.Number))
 				result = (result != null) ? result + String.Format(CultureInfo.InvariantCulture, ", #{0}", I) : String.Format(CultureInfo.InvariantCulture, "#{0}", I);
 
 			if(result != null)
 			{
-				await gitHubManager.CreateComment(payload.PullRequest.Number, stringLocalizer["TooManyPRs", result]).ConfigureAwait(false);
-				await gitHubManager.Close(payload.PullRequest.Number).ConfigureAwait(false);
+				await gitHubManager.CreateComment(payload.PullRequest.Base.Repository.Id, payload.PullRequest.Number, stringLocalizer["TooManyPRs", result], cancellationToken).ConfigureAwait(false);
+				await gitHubManager.Close(payload.PullRequest.Base.Repository.Id, payload.PullRequest.Number, cancellationToken).ConfigureAwait(false);
 			}
 		}
 

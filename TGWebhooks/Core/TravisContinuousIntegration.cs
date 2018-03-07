@@ -49,10 +49,11 @@ namespace TGWebhooks.Core
 		/// </summary>
 		/// <param name="pullRequest">The <see cref="PullRequest"/> to check for statuses</param>
 		/// <param name="handler">A function taking a <see cref="CommitState"/> and travis build id <see cref="string"/> and returning <see langword="true"/> to continue, <see langword="false"/> to cancel</param>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
-		async Task NonParallelForEachBuild(PullRequest pullRequest, Func<CommitState, string, bool> handler)
+		async Task NonParallelForEachBuild(PullRequest pullRequest, Func<CommitState, string, bool> handler, CancellationToken cancellationToken)
 		{
-			var statuses = await gitHubManager.GetLatestCommitStatus(pullRequest).ConfigureAwait(false);
+			var statuses = await gitHubManager.GetLatestCommitStatus(pullRequest, cancellationToken).ConfigureAwait(false);
 			var buildNumberRegex = new Regex(@"/builds/([1-9][0-9]*)\?");
 			foreach (var I in statuses.Statuses)
 			{
@@ -164,7 +165,7 @@ namespace TGWebhooks.Core
 							//even though the correct build DID run
 							//so now we gotta compare the creation time of the build to the creation time of the merge commit sha to make sure this plumber isn't lying to us
 
-							var commit = await gitHubManager.GetCommit(pullRequest.MergeCommitSha).ConfigureAwait(false);
+							var commit = await gitHubManager.GetCommit(pullRequest.Base.Repository.Id, pullRequest.MergeCommitSha, cancellationToken).ConfigureAwait(false);
 
 							var buildStartedAt = DateTimeOffset.Parse((string)jsonObj["started_at"], CultureInfo.InvariantCulture);
 
@@ -176,7 +177,7 @@ namespace TGWebhooks.Core
 					else if (state == CommitState.Pending)
 						result = ContinuousIntegrationStatus.Pending;
 					return true;
-				}).ConfigureAwait(false);
+				}, cancellationToken).ConfigureAwait(false);
 
 				try
 				{
@@ -204,7 +205,7 @@ namespace TGWebhooks.Core
 			await NonParallelForEachBuild(pullRequest, (status, buildNumber) => {
 				tasks.Add(RestartBuild(buildNumber, cancellationToken));
 				return true;
-			}).ConfigureAwait(false);
+			}, cancellationToken).ConfigureAwait(false);
 			await Task.WhenAll(tasks).ConfigureAwait(false);
 		}
 	}

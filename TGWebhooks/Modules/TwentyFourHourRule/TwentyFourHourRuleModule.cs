@@ -42,11 +42,6 @@ namespace TGWebhooks.Modules.TwentyFourHourRule
 		readonly IStringLocalizer<TwentyFourHourRuleModule> stringLocalizer;
 
 		/// <summary>
-		/// Backing field for <see cref="SetEnabled(bool)"/>
-		/// </summary>
-		bool enabled;
-
-		/// <summary>
 		/// Construct a <see cref="TwentyFourHourRuleModule"/>
 		/// </summary>
 		/// <param name="stringLocalizer">The value of <see cref="stringLocalizer"/></param>
@@ -74,8 +69,5 @@ namespace TGWebhooks.Modules.TwentyFourHourRule
 
 		/// <inheritdoc />
 		public Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken) => Task.CompletedTask;
-
-		/// <inheritdoc />
-		public void SetEnabled(bool enabled) => this.enabled = enabled;
 	}
 }

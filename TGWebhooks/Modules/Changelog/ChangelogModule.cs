@@ -78,7 +78,7 @@ namespace TGWebhooks.Modules.Changelog
 		/// <returns>A <see cref="Task{TResult}"/> resulting in the <see cref="RequireChangelogEntry"/> for the <paramref name="pullRequest"/></returns>
 		async Task<RequireChangelogEntry> GetRequired(PullRequest pullRequest, CancellationToken cancellationToken)
 		{
-			var setRequired = await dataStore.ReadData<RequireChangelogEntry>(pullRequest.Number.ToString(CultureInfo.InvariantCulture), cancellationToken).ConfigureAwait(false);
+			var setRequired = await dataStore.ReadData<RequireChangelogEntry>(pullRequest.Number.ToString(CultureInfo.InvariantCulture), pullRequest.Base.Repository.Id, cancellationToken).ConfigureAwait(false);
 			return setRequired;
 		}
 
@@ -108,13 +108,13 @@ namespace TGWebhooks.Modules.Changelog
 		}
 
 		/// <summary>
-		/// Set the <see cref="RequireChangelogEntry"/> for a <paramref name="prNumber"/>
+		/// Set the <see cref="RequireChangelogEntry"/> for a <paramref name="pullRequest"/>
 		/// </summary>
-		/// <param name="prNumber">The <see cref="PullRequest.Number"/></param>
+		/// <param name="pullRequest">The <see cref="PullRequest"/></param>
 		/// <param name="requireChangelogEntry">The <see cref="RequireChangelogEntry"/></param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> representing the running operation</returns>
-		public Task SetRequirement(int prNumber, RequireChangelogEntry requireChangelogEntry, CancellationToken cancellationToken) => dataStore.WriteData(prNumber.ToString(CultureInfo.InvariantCulture), requireChangelogEntry, cancellationToken);
+		public Task SetRequirement(PullRequest pullRequest, RequireChangelogEntry requireChangelogEntry, CancellationToken cancellationToken) => dataStore.WriteData(pullRequest.Number.ToString(CultureInfo.InvariantCulture), pullRequest.Base.Repository.Id, requireChangelogEntry, cancellationToken);
 
 		/// <inheritdoc />
 		public IEnumerable<IPayloadHandler<TPayload>> GetPayloadHandlers<TPayload>() where TPayload : ActivityPayload
@@ -188,7 +188,7 @@ namespace TGWebhooks.Modules.Changelog
 
 			var pathToWrite = Path.Combine("html", "changelogs", title);
 
-			await gitHubManager.CreateFile(payload.PullRequest.Base.Ref, stringLocalizer["CommitMessage", payload.PullRequest.Number], pathToWrite, yaml).ConfigureAwait(false);
+			await gitHubManager.CreateFile(payload.PullRequest.Base.Repository.Id, payload.PullRequest.Base.Ref, stringLocalizer["CommitMessage", payload.PullRequest.Number], pathToWrite, yaml, cancellationToken).ConfigureAwait(false);
 		}
 	}
 }

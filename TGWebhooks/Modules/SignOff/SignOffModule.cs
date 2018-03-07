@@ -43,11 +43,6 @@ namespace TGWebhooks.Modules.SignOff
 		readonly IStringLocalizer<SignOffModule> stringLocalizer;
 
 		/// <summary>
-		/// Backing field for <see cref="SetEnabled(bool)"/>
-		/// </summary>
-		bool enabled;
-
-		/// <summary>
 		/// Construct a <see cref="SignOffModule"/>
 		/// </summary>
 		/// <param name="gitHubManager">The value of <see cref="gitHubManager"/></param>
@@ -65,7 +60,7 @@ namespace TGWebhooks.Modules.SignOff
 		{
 			if (pullRequest == null)
 				throw new ArgumentNullException(nameof(pullRequest));
-			var signOff = await dataStore.ReadData<PullRequestSignOff>(pullRequest.Number.ToString(CultureInfo.InvariantCulture), cancellationToken).ConfigureAwait(false);
+			var signOff = await dataStore.ReadData<PullRequestSignOff>(pullRequest.Number.ToString(CultureInfo.InvariantCulture), pullRequest.Base.Repository.Id, cancellationToken).ConfigureAwait(false);
 
 			var result = new AutoMergeStatus() {
 				RequiredProgress = 1,
@@ -74,7 +69,7 @@ namespace TGWebhooks.Modules.SignOff
 			};
 
 			if (signOff.AccessToken != null) {
-				var user = await gitHubManager.GetUserLogin(signOff.AccessToken, cancellationToken).ConfigureAwait(false);
+				var user = await gitHubManager.GetUser(signOff.AccessToken).ConfigureAwait(false);
 				result.Notes.Add(stringLocalizer["Signer", user.Login]);
 			}
 			return result;
@@ -112,9 +107,9 @@ namespace TGWebhooks.Modules.SignOff
 			viewBag.SignedBy = stringLocalizer["SignedBy"];
 			viewBag.SignOffDisclaimer = stringLocalizer["Disclaimer"];
 
-			var signer = await dataStore.ReadData<PullRequestSignOff>(pullRequest.Number.ToString(CultureInfo.InvariantCulture), cancellationToken).ConfigureAwait(false);
+			var signer = await dataStore.ReadData<PullRequestSignOff>(pullRequest.Number.ToString(CultureInfo.InvariantCulture), pullRequest.Base.Repository.Id, cancellationToken).ConfigureAwait(false);
 			if (signer.AccessToken != null)
-				viewBag.Signer = (await gitHubManager.GetUserLogin(signer.AccessToken, cancellationToken).ConfigureAwait(false)).Login;
+				viewBag.Signer = (await gitHubManager.GetUser(signer.AccessToken).ConfigureAwait(false)).Login;
 			else
 				viewBag.Signer = null;
 		}
@@ -143,8 +138,8 @@ namespace TGWebhooks.Modules.SignOff
 				throw new ArgumentNullException(nameof(user));
 			if (token == null)
 				throw new ArgumentNullException(nameof(token));
-			await dataStore.WriteData(pullRequest.Number.ToString(CultureInfo.InvariantCulture), new PullRequestSignOff { AccessToken = token }, cancellationToken).ConfigureAwait(false);
-			await gitHubManager.ApprovePullRequest(pullRequest, stringLocalizer["SignerTag", user.Login]).ConfigureAwait(false);
+			await dataStore.WriteData(pullRequest.Number.ToString(CultureInfo.InvariantCulture), pullRequest.Base.Repository.Id, new PullRequestSignOff { AccessToken = token }, cancellationToken).ConfigureAwait(false);
+			await gitHubManager.ApprovePullRequest(pullRequest, stringLocalizer["SignerTag", user.Login], cancellationToken).ConfigureAwait(false);
 		}
 
 		/// <summary>
@@ -156,9 +151,9 @@ namespace TGWebhooks.Modules.SignOff
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
 		async Task EraseAndDismissReviews(PullRequest pullRequest, string message, CancellationToken cancellationToken)
 		{
-			var reviewsTask = gitHubManager.GetPullRequestReviews(pullRequest);
-			var botLoginTask = gitHubManager.GetUserLogin(null, cancellationToken);
-			await dataStore.WriteData(pullRequest.Number.ToString(CultureInfo.InvariantCulture), new PullRequestSignOff(), cancellationToken).ConfigureAwait(false);
+			var reviewsTask = gitHubManager.GetPullRequestReviews(pullRequest, cancellationToken);
+			var botLoginTask = gitHubManager.GetUser(null);
+			await dataStore.WriteData(pullRequest.Number.ToString(CultureInfo.InvariantCulture), pullRequest.Base.Repository.Id, new PullRequestSignOff(), cancellationToken).ConfigureAwait(false);
 			var reviews = await reviewsTask.ConfigureAwait(false);
 			var botLogin = await botLoginTask.ConfigureAwait(false);
 
@@ -167,7 +162,7 @@ namespace TGWebhooks.Modules.SignOff
 					x => x.User.Id == botLogin.Id
 					&& x.State.Value == PullRequestReviewState.Approved
 				).Select(
-					x => gitHubManager.DismissReview(pullRequest, x, message)
+					x => gitHubManager.DismissReview(pullRequest, x, message, cancellationToken)
 				)).ConfigureAwait(false);
 		}
 
@@ -180,15 +175,12 @@ namespace TGWebhooks.Modules.SignOff
 			if(payload.Action != "edited")
 				throw new NotSupportedException();
 
-			var signOff = await dataStore.ReadData<PullRequestSignOff>(payload.PullRequest.Number.ToString(CultureInfo.InvariantCulture), cancellationToken).ConfigureAwait(false);
+			var signOff = await dataStore.ReadData<PullRequestSignOff>(payload.PullRequest.Number.ToString(CultureInfo.InvariantCulture), payload.PullRequest.Base.Repository.Id, cancellationToken).ConfigureAwait(false);
 
 			if (signOff.AccessToken == null)
 				return;
 			
 			await EraseAndDismissReviews(payload.PullRequest, stringLocalizer["SignOffNulled"], cancellationToken).ConfigureAwait(false);
 		}
-
-		/// <inheritdoc />
-		public void SetEnabled(bool enabled) => this.enabled = enabled;
 	}
 }

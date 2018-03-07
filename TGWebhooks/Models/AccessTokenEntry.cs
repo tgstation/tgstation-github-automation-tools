@@ -5,7 +5,7 @@ namespace TGWebhooks.Models
 	/// <summary>
 	/// Describes a GitHub AccessToken stored within a cookie
 	/// </summary>
-	sealed class AccessTokenEntry
+	sealed class UserAccessToken
 	{
 		/// <summary>
 		/// The name of the cookie

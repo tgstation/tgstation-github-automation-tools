@@ -40,23 +40,30 @@ namespace TGWebhooks.Modules.SignOff.Controllers
 		/// <summary>
 		/// Set the <see cref="PullRequestSignOff"/> for a <paramref name="prNumber"/>
 		/// </summary>
+		/// <param name="owner">The <see cref="Octokit.Repository.Owner"/> for the operation</param>
+		/// <param name="name">The <see cref="Octokit.Repository.Name"/> for the operation</param>
 		/// <param name="prNumber">The <see cref="Octokit.PullRequest.Number"/></param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in an <see cref="IActionResult"/></returns>
-		[HttpPost("SignOff/{prNumber}")]
-		public async Task<IActionResult> SignOff(int prNumber, CancellationToken cancellationToken)
+		[HttpPost("SignOff/{owner}/{name}/{prNumber}")]
+		public async Task<IActionResult> SignOff(string owner, string name, int prNumber, CancellationToken cancellationToken)
 		{
-			var token = await gitHubManager.CheckAuthorization(Request.Cookies, cancellationToken).ConfigureAwait(false);
+			if (owner == null)
+				throw new ArgumentNullException(nameof(owner));
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+
+			var token = await gitHubManager.CheckAuthorization(owner, name, Request.Cookies, cancellationToken).ConfigureAwait(false);
 
 			if (token == null)
 				return Unauthorized();
-
-			var user = await gitHubManager.GetUserLogin(token, cancellationToken).ConfigureAwait(false);
-
-			if (!await gitHubManager.UserHasWriteAccess(user).ConfigureAwait(false))
+			
+			var user = await gitHubManager.GetUser(token).ConfigureAwait(false);
+			
+			if (!await gitHubManager.UserHasWriteAccess(owner, name, user, cancellationToken).ConfigureAwait(false))
 				return Forbid();
 
-			var pr = await gitHubManager.GetPullRequest(prNumber).ConfigureAwait(false);
+			var pr = await gitHubManager.GetPullRequest(owner, name, prNumber, cancellationToken).ConfigureAwait(false);
 
 #if !ENABLE_SELF_SIGN
 			//no self signing
@@ -66,7 +73,7 @@ namespace TGWebhooks.Modules.SignOff.Controllers
 
 			await signOffModule.SignOff(pr, user, token, cancellationToken).ConfigureAwait(false);
 
-			autoMergeHandler.RecheckPullRequest(prNumber);
+			autoMergeHandler.RecheckPullRequest(pr);
 
 			return Json(new object());
 		}
@@ -74,23 +81,30 @@ namespace TGWebhooks.Modules.SignOff.Controllers
 		/// <summary>
 		/// Veto the <see cref="PullRequestSignOff"/> for a <paramref name="prNumber"/>
 		/// </summary>
+		/// <param name="owner">The <see cref="Octokit.Repository.Owner"/> for the operation</param>
+		/// <param name="name">The <see cref="Octokit.Repository.Name"/> for the operation</param>
 		/// <param name="prNumber">The <see cref="Octokit.PullRequest.Number"/></param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in an <see cref="IActionResult"/></returns>
-		[HttpPost("SignOff/Veto/{prNumber}")]
-		public async Task<IActionResult> Veto(int prNumber, CancellationToken cancellationToken)
+		[HttpPost("SignOff/Veto/{owner}/{name}/{prNumber}")]
+		public async Task<IActionResult> Veto(string owner, string name, int prNumber, CancellationToken cancellationToken)
 		{
-			var token = await gitHubManager.CheckAuthorization(Request.Cookies, cancellationToken).ConfigureAwait(false);
+			if (owner == null)
+				throw new ArgumentNullException(nameof(owner));
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+
+			var token = await gitHubManager.CheckAuthorization(owner, name, Request.Cookies, cancellationToken).ConfigureAwait(false);
 
 			if (token == null)
 				return Unauthorized();
+			
+			var user = await gitHubManager.GetUser(token).ConfigureAwait(false);
 
-			var user = await gitHubManager.GetUserLogin(token, cancellationToken).ConfigureAwait(false);
-
-			if (!await gitHubManager.UserHasWriteAccess(user).ConfigureAwait(false))
+			if (!await gitHubManager.UserHasWriteAccess(owner, name, user, cancellationToken).ConfigureAwait(false))
 				return Forbid();
 
-			var pr = await gitHubManager.GetPullRequest(prNumber).ConfigureAwait(false);
+			var pr = await gitHubManager.GetPullRequest(owner, name, prNumber, cancellationToken).ConfigureAwait(false);
 			await signOffModule.VetoSignOff(pr, cancellationToken).ConfigureAwait(false);
 
 			return Json(new object());

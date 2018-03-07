@@ -62,8 +62,9 @@ namespace TGWebhooks.Modules.PullRequestLabeller
 		/// </summary>
 		/// <param name="payload">The <see cref="PullRequestEventPayload"/> for the pull request</param>
 		/// <param name="oneCheckTags"><see langword="true"/> if additional tags should be contionally applied, <see langword="false"/> otherwise</param>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
-		async Task TagPR(PullRequestEventPayload payload, bool oneCheckTags)
+		async Task TagPR(PullRequestEventPayload payload, bool oneCheckTags, CancellationToken cancellationToken)
 		{
 			async Task<bool?> MergeableCheck()
 			{
@@ -72,14 +73,14 @@ namespace TGWebhooks.Modules.PullRequestLabeller
 				for (var I = 0; !mergeable.HasValue && I < 3; ++I)
 				{
 					await Task.Delay(I * 1000).ConfigureAwait(false);
-					mergeable = (await gitHubManager.GetPullRequest(payload.PullRequest.Number).ConfigureAwait(false)).Mergeable;
+					mergeable = (await gitHubManager.GetPullRequest(payload.PullRequest.Base.Repository.Id, payload.PullRequest.Number, cancellationToken).ConfigureAwait(false)).Mergeable;
 				}
 				return mergeable;
 			};
 
 			var mergeableTask = MergeableCheck().ConfigureAwait(false);
-			var filesChanged = gitHubManager.GetPullRequestChangedFiles(payload.PullRequest.Number).ConfigureAwait(false);
-			var currentLabelsTask = gitHubManager.GetIssueLabels(payload.PullRequest.Number).ConfigureAwait(false);
+			var filesChanged = gitHubManager.GetPullRequestChangedFiles(payload.PullRequest, cancellationToken).ConfigureAwait(false);
+			var currentLabelsTask = gitHubManager.GetIssueLabels(payload.PullRequest.Base.Repository.Id, payload.PullRequest.Number, cancellationToken).ConfigureAwait(false);
 
 			var labelsToAdd = new List<string>();
 			var labelsToRemove = new List<string>();
@@ -208,32 +209,53 @@ namespace TGWebhooks.Modules.PullRequestLabeller
 			foreach (var I in currentLabels)
 				newLabels.Add(I.Name);
 
-			await gitHubManager.SetIssueLabels(payload.PullRequest.Number, newLabels).ConfigureAwait(false);
+			await gitHubManager.SetIssueLabels(payload.PullRequest.Base.Repository.Id, payload.PullRequest.Number, newLabels, cancellationToken).ConfigureAwait(false);
 		}
 
-		/// <summary>
-		/// Checks all open PRs for if they should have the 'Merge Conflict' tag
-		/// </summary>
-		/// <returns>A <see cref="Task"/> representing the running operation</returns>
-		async Task CheckMergeConflicts()
+		/// <inheritdoc />
+		public IEnumerable<IPayloadHandler<TPayload>> GetPayloadHandlers<TPayload>() where TPayload : ActivityPayload
 		{
-			Task AddMergeConflictTag(PullRequest pullRequest)
+			if (gitHubManager == null)
+				throw new InvalidOperationException("Configure() wasn't called!");
+			if (typeof(TPayload) == typeof(PullRequestEventPayload))
+				yield return (IPayloadHandler<TPayload>)(object)this;
+		}
+
+		/// <inheritdoc />
+		public async Task ProcessPayload(PullRequestEventPayload payload, CancellationToken cancellationToken)
+		{
+			if (payload == null)
+				throw new ArgumentNullException(nameof(payload));
+			switch (payload.Action)
 			{
-				return gitHubManager.AddLabel(pullRequest.Number, "Merge Conflict");
-			};
+				case "opened":
+					await TagPR(payload, true, cancellationToken).ConfigureAwait(false);
+					return;
+				case "synchronize":
+					await TagPR(payload, false, cancellationToken).ConfigureAwait(false);
+					return;
+				case "closed":
+					if (payload.PullRequest.Merged)
+						break;
+					goto default;
+				default:
+					throw new NotSupportedException();
+			}
+
+			Task AddMergeConflictTag(PullRequest pullRequest) => gitHubManager.AddLabel(pullRequest.Base.Repository.Id, pullRequest.Number, "Merge Conflict", cancellationToken);
 
 			async Task RefreshPR(PullRequest pullRequest)
 			{
 				//wait 10s for refresh then give up
 				await Task.Delay(10000).ConfigureAwait(false);
-				pullRequest = await gitHubManager.GetPullRequest(pullRequest.Number).ConfigureAwait(false);
-				if(pullRequest.Mergeable.HasValue && !pullRequest.Mergeable.Value)
+				pullRequest = await gitHubManager.GetPullRequest(pullRequest.Base.Repository.Id, pullRequest.Number, cancellationToken).ConfigureAwait(false);
+				if (pullRequest.Mergeable.HasValue && !pullRequest.Mergeable.Value)
 					await AddMergeConflictTag(pullRequest).ConfigureAwait(false);
 			};
 
 			var tasks = new List<Task>();
 
-			var prs = await gitHubManager.GetOpenPullRequests().ConfigureAwait(false);
+			var prs = await gitHubManager.GetOpenPullRequests(payload.PullRequest.Base.Repository.Owner.Login, payload.PullRequest.Base.Repository.Name, cancellationToken).ConfigureAwait(false);
 			foreach (var I in prs)
 				if (I.Mergeable.HasValue)
 				{
@@ -249,34 +271,6 @@ namespace TGWebhooks.Modules.PullRequestLabeller
 		}
 
 		/// <inheritdoc />
-		public IEnumerable<IPayloadHandler<TPayload>> GetPayloadHandlers<TPayload>() where TPayload : ActivityPayload
-		{
-			if (gitHubManager == null)
-				throw new InvalidOperationException("Configure() wasn't called!");
-			if (typeof(TPayload) == typeof(PullRequestEventPayload))
-				yield return (IPayloadHandler<TPayload>)(object)this;
-		}
-
-		/// <inheritdoc />
-		public Task ProcessPayload(PullRequestEventPayload payload, CancellationToken cancellationToken)
-		{
-			if (payload == null)
-				throw new ArgumentNullException(nameof(payload));
-			switch (payload.Action)
-			{
-				case "opened":
-					return TagPR(payload, true);
-				case "synchronize":
-					return TagPR(payload, false);
-				case "closed":
-					if (payload.PullRequest.Merged)
-						return CheckMergeConflicts();
-					break;
-			}
-			throw new NotSupportedException();
-		}
-
-		/// <inheritdoc />
 		public Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken) => Task.CompletedTask;
 
 		/// <inheritdoc />
@@ -288,7 +282,7 @@ namespace TGWebhooks.Modules.PullRequestLabeller
 			if (pullRequest == null)
 				throw new ArgumentNullException(nameof(pullRequest));
 
-			var labels = await gitHubManager.GetIssueLabels(pullRequest.Number).ConfigureAwait(false);
+			var labels = await gitHubManager.GetIssueLabels(pullRequest.Base.Repository.Id, pullRequest.Number, cancellationToken).ConfigureAwait(false);
 
 			var result = new AutoMergeStatus
 			{

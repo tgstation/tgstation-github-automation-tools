@@ -21,10 +21,5 @@ namespace TGWebhooks.Modules
 		/// A verbose user-friendly description of the <see cref="IModule"/>
 		/// </summary>
 		string Description { get; }
-
-		/// <summary>
-		/// If the <see cref="IModule"/> is enabled
-		/// </summary>
-		void SetEnabled(bool enabled);
 	}
 }

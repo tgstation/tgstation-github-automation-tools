@@ -14,13 +14,7 @@ namespace TGWebhooks.Core
 #pragma warning disable CA1812
 	sealed class ModuleManager : IModuleManager, IDisposable
 #pragma warning restore CA1812
-	{
-		/// <inheritdoc />
-		public IEnumerable<IMergeRequirement> MergeRequirements => modulesAndEnabledStatus.Where(x => x.Value).SelectMany(x => x.Key.MergeRequirements);
-
-		/// <inheritdoc />
-		public IDictionary<IModule, bool> ModuleStatuses => modulesAndEnabledStatus;
-		
+	{		
 		/// <summary>
 		/// The <see cref="ILogger{TCategoryName}"/> for the <see cref="ModuleManager"/>
 		/// </summary>
@@ -35,14 +29,14 @@ namespace TGWebhooks.Core
 		readonly IEnumerable<IModule> allModules;
 
 		/// <summary>
-		/// Used for initialization
+		/// Used for creating <see cref="RepositoryContext"/>s
 		/// </summary>
 		readonly SemaphoreSlim semaphore;
 
 		/// <summary>
-		/// <see cref="IDictionary{TKey, TValue}"/> of loaded <see cref="IModule"/>s and enabled status
+		/// The current <see cref="RepositoryContext"/>
 		/// </summary>
-		IDictionary<IModule, bool> modulesAndEnabledStatus;
+		RepositoryContext repositoryContext;
 
 		/// <summary>
 		/// Construct a <see cref="ModuleManager"/>
@@ -62,92 +56,86 @@ namespace TGWebhooks.Core
 		public void Dispose() => semaphore.Dispose();
 
 		/// <inheritdoc />
-		public async Task Initialize(CancellationToken cancellationToken)
+		public async Task<IRepositoryContext> UsingRepositoryId(long repositoryId, CancellationToken cancellationToken)
 		{
-			using (await SemaphoreSlimContext.Lock(semaphore, cancellationToken).ConfigureAwait(false))
+			var context = await SemaphoreSlimContext.Lock(semaphore, cancellationToken).ConfigureAwait(false);
+			try
 			{
-				if (modulesAndEnabledStatus != null)
-					return;
-
-				modulesAndEnabledStatus = new Dictionary<IModule, bool>();
-
-				var tasks = new List<Task<IModule>>();
-
-				async Task<KeyValuePair<IModule, bool>> InitPlugin(IModule plugin)
-				{
-					var type = plugin.GetType();
-					logger.LogTrace("Plugin {0}.Name: {1}", type, plugin.Name);
-					logger.LogTrace("Plugin {0}.Description: {1}", type, plugin.Description);
-					logger.LogTrace("Plugin {0}.Uid: {1}", type, plugin.Uid);
-
-					var query = databaseContext.ModuleMetadatas.Where(x => x.Id == plugin.Uid);
-					var result = await query.ToAsyncEnumerable().FirstOrDefault().ConfigureAwait(false);
-
-					bool enabled;
-					if (result == default(ModuleMetadata))
-					{
-						enabled = true;
-						await databaseContext.ModuleMetadatas.AddAsync(new ModuleMetadata { Id = plugin.Uid, Enabled = true }).ConfigureAwait(false);
-					}
-					else
-						enabled = result.Enabled;
-
-					logger.LogTrace("Plugin {0}.Enabled: {1}", type, enabled);
-
-					return new KeyValuePair<IModule, bool>(plugin, enabled);
-				};
-
-				using (logger.BeginScope("Loading plugins..."))
-				{
-					var tasks2 = new List<Task<KeyValuePair<IModule, bool>>>();
-					tasks2.AddRange(allModules.Select(x => InitPlugin(x)));
-					await Task.WhenAll(tasks2).ConfigureAwait(false);
-					await databaseContext.Save(cancellationToken).ConfigureAwait(false);
-					foreach (var I in tasks2.Select(x => x.Result))
-					{
-						modulesAndEnabledStatus.Add(I);
-						I.Key.SetEnabled(I.Value);
-					}
-				}
+				var dic = await ModuleStatuses(repositoryId, cancellationToken).ConfigureAwait(false);
+				var enumerable = dic.Select(x => x.Key);
+				repositoryContext = new RepositoryContext(context, enumerable, repositoryId, () => repositoryContext = null);
+				return repositoryContext;
+			}
+			catch
+			{
+				context.Dispose();
+				throw;
 			}
 		}
 
 		/// <inheritdoc />
 		public IEnumerable<IPayloadHandler<TPayload>> GetPayloadHandlers<TPayload>() where TPayload : ActivityPayload
 		{
-			logger.LogTrace("Enumerating payload handlers.");
-			return modulesAndEnabledStatus.Where(x => x.Value).SelectMany(x => x.Key.GetPayloadHandlers<TPayload>());
+			var repoContext = repositoryContext;
+			if (repoContext == null)
+				throw new InvalidOperationException("UsingRepositoryId was not called!");
+			return repoContext.EnabledModules.SelectMany(x => x.GetPayloadHandlers<TPayload>());
 		}
 
 		/// <inheritdoc />
-		public async Task SetModuleEnabled(Guid uid, bool enabled, CancellationToken cancellationToken)
-		{
-			var module = modulesAndEnabledStatus.Keys.First(x => x.Uid == uid);
-			if (modulesAndEnabledStatus[module] == enabled)
+		public IEnumerable<IMergeRequirement> MergeRequirements {
+			get
 			{
-				logger.LogInformation("Module {0} already enabled/disabled ({1})", module.Name, enabled);
-				return;
+				var repoContext = repositoryContext;
+				if (repoContext == null)
+					throw new InvalidOperationException("UsingRepositoryId was not called!");
+				return repoContext.EnabledModules.SelectMany(x => x.MergeRequirements);
 			}
-			modulesAndEnabledStatus[module] = enabled;
-			module.SetEnabled(enabled);
+		}
 
-			var dbentry = await databaseContext.ModuleMetadatas.Where(x => x.Id == uid).ToAsyncEnumerable().First(cancellationToken).ConfigureAwait(false);
-			dbentry.Enabled = enabled;
-			await databaseContext.Save(cancellationToken).ConfigureAwait(false);
+		/// <inheritdoc />
+		public async Task SetModuleEnabled(Guid uid, long repositoryId, bool enabled, CancellationToken cancellationToken)
+		{
+			ModuleMetadata dbentry;
+			using (await databaseContext.LockToCallStack(cancellationToken).ConfigureAwait(false))
+			{
+				dbentry = await databaseContext.ModuleMetadatas.Where(x => x.Uid == uid && x.RepositoryId == repositoryId).ToAsyncEnumerable().First(cancellationToken).ConfigureAwait(false);
+				if (enabled && dbentry.Enabled)
+					return;
+				dbentry.Enabled = enabled;
+				await databaseContext.Save(cancellationToken).ConfigureAwait(false);
+			}
 
-			logger.LogInformation("Module {0} enabled status set to {1}", module.Name, enabled);
+			logger.LogInformation("Module {0} enabled status set to {1} for repo {2}", uid, enabled, repositoryId);
 		}
 
 		/// <inheritdoc />
 		public Task AddViewVars(PullRequest pullRequest, dynamic viewBag, CancellationToken cancellationToken)
 		{
-			var tasks = new List<Task>();
-			foreach (var I in modulesAndEnabledStatus.Where(x => x.Value).Select(x => x.Key))
-				//object cast to workaround a runtime binder bug
-				tasks.Add(I.AddViewVars(pullRequest, (object)viewBag, cancellationToken));
-			return Task.WhenAll(tasks);
+			var repoContext = repositoryContext;
+			if (repoContext == null)
+				throw new InvalidOperationException("UsingRepositoryId was not called!");
+			return Task.WhenAll(repositoryContext.EnabledModules.Select(x => x.AddViewVars(pullRequest, (object)viewBag, cancellationToken)));
 		}
+
 		/// <inheritdoc />
-		public bool ModuleEnabled<TModule>() where TModule : IModule => modulesAndEnabledStatus.Where(x => x.Key is TModule).Select(x => x.Value).First();
+		public async Task<IDictionary<IModule, bool>> ModuleStatuses(long repositoryId, CancellationToken cancellationToken)
+		{
+			var repoDic = new Dictionary<IModule, bool>();
+
+			using (await databaseContext.LockToCallStack(cancellationToken).ConfigureAwait(false))
+				foreach (var plugin in allModules)
+				{
+					var query = databaseContext.ModuleMetadatas.Where(x => x.Uid == plugin.Uid && x.RepositoryId == repositoryId);
+					var result = await query.ToAsyncEnumerable().FirstOrDefault().ConfigureAwait(false);
+
+					if (result == default(ModuleMetadata))
+						repoDic.Add(plugin, true);
+					else
+						repoDic.Add(plugin, result.Enabled);
+				};
+			
+			return repoDic;
+		}
 	}
 }

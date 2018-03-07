@@ -40,26 +40,34 @@ namespace TGWebhooks.Modules.Changelog.Controllers
 		/// <summary>
 		/// Set the <see cref="RequireChangelogEntry"/> for a <paramref name="prNumber"/>
 		/// </summary>
+		/// <param name="owner">The <see cref="Octokit.Repository.Owner"/> for the operation</param>
+		/// <param name="name">The <see cref="Octokit.Repository.Name"/> for the operation</param>
 		/// <param name="prNumber">The <see cref="Octokit.PullRequest.Number"/></param>
 		/// <param name="requireChangelogEntry">The <see cref="RequireChangelogEntry"/></param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in an <see cref="IActionResult"/></returns>
-		[HttpPost("Changelog/{prNumber}")]
-		public async Task<IActionResult> SetRequirement(int prNumber, [FromBody] RequireChangelogEntry requireChangelogEntry, CancellationToken cancellationToken)
+		[HttpPost("Changelog/{owner}/{name}/{prNumber}")]
+		public async Task<IActionResult> SetRequirement(string owner, string name, int prNumber, [FromBody] RequireChangelogEntry requireChangelogEntry, CancellationToken cancellationToken)
 		{
-			var token = await gitHubManager.CheckAuthorization(Request.Cookies, cancellationToken).ConfigureAwait(false);
+			if (owner == null)
+				throw new ArgumentNullException(nameof(owner));
+			if (owner == null)
+				throw new ArgumentNullException(nameof(name));
+
+			var token = await gitHubManager.CheckAuthorization(owner, name, Request.Cookies, cancellationToken).ConfigureAwait(false);
 
 			if (token == null)
 				return Unauthorized();
 
-			var user = await gitHubManager.GetUserLogin(token, cancellationToken).ConfigureAwait(false);
+			var user = await gitHubManager.GetUser(token).ConfigureAwait(false);
 
-			if (!await gitHubManager.UserHasWriteAccess(user).ConfigureAwait(false))
+			if (!await gitHubManager.UserHasWriteAccess(owner, name, user, cancellationToken).ConfigureAwait(false))
 				return Forbid();
-			
-			await changelogModule.SetRequirement(prNumber, requireChangelogEntry, cancellationToken).ConfigureAwait(false);
 
-			autoMergeHandler.RecheckPullRequest(prNumber);
+			var pr = await gitHubManager.GetPullRequest(owner, name, prNumber, cancellationToken).ConfigureAwait(false);
+			await changelogModule.SetRequirement(pr, requireChangelogEntry, cancellationToken).ConfigureAwait(false);
+
+			autoMergeHandler.RecheckPullRequest(pr);
 
 			return Json(new object());
 		}

@@ -4,10 +4,12 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Octokit;
+using Octokit.Internal;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Configuration;
@@ -66,28 +68,27 @@ namespace TGWebhooks.Core
 		/// <inheritdoc />
 		public void Dispose() => semaphore.Dispose();
 
-		/// <summary>
-		/// Schedules a recheck of the <see cref="AutoMergeStatus"/>es of a given <paramref name="prNumber"/>
-		/// </summary>
-		/// <param name="prNumber">The <see cref="PullRequest.Number"/> <see cref="PullRequest"/> to check</param>
-		public void RecheckPullRequest(int prNumber) => backgroundJobClient.Enqueue(() => RecheckPullRequest(prNumber, JobCancellationToken.Null));
+		/// <inheritdoc />
+		public void RecheckPullRequest(PullRequest pullRequest) => backgroundJobClient.Enqueue(() => RecheckPullRequest(pullRequest.Base.Repository.Id, pullRequest.Number, JobCancellationToken.Null));
 
 		/// <summary>
 		/// Rechecks the <see cref="AutoMergeStatus"/>es of a given <paramref name="pullRequestNumber"/>
 		/// </summary>
+		/// <param name="repositoryId">The <see cref="Repository.Id"/> of the <see cref="PullRequest.Base"/></param>
 		/// <param name="pullRequestNumber">The <see cref="PullRequest.Number"/> <see cref="PullRequest"/> to check</param>
 		/// <param name="jobCancellationToken">The <see cref="IJobCancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
 		[AutomaticRetry(Attempts = 0)]
-		public Task RecheckPullRequest(int pullRequestNumber, IJobCancellationToken jobCancellationToken) => CheckMergePullRequest(pullRequestNumber, jobCancellationToken.ShutdownToken);
+		public Task RecheckPullRequest(long repositoryId, int pullRequestNumber, IJobCancellationToken jobCancellationToken) => CheckMergePullRequest(repositoryId, pullRequestNumber, jobCancellationToken.ShutdownToken);
 
 		/// <summary>
 		/// Checks if a given <see cref="PullRequest"/> is considered mergeable and does so if need be and sets it's commit status
 		/// </summary>
+		/// <param name="repositoryId">The <see cref="Repository.Id"/> of the <see cref="PullRequest.Base"/></param>
 		/// <param name="prNumber">The <see cref="PullRequest.Number"/> of the <see cref="PullRequest"/> to check</param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
-		async Task CheckMergePullRequest(int prNumber, CancellationToken cancellationToken)
+		async Task CheckMergePullRequest(long repositoryId, int prNumber, CancellationToken cancellationToken)
 		{
 			using (await SemaphoreSlimContext.Lock(semaphore, cancellationToken).ConfigureAwait(false))
 			using (logger.BeginScope("Checking mergability of pull request #{0}.", prNumber))
@@ -96,7 +97,7 @@ namespace TGWebhooks.Core
 				var componentProvider = serviceProvider.GetRequiredService<IComponentProvider>();
 				var gitHubManager = serviceProvider.GetRequiredService<IGitHubManager>();
 				var continuousIntegration = serviceProvider.GetRequiredService<IContinuousIntegration>();
-				var pullRequest = await gitHubManager.GetPullRequest(prNumber).ConfigureAwait(false);
+				var pullRequest = await gitHubManager.GetPullRequest(repositoryId, prNumber, cancellationToken).ConfigureAwait(false);
 				if (pullRequest.State.Value == ItemState.Closed)
 				{
 					logger.LogDebug("Pull request is closed!");
@@ -108,12 +109,12 @@ namespace TGWebhooks.Core
 				Task pendingStatusTask = null;
 				try
 				{
-					pendingStatusTask = gitHubManager.SetCommitStatus(pullRequest, CommitState.Pending, stringLocalizer["CommitStatusPending"]);
+					pendingStatusTask = gitHubManager.SetCommitStatus(pullRequest, CommitState.Pending, stringLocalizer["CommitStatusPending"], cancellationToken);
 					for (var I = 1; I < 4 && !pullRequest.Mergeable.HasValue; ++I)
 					{
 						await Task.Delay(I * 1000, cancellationToken).ConfigureAwait(false);
 						logger.LogTrace("Rechecking git mergeablility.");
-						pullRequest = await gitHubManager.GetPullRequest(pullRequest.Number).ConfigureAwait(false);
+						pullRequest = await gitHubManager.GetPullRequest(pullRequest.Base.Repository.Id, pullRequest.Number, cancellationToken).ConfigureAwait(false);
 					}
 
 					if (!pullRequest.Mergeable.HasValue || !pullRequest.Mergeable.Value)
@@ -121,11 +122,11 @@ namespace TGWebhooks.Core
 						logger.LogDebug("Aborted due to lack of mergeablility!");
 						return;
 					}
-					await componentProvider.Initialize(cancellationToken).ConfigureAwait(false);
 
 					var tasks = new List<Task<AutoMergeStatus>>();
-					foreach (var I in componentProvider.MergeRequirements)
-						tasks.Add(I.EvaluateFor(pullRequest, cancellationToken));
+					using (await componentProvider.UsingRepositoryId(pullRequest.Base.Repository.Id, cancellationToken).ConfigureAwait(false))
+						foreach (var I in componentProvider.MergeRequirements)
+							tasks.Add(I.EvaluateFor(pullRequest, cancellationToken));
 
 					await Task.WhenAll(tasks).ConfigureAwait(false);
 
@@ -165,7 +166,7 @@ namespace TGWebhooks.Core
 						failReasonMessage = String.Format(CultureInfo.InvariantCulture, "{0}{1}  - {2}", failReasonMessage, Environment.NewLine, I);
 
 					await pendingStatusTask.ConfigureAwait(false);
-					await gitHubManager.SetCommitStatus(pullRequest, goodStatus ? CommitState.Success : CommitState.Failure, goodStatus ? stringLocalizer["CommitStatusSuccess"] : stringLocalizer["CommitStatusFail", failReasonMessage]).ConfigureAwait(false);
+					await gitHubManager.SetCommitStatus(pullRequest, goodStatus ? CommitState.Success : CommitState.Failure, goodStatus ? stringLocalizer["CommitStatusSuccess"] : stringLocalizer["CommitStatusFail", failReasonMessage], cancellationToken).ConfigureAwait(false);
 				}
 				catch (Exception e)
 				{
@@ -174,7 +175,7 @@ namespace TGWebhooks.Core
 					logger.LogDebug(e, "Error occurred. Setting commit state to errored.");
 					try
 					{
-						await gitHubManager.SetCommitStatus(pullRequest, CommitState.Error, stringLocalizer["CommitStatusError", e]).ConfigureAwait(false);
+						await gitHubManager.SetCommitStatus(pullRequest, CommitState.Error, stringLocalizer["CommitStatusError", e], cancellationToken).ConfigureAwait(false);
 					}
 					catch (Exception e2)
 					{
@@ -203,7 +204,7 @@ namespace TGWebhooks.Core
 							goto case ContinuousIntegrationStatus.NotPresent;
 						case ContinuousIntegrationStatus.NotPresent:
 						case ContinuousIntegrationStatus.Pending:
-							backgroundJobClient.Schedule(() => RecheckPullRequest(pullRequest.Number, JobCancellationToken.Null), DateTimeOffset.UtcNow.AddMinutes(rescheduleInterval));
+							backgroundJobClient.Schedule(() => RecheckPullRequest(pullRequest.Base.Repository.Id, pullRequest.Number, JobCancellationToken.Null), DateTimeOffset.UtcNow.AddMinutes(rescheduleInterval));
 							return;
 					}
 
@@ -222,7 +223,7 @@ namespace TGWebhooks.Core
 				if (rescheduleIn > 0)
 				{
 					var targetTime = DateTimeOffset.UtcNow.AddSeconds(rescheduleIn);
-					BackgroundJob.Schedule(() => RecheckPullRequest(pullRequest.Number, JobCancellationToken.Null), targetTime);
+					BackgroundJob.Schedule(() => RecheckPullRequest(pullRequest.Base.Repository.Id, pullRequest.Number, JobCancellationToken.Null), targetTime);
 					logger.LogDebug("Pull request recheck scheduled for {0}.", targetTime);
 				}
 				else
@@ -236,7 +237,93 @@ namespace TGWebhooks.Core
 			if (payload == null)
 				throw new ArgumentNullException(nameof(payload));
 
-			return CheckMergePullRequest(payload.PullRequest.Number, cancellationToken);
+			return CheckMergePullRequest(payload.PullRequest.Base.Repository.Id, payload.PullRequest.Number, cancellationToken);
+		}
+
+		/// <summary>
+		/// Invoke the active <see cref="IPayloadHandler{TPayload}"/> for a given <paramref name="payloadType"/>
+		/// </summary>
+		/// <param name="json">The JSON <see cref="string"/> of the <paramref name="payloadType"/> to process</param>
+		/// <param name="payloadType">The payload type to invoke</param>
+		/// <param name="jobCancellationToken">The <see cref="IJobCancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task"/> representing the running handlers</returns>
+		[AutomaticRetry(Attempts = 0)]
+		public Task InvokeHandlers(string json, Type payloadType, IJobCancellationToken jobCancellationToken)
+		{
+			//reflection shennanigans bc of a hangfire bug
+			var method = GetType().GetMethod(nameof(InternalInvokeHandlers), BindingFlags.NonPublic | BindingFlags.Instance);
+			var genMethod = method.MakeGenericMethod(payloadType);
+			return (Task)genMethod.Invoke(this, new object[] { json, jobCancellationToken });
+		}
+
+		/// <inheritdoc />
+		public void InvokeHandlers<TPayload>(string json) where TPayload : ActivityPayload
+		{
+			if (json == null)
+				throw new ArgumentNullException(nameof(json));
+			var jobName = backgroundJobClient.Enqueue(() => InvokeHandlers(json, typeof(TPayload), JobCancellationToken.Null));
+			logger.LogTrace("Started background job for payload: {0}", jobName);
+		}
+
+		/// <summary>
+		/// Invoke the active <see cref="IPayloadHandler{TPayload}"/> for a given <typeparamref name="TPayload"/>
+		/// </summary>
+		/// <typeparam name="TPayload">The payload type to invoke</typeparam>
+		/// <param name="json">The JSON <see cref="string"/> of the <typeparamref name="TPayload"/> to process</param>
+		/// <param name="jobCancellationToken">The <see cref="IJobCancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task"/> representing the running handlers</returns>
+		async Task InternalInvokeHandlers<TPayload>(string json, IJobCancellationToken jobCancellationToken) where TPayload : ActivityPayload
+		{
+			logger.LogTrace("Beginning payload processing job: {0}");
+			var cancellationToken = jobCancellationToken.ShutdownToken;
+
+			var payload = new SimpleJsonSerializer().Deserialize<TPayload>(json);
+			var tasks = new List<Task>();
+			async Task RunHandler(IPayloadHandler<TPayload> payloadHandler)
+			{
+				try
+				{
+					await payloadHandler.ProcessPayload(payload, cancellationToken).ConfigureAwait(false);
+				}
+				//To be expected
+				catch (OperationCanceledException e)
+				{
+					logger.LogDebug(e, "Payload handler processing cancelled!");
+				}
+				catch (NotSupportedException e)
+				{
+					logger.LogTrace(e, "Payload handler does not support payload!");
+				}
+				catch (Exception e)
+				{
+					logger.LogError(e, "Payload handler threw exception!");
+				}
+			};
+
+			using (serviceProvider.CreateScope())
+			{
+				var componentProvider = serviceProvider.GetRequiredService<IComponentProvider>();
+				using (await componentProvider.UsingRepositoryId(payload.Repository.Id, cancellationToken).ConfigureAwait(false))
+					foreach (var handler in componentProvider.GetPayloadHandlers<TPayload>())
+						tasks.Add(RunHandler(handler));
+
+				await Task.WhenAll(tasks).ConfigureAwait(false);
+			}
+
+			if (this is IPayloadHandler<TPayload> asHandler)
+			{
+				logger.LogTrace("Running auto merge payload handler.");
+				try
+				{
+					await asHandler.ProcessPayload(payload, cancellationToken).ConfigureAwait(false);
+				}
+				catch (Exception e)
+				{
+					logger.LogError(e, "Failed running auto merge handler!");
+				}
+			}
+			else
+				logger.LogTrace("Not running auto merge handler to to payload type of {0}.", typeof(TPayload).FullName);
 		}
 	}
 }

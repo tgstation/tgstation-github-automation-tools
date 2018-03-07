@@ -5,6 +5,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using TGWebhooks.Configuration;
+using TGWebhooks.Modules;
 using ZNetCS.AspNetCore.Logging.EntityFrameworkCore;
 
 namespace TGWebhooks.Models
@@ -14,12 +15,61 @@ namespace TGWebhooks.Models
 	sealed class DatabaseContext : DbContext, IDatabaseContext
 #pragma warning restore CA1812
 	{
-		/// <inheridoc />
-		public DbSet<AccessTokenEntry> AccessTokenEntries { get; set; }
-		/// <inheridoc />
-		public DbSet<KeyValuePair> KeyValuePairs { get; set; }
-		/// <inheridoc />
-		public DbSet<ModuleMetadata> ModuleMetadatas { get; set; }
+		/// <inheritdoc />
+		public DbSet<UserAccessToken> UserAccessTokens
+		{
+			get
+			{
+				CheckSemaphoreLocked();
+				return userAccessTokens;
+			}
+			set => userAccessTokens = value;
+		}
+
+		/// <inheritdoc />
+		public DbSet<DataEntry> DataEntries
+		{
+			get
+			{
+				CheckSemaphoreLocked();
+				return dataEntries;
+			}
+			set => dataEntries = value;
+		}
+
+		/// <inheritdoc />
+		public DbSet<ModuleMetadata> ModuleMetadatas
+		{
+			get
+			{
+				CheckSemaphoreLocked();
+				return moduleMetadatas;
+			}
+			set => moduleMetadatas = value;
+		}
+
+		/// <inheritdoc />
+		public DbSet<Installation> Installations
+		{
+			get
+			{
+				CheckSemaphoreLocked();
+				return installations;
+			}
+			set => installations = value;
+		}
+
+		/// <inheritdoc />
+		public DbSet<InstallationRepository> InstallationRepositories
+		{
+			get
+			{
+				CheckSemaphoreLocked();
+				return installationRepositories;
+			}
+			set => installationRepositories = value;
+		}
+
 		/// <summary>
 		/// The <see cref="DbSet{TEntity}"/> for <see cref="Log"/>s
 		/// </summary>
@@ -33,6 +83,31 @@ namespace TGWebhooks.Models
 		/// The <see cref="ILoggerFactory"/> for the <see cref="DatabaseContext"/>
 		/// </summary>
 		readonly ILoggerFactory loggerFactory;
+		/// <summary>
+		/// The <see cref="SemaphoreSlim"/> for the <see cref="DatabaseContext"/>
+		/// </summary>
+		readonly SemaphoreSlim semaphore;
+
+		/// <summary>
+		/// Backing field for <see cref="UserAccessTokens"/>
+		/// </summary>
+		DbSet<UserAccessToken> userAccessTokens;
+		/// <summary>
+		/// Backing field for <see cref="DataEntries"/>
+		/// </summary>
+		DbSet<DataEntry> dataEntries;
+		/// <summary>
+		/// Backing field for <see cref="ModuleMetadatas"/>
+		/// </summary>
+		DbSet<ModuleMetadata> moduleMetadatas;
+		/// <summary>
+		/// Backing field for <see cref="Installations"/>
+		/// </summary>
+		DbSet<Installation> installations;
+		/// <summary>
+		/// Backing field for <see cref="InstallationRepositories"/>
+		/// </summary>
+		DbSet<InstallationRepository> installationRepositories;
 
 		/// <summary>
 		/// Helper for calling different <see cref="Action{T}"/>s with <see cref="DatabaseConfiguration.ConnectionString"/> based on <see cref="DatabaseConfiguration.DatabaseType"/>
@@ -67,6 +142,19 @@ namespace TGWebhooks.Models
 			}
 		}
 
+		/// <inheritdoc />
+		public override void Dispose()
+		{
+			base.Dispose();
+			semaphore.Dispose();
+		}
+
+		void CheckSemaphoreLocked()
+		{
+			if (semaphore.CurrentCount > 0)
+				throw new InvalidOperationException("The DatabaseContext is not locked!");
+		}
+
 		/// <summary>
 		/// Construct a <see cref="DatabaseContext"/>
 		/// </summary>
@@ -77,9 +165,10 @@ namespace TGWebhooks.Models
 		{
 			databaseConfiguration = databaseConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(databaseConfigurationOptions));
 			this.loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
+			semaphore = new SemaphoreSlim(1);
 		}
 
-		/// <inheridoc />
+		/// <inheritdoc />
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
@@ -89,19 +178,32 @@ namespace TGWebhooks.Models
 
 			// real relation database can map table:
 			modelBuilder.Entity<Log>().ToTable(nameof(Log));
+
+			//set up multikeys
+			modelBuilder.Entity<DataEntry>().HasKey(x => new { x.ModuleUid, x.RepositoryId, x.Key });
+			modelBuilder.Entity<ModuleMetadata>().HasKey(x => new { x.Uid, x.RepositoryId });
+			modelBuilder.Entity<InstallationRepository>().HasKey(x => new { x.Id, x.Slug });
 		}
 
-		/// <inheridoc />
+		/// <inheritdoc />
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
 			SelectDatabaseType(databaseConfiguration, x => optionsBuilder.UseSqlServer(x), x => optionsBuilder.UseMySQL(x), x => optionsBuilder.UseSqlite(x));
 			optionsBuilder.UseLoggerFactory(loggerFactory);
 		}
 
-		/// <inheridoc />
-		public Task Save(CancellationToken cancellationToken) => SaveChangesAsync(cancellationToken);
+		/// <inheritdoc />
+		public Task Save(CancellationToken cancellationToken)
+		{
+			CheckSemaphoreLocked();
+			return SaveChangesAsync(cancellationToken);
+		}
 
-		/// <inheridoc />
+		/// <inheritdoc />
 		public Task Initialize(CancellationToken cancellationToken) => Database.EnsureCreatedAsync(cancellationToken);
+
+
+		/// <inheritdoc />
+		public Task<SemaphoreSlimContext> LockToCallStack(CancellationToken cancellationToken) => SemaphoreSlimContext.Lock(semaphore, cancellationToken);
 	}
 }

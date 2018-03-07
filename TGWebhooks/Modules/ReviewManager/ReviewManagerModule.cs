@@ -39,11 +39,6 @@ namespace TGWebhooks.Modules.ReviewManager
 		readonly IStringLocalizer<ReviewManagerModule> stringLocalizer;
 
 		/// <summary>
-		/// Backing field for <see cref="SetEnabled(bool)"/>
-		/// </summary>
-		bool enabled;
-
-		/// <summary>
 		/// Construct a <see cref="ReviewManagerModule"/>
 		/// </summary>
 		/// <param name="gitHubManager">The value of <see cref="gitHubManager"/></param>
@@ -69,7 +64,7 @@ namespace TGWebhooks.Modules.ReviewManager
 			if (gitHubManager == null)
 				throw new InvalidOperationException("Configure() wasn't called!");
 
-			var reviews = await gitHubManager.GetPullRequestReviews(pullRequest).ConfigureAwait(false);
+			var reviews = await gitHubManager.GetPullRequestReviews(pullRequest, cancellationToken).ConfigureAwait(false);
 
 			var approvers = new List<User>();
 			var critics = new List<User>();
@@ -81,7 +76,7 @@ namespace TGWebhooks.Modules.ReviewManager
 				void CheckupUser()
 				{
 					if (!userCheckups.ContainsKey(I.User.Login))
-						userCheckups.Add(I.User.Login, gitHubManager.UserHasWriteAccess(I.User));
+						userCheckups.Add(I.User.Login, gitHubManager.UserHasWriteAccess(pullRequest.Base.Repository.Owner.Login, pullRequest.Base.Repository.Name, I.User, cancellationToken));
 				}
 				if (I.State.Value == PullRequestReviewState.Approved)
 				{
@@ -128,8 +123,5 @@ namespace TGWebhooks.Modules.ReviewManager
 
 			return result;
 		}
-
-		/// <inheritdoc />
-		public void SetEnabled(bool enabled) => this.enabled = enabled;
 	}
 }
