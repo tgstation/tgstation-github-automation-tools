@@ -40,6 +40,8 @@ namespace TGWebhooks.Modules.SignOff.Controllers
 		/// <summary>
 		/// Set the <see cref="PullRequestSignOff"/> for a <paramref name="prNumber"/>
 		/// </summary>
+		/// <param name="owner">The <see cref="Octokit.Repository.Owner"/> for the operation</param>
+		/// <param name="name">The <see cref="Octokit.Repository.Name"/> for the operation</param>
 		/// <param name="prNumber">The <see cref="Octokit.PullRequest.Number"/></param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in an <see cref="IActionResult"/></returns>
@@ -79,6 +81,8 @@ namespace TGWebhooks.Modules.SignOff.Controllers
 		/// <summary>
 		/// Veto the <see cref="PullRequestSignOff"/> for a <paramref name="prNumber"/>
 		/// </summary>
+		/// <param name="owner">The <see cref="Octokit.Repository.Owner"/> for the operation</param>
+		/// <param name="name">The <see cref="Octokit.Repository.Name"/> for the operation</param>
 		/// <param name="prNumber">The <see cref="Octokit.PullRequest.Number"/></param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in an <see cref="IActionResult"/></returns>

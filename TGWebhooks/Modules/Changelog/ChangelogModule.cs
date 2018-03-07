@@ -108,9 +108,9 @@ namespace TGWebhooks.Modules.Changelog
 		}
 
 		/// <summary>
-		/// Set the <see cref="RequireChangelogEntry"/> for a <paramref name="prNumber"/>
+		/// Set the <see cref="RequireChangelogEntry"/> for a <paramref name="pullRequest"/>
 		/// </summary>
-		/// <param name="prNumber">The <see cref="PullRequest.Number"/></param>
+		/// <param name="pullRequest">The <see cref="PullRequest"/></param>
 		/// <param name="requireChangelogEntry">The <see cref="RequireChangelogEntry"/></param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> representing the running operation</returns>

@@ -41,6 +41,7 @@ namespace TGWebhooks.Core
 		/// </summary>
 		/// <param name="gitHubConfigurationOptions">The <see cref="IOptions{TOptions}"/> containing the value of <see cref="gitHubConfiguration"/></param>
 		/// <param name="databaseContext">The value of <see cref="databaseContext"/></param>
+		/// <param name="webRequestManager">The value of <see cref="webRequestManager"/></param>
 		public GitHubClientFactory(IOptions<GitHubConfiguration> gitHubConfigurationOptions, IDatabaseContext databaseContext, IWebRequestManager webRequestManager)
 		{
 			gitHubConfiguration = gitHubConfigurationOptions?.Value ?? throw new ArgumentNullException(nameof(gitHubConfigurationOptions));
@@ -76,6 +77,13 @@ namespace TGWebhooks.Core
 			var slug = String.Concat(owner, '/', name);
 			return CreateInstallationClient(x => x.Repositories.Any(y => y.Slug == slug), cancellationToken);
 		}
+
+		/// <summary>
+		/// Create a <see cref="IGitHubClient"/> based on a <see cref="Repository.Id"/> in a <see cref="Models.Installation"/>
+		/// </summary>
+		/// <param name="query">The query to run on <see cref="IDatabaseContext.InstallationRepositories"/></param>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task{TResult}"/> resulting in a new <see cref="IGitHubClient"/></returns>
 		async Task<IGitHubClient> CreateInstallationClient(Expression<Func<Models.Installation, bool>> query, CancellationToken cancellationToken)
 		{
 			var installation = await databaseContext.Installations.Where(query).ToAsyncEnumerable().FirstOrDefault(cancellationToken).ConfigureAwait(false);

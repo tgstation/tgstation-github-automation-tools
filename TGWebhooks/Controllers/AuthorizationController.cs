@@ -57,6 +57,8 @@ namespace TGWebhooks.Controllers
 		/// <summary>
 		/// Handle a GET to the <see cref="AuthorizationController"/>
 		/// </summary>
+		/// <param name="owner">The <see cref="Octokit.Repository.Owner"/> for the operation</param>
+		/// <param name="name">The <see cref="Octokit.Repository.Name"/> for the operation</param>
 		/// <param name="prNumber">A <see cref="Octokit.PullRequest.Number"/></param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in the <see cref="IActionResult"/> of the GET</returns>
@@ -83,7 +85,10 @@ namespace TGWebhooks.Controllers
 		/// <summary>
 		/// Signs out the user and closes their window
 		/// </summary>
+		/// <param name="owner">The <see cref="Octokit.Repository.Owner"/> for the operation</param>
+		/// <param name="name">The <see cref="Octokit.Repository.Name"/> for the operation</param>
 		/// <param name="prNumber">The <see cref="Octokit.PullRequest.Number"/> to redirect to, defaults to the first open pull request</param>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>An <see cref="RedirectToActionResult"/></returns>
 		[HttpGet("SignOut/{owner}/{name}/{prNumber}")]
 		public async Task<IActionResult> SignOut(string owner, string name, int prNumber, CancellationToken cancellationToken)

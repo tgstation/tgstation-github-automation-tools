@@ -34,6 +34,8 @@ namespace TGWebhooks.Modules.GoodBoyPoints.Controllers
 		/// <summary>
 		/// Handle a HTTP GET to the <see cref="GoodBoyPointsController"/>
 		/// </summary>
+		/// <param name="owner">The <see cref="Octokit.Repository.Owner"/> for the operation</param>
+		/// <param name="name">The <see cref="Octokit.Repository.Name"/> for the operation</param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in a <see cref="JsonResult"/></returns>
 		[HttpGet("{owner}/{name}")]
@@ -51,6 +53,8 @@ namespace TGWebhooks.Modules.GoodBoyPoints.Controllers
 		/// <summary>
 		/// Set the <paramref name="offset"/> for a <paramref name="prNumber"/>
 		/// </summary>
+		/// <param name="owner">The <see cref="Octokit.Repository.Owner"/> for the operation</param>
+		/// <param name="name">The <see cref="Octokit.Repository.Name"/> for the operation</param>
 		/// <param name="prNumber">The <see cref="Octokit.PullRequest.Number"/></param>
 		/// <param name="offset">The <see cref="GoodBoyPointsOffset"/> for <paramref name="prNumber"/></param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>

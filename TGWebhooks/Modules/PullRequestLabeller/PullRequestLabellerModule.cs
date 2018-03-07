@@ -62,6 +62,7 @@ namespace TGWebhooks.Modules.PullRequestLabeller
 		/// </summary>
 		/// <param name="payload">The <see cref="PullRequestEventPayload"/> for the pull request</param>
 		/// <param name="oneCheckTags"><see langword="true"/> if additional tags should be contionally applied, <see langword="false"/> otherwise</param>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
 		async Task TagPR(PullRequestEventPayload payload, bool oneCheckTags, CancellationToken cancellationToken)
 		{

@@ -49,6 +49,7 @@ namespace TGWebhooks.Core
 		/// </summary>
 		/// <param name="pullRequest">The <see cref="PullRequest"/> to check for statuses</param>
 		/// <param name="handler">A function taking a <see cref="CommitState"/> and travis build id <see cref="string"/> and returning <see langword="true"/> to continue, <see langword="false"/> to cancel</param>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
 		async Task NonParallelForEachBuild(PullRequest pullRequest, Func<CommitState, string, bool> handler, CancellationToken cancellationToken)
 		{

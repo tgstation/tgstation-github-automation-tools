@@ -4,7 +4,6 @@ using Octokit;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -94,10 +93,10 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 		}
 
 		/// <summary>
-		/// Set the <paramref name="offset"/> for a <paramref name="prNumber"/>
+		/// Set the <paramref name="offset"/> for a <paramref name="pullRequest"/>
 		/// </summary>
-		/// <param name="prNumber">The <see cref="Octokit.PullRequest.Number"/></param>
-		/// <param name="offset">The <see cref="GoodBoyPointsOffset"/> for <paramref name="prNumber"/></param>
+		/// <param name="pullRequest">The <see cref="PullRequest"/></param>
+		/// <param name="offset">The <see cref="GoodBoyPointsOffset"/> for the <paramref name="pullRequest"/></param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
 		public Task SetOffset(PullRequest pullRequest, GoodBoyPointsOffset offset, CancellationToken cancellationToken) => dataStore.WriteData(pullRequest.Number.ToString(CultureInfo.InvariantCulture), pullRequest.Base.Repository.Id, offset ?? throw new ArgumentNullException(nameof(offset)), cancellationToken);
@@ -167,6 +166,7 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 		/// <summary>
 		/// List all <see cref="GoodBoyPointsEntry"/>s
 		/// </summary>
+		/// <param name="repositoryId">The <see cref="Repository.Id"/> for the operation</param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// A <see cref="Task{TResult}"/> resulting in the <see cref="Dictionary{TKey, TValue}"/> of good boy points
 		public async Task<Dictionary<string, int>> GoodBoyPointsEntries(long repositoryId, CancellationToken cancellationToken)

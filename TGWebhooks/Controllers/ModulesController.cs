@@ -64,6 +64,8 @@ namespace TGWebhooks.Controllers
 		/// <summary>
 		/// Handle a HTTP GET to the <see cref="ModulesController"/>
 		/// </summary>
+		/// <param name="owner">The <see cref="Octokit.Repository.Owner"/> for the operation</param>
+		/// <param name="name">The <see cref="Octokit.Repository.Name"/> for the operation</param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in the <see cref="IActionResult"/> of the action</returns>
 		[HttpGet("{owner}/{name}")]
@@ -97,6 +99,8 @@ namespace TGWebhooks.Controllers
 		/// <summary>
 		/// Handle a HTTP POST to the <see cref="ModulesController"/>
 		/// </summary>
+		/// <param name="owner">The <see cref="Octokit.Repository.Owner"/> for the operation</param>
+		/// <param name="name">The <see cref="Octokit.Repository.Name"/> for the operation</param>
 		/// <param name="moduleUpdate">The <see cref="ModuleUpdate"/> to run</param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in the <see cref="IActionResult"/> of the action</returns>

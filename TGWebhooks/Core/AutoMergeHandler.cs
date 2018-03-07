@@ -74,6 +74,7 @@ namespace TGWebhooks.Core
 		/// <summary>
 		/// Rechecks the <see cref="AutoMergeStatus"/>es of a given <paramref name="pullRequestNumber"/>
 		/// </summary>
+		/// <param name="repositoryId">The <see cref="Repository.Id"/> of the <see cref="PullRequest.Base"/></param>
 		/// <param name="pullRequestNumber">The <see cref="PullRequest.Number"/> <see cref="PullRequest"/> to check</param>
 		/// <param name="jobCancellationToken">The <see cref="IJobCancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
@@ -83,6 +84,7 @@ namespace TGWebhooks.Core
 		/// <summary>
 		/// Checks if a given <see cref="PullRequest"/> is considered mergeable and does so if need be and sets it's commit status
 		/// </summary>
+		/// <param name="repositoryId">The <see cref="Repository.Id"/> of the <see cref="PullRequest.Base"/></param>
 		/// <param name="prNumber">The <see cref="PullRequest.Number"/> of the <see cref="PullRequest"/> to check</param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
@@ -239,10 +241,10 @@ namespace TGWebhooks.Core
 		}
 
 		/// <summary>
-		/// Invoke the active <see cref="IPayloadHandler{TPayload}"/> for a given <typeparamref name="TPayload"/>
+		/// Invoke the active <see cref="IPayloadHandler{TPayload}"/> for a given <paramref name="payloadType"/>
 		/// </summary>
-		/// <typeparam name="TPayload">The payload type to invoke</typeparam>
-		/// <param name="json">The JSON <see cref="string"/> of the <typeparamref name="TPayload"/> to process</param>
+		/// <param name="json">The JSON <see cref="string"/> of the <paramref name="payloadType"/> to process</param>
+		/// <param name="payloadType">The payload type to invoke</param>
 		/// <param name="jobCancellationToken">The <see cref="IJobCancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running handlers</returns>
 		[AutomaticRetry(Attempts = 0)]

@@ -71,6 +71,8 @@ namespace TGWebhooks.Controllers
 		/// <summary>
 		/// Review automation information for a <see cref="PullRequest"/>
 		/// </summary>
+		/// <param name="owner">The <see cref="Repository.Owner"/> for the operation</param>
+		/// <param name="name">The <see cref="Repository.Name"/> for the operation</param>
 		/// <param name="number">The <see cref="PullRequest.Number"/></param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="ViewResult"/></returns>
