@@ -81,36 +81,42 @@ namespace TGWebhooks.Core
 		/// <summary>
 		/// Create a <see cref="IGitHubClient"/> based on a <see cref="Repository.Id"/> in a <see cref="Models.Installation"/>
 		/// </summary>
-		/// <param name="query">The query to run on <see cref="IDatabaseContext.InstallationRepositories"/></param>
+		/// <param name="query">The query to run on <see cref="IDatabaseContext.Installations"/></param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in a new <see cref="IGitHubClient"/></returns>
 		async Task<IGitHubClient> CreateInstallationClient(Expression<Func<Models.Installation, bool>> query, CancellationToken cancellationToken)
 		{
-			var installation = await databaseContext.Installations.Where(query).ToAsyncEnumerable().FirstOrDefault(cancellationToken).ConfigureAwait(false);
-
-			if (installation != default(Models.Installation))
+			IReadOnlyList<Octokit.Installation> gitHubInstalls;
+			List<Models.Installation> allKnownInstalls;
+			IGitHubClient client;
+			using (await databaseContext.LockToCallStack(cancellationToken).ConfigureAwait(false))
 			{
-				if (installation.AccessTokenExpiry < DateTimeOffset.UtcNow)
+				var installation = await databaseContext.Installations.Where(query).ToAsyncEnumerable().FirstOrDefault(cancellationToken).ConfigureAwait(false);
+
+				if (installation != default(Models.Installation))
 				{
-					var newToken = await CreateAppClient().GitHubApps.CreateInstallationToken(installation.InstallationId).ConfigureAwait(false);
-					installation.AccessToken = newToken.Token;
-					installation.AccessTokenExpiry = newToken.ExpiresAt;
-					await databaseContext.Save(cancellationToken).ConfigureAwait(false);
+					if (installation.AccessTokenExpiry < DateTimeOffset.UtcNow)
+					{
+						var newToken = await CreateAppClient().GitHubApps.CreateInstallationToken(installation.InstallationId).ConfigureAwait(false);
+						installation.AccessToken = newToken.Token;
+						installation.AccessTokenExpiry = newToken.ExpiresAt;
+						await databaseContext.Save(cancellationToken).ConfigureAwait(false);
+					}
+					return CreateOauthClient(installation.AccessToken);
 				}
-				return CreateOauthClient(installation.AccessToken);
+
+				//do a discovery
+				client = CreateAppClient();
+
+				//remove bad installs while we're here
+				var allKnownInstallsTask = databaseContext.Installations.ToAsyncEnumerable().ToList();
+				gitHubInstalls = await client.GitHubApps.GetAllInstallationsForCurrent().ConfigureAwait(false);
+				allKnownInstalls = await allKnownInstallsTask.ConfigureAwait(false);
+				databaseContext.Installations.RemoveRange(allKnownInstalls.Where(x => !gitHubInstalls.Any(y => y.Id == x.InstallationId)));
 			}
 
-			//do a discovery
-			var client = CreateAppClient();
-
-			//remove bad installs while we're here
-			var allKnownInstallsTask = databaseContext.Installations.ToAsyncEnumerable().ToList();
-			var gitHubInstalls = await client.GitHubApps.GetAllInstallationsForCurrent().ConfigureAwait(false);
-			var allKnownInstalls = await allKnownInstallsTask.ConfigureAwait(false);
-			databaseContext.Installations.RemoveRange(allKnownInstalls.Where(x => !gitHubInstalls.Any(y => y.Id == x.InstallationId)));
-
 			//add new installs for those that aren't
-			var installsToAdd = gitHubInstalls.Where(x => !databaseContext.Installations.Any(y => y.InstallationId == x.Id));
+			var installsToAdd = gitHubInstalls.Where(x => !allKnownInstalls.Any(y => y.InstallationId == x.Id));
 
 			async Task<Models.Installation> CreateAccessToken(Octokit.Installation newInstallation)
 			{
@@ -130,17 +136,19 @@ namespace TGWebhooks.Core
 				var jsonObj = JObject.Parse(json);
 				var array = jsonObj["repositories"];
 				var repos = new SimpleJsonSerializer().Deserialize<List<Repository>>(array.ToString());
-				
+
 				entity.Repositories.AddRange(repos.Select(x => new InstallationRepository { Id = x.Id, Slug = String.Concat(x.Owner.Login, '/', x.Name) }));
 
 				return entity;
 			}
-			
+
 			var newEntities = await Task.WhenAll(installsToAdd.Select(x => CreateAccessToken(x))).ConfigureAwait(false);
 
-			databaseContext.Installations.AddRange(newEntities);
-			await databaseContext.Save(cancellationToken).ConfigureAwait(false);
-
+			using (await databaseContext.LockToCallStack(cancellationToken).ConfigureAwait(false))
+			{
+				await databaseContext.Installations.AddRangeAsync(newEntities).ConfigureAwait(false);
+				await databaseContext.Save(cancellationToken).ConfigureAwait(false);
+			}
 			//its either in newEntities now or it doesn't exist
 			return CreateOauthClient(newEntities.First(query.Compile()).AccessToken);
 		}

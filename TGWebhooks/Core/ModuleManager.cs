@@ -96,11 +96,15 @@ namespace TGWebhooks.Core
 		/// <inheritdoc />
 		public async Task SetModuleEnabled(Guid uid, long repositoryId, bool enabled, CancellationToken cancellationToken)
 		{
-			var dbentry = await databaseContext.ModuleMetadatas.Where(x => x.Uid == uid && x.RepositoryId == repositoryId).ToAsyncEnumerable().First(cancellationToken).ConfigureAwait(false);
-			if (enabled && dbentry.Enabled)
-				return;
-			dbentry.Enabled = enabled;
-			await databaseContext.Save(cancellationToken).ConfigureAwait(false);
+			ModuleMetadata dbentry;
+			using (await databaseContext.LockToCallStack(cancellationToken).ConfigureAwait(false))
+			{
+				dbentry = await databaseContext.ModuleMetadatas.Where(x => x.Uid == uid && x.RepositoryId == repositoryId).ToAsyncEnumerable().First(cancellationToken).ConfigureAwait(false);
+				if (enabled && dbentry.Enabled)
+					return;
+				dbentry.Enabled = enabled;
+				await databaseContext.Save(cancellationToken).ConfigureAwait(false);
+			}
 
 			logger.LogInformation("Module {0} enabled status set to {1} for repo {2}", uid, enabled, repositoryId);
 		}
@@ -119,18 +123,18 @@ namespace TGWebhooks.Core
 		{
 			var repoDic = new Dictionary<IModule, bool>();
 
-			async Task LoadModule(IModule plugin)
-			{
-				var query = databaseContext.ModuleMetadatas.Where(x => x.Uid == plugin.Uid && x.RepositoryId == repositoryId);
-				var result = await query.ToAsyncEnumerable().FirstOrDefault().ConfigureAwait(false);
+			using (await databaseContext.LockToCallStack(cancellationToken).ConfigureAwait(false))
+				foreach (var plugin in allModules)
+				{
+					var query = databaseContext.ModuleMetadatas.Where(x => x.Uid == plugin.Uid && x.RepositoryId == repositoryId);
+					var result = await query.ToAsyncEnumerable().FirstOrDefault().ConfigureAwait(false);
 
-				if (result == default(ModuleMetadata))
-					repoDic.Add(plugin, true);
-				else
-					repoDic.Add(plugin, result.Enabled);
-			};
-
-			await Task.WhenAll(allModules.Select(x => LoadModule(x))).ConfigureAwait(false);
+					if (result == default(ModuleMetadata))
+						repoDic.Add(plugin, true);
+					else
+						repoDic.Add(plugin, result.Enabled);
+				};
+			
 			return repoDic;
 		}
 	}

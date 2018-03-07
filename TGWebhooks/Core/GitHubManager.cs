@@ -255,8 +255,11 @@ namespace TGWebhooks.Core
 				Secure = true,
 				Expires = expiry
 			});
-			await databaseContext.UserAccessTokens.AddAsync(newEntry, cancellationToken).ConfigureAwait(false);
-			await databaseContext.Save(cancellationToken).ConfigureAwait(false);
+			using (await databaseContext.LockToCallStack(cancellationToken).ConfigureAwait(false))
+			{
+				await databaseContext.UserAccessTokens.AddAsync(newEntry, cancellationToken).ConfigureAwait(false);
+				await databaseContext.Save(cancellationToken).ConfigureAwait(false);
+			}
 		}
 
 		/// <inheritdoc />
@@ -372,15 +375,18 @@ namespace TGWebhooks.Core
 			var now = DateTimeOffset.Now;
 
 			//two queries is better here
-			var toRemove = await databaseContext.UserAccessTokens.Where(x => x.Expiry < now).ToAsyncEnumerable().ToList().ConfigureAwait(false);
-			databaseContext.UserAccessTokens.RemoveRange(toRemove);
-			await databaseContext.Save(cancellationToken).ConfigureAwait(false);
+			using (await databaseContext.LockToCallStack(cancellationToken).ConfigureAwait(false))
+			{
+				var toRemove = await databaseContext.UserAccessTokens.Where(x => x.Expiry < now).ToAsyncEnumerable().ToList().ConfigureAwait(false);
+				databaseContext.UserAccessTokens.RemoveRange(toRemove);
+				await databaseContext.Save(cancellationToken).ConfigureAwait(false);
 
-			var entry = await databaseContext.UserAccessTokens.Where(x => x.Id == guid && x.Expiry >= now).ToAsyncEnumerable().FirstOrDefault().ConfigureAwait(false);
-			if (entry == default(UserAccessToken))
-				return null;
+				var entry = await databaseContext.UserAccessTokens.Where(x => x.Id == guid && x.Expiry >= now).ToAsyncEnumerable().FirstOrDefault().ConfigureAwait(false);
+				if (entry == default(UserAccessToken))
+					return null;
 
-			return entry.AccessToken;
+				return entry.AccessToken;
+			}
 		}
 
 		/// <inheritdoc />

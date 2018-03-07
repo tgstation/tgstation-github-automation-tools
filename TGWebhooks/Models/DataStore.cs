@@ -38,7 +38,9 @@ namespace TGWebhooks.Models
 			if(key == null)
 				throw new ArgumentNullException(nameof(key));
 			var moduleUidString = moduleUid.ToString();
-			var result = await databaseContext.DataEntries.FirstOrDefaultAsync(x => x.ModuleUid == moduleUid && x.RepositoryId == repositoryId && x.Key == key, cancellationToken).ConfigureAwait(false);
+			DataEntry result;
+			using (await databaseContext.LockToCallStack(cancellationToken).ConfigureAwait(false))
+				result = await databaseContext.DataEntries.FirstOrDefaultAsync(x => x.ModuleUid == moduleUid && x.RepositoryId == repositoryId && x.Key == key, cancellationToken).ConfigureAwait(false);
 			if (result == default(DataEntry))
 				return new TData();
 			return JsonConvert.DeserializeObject<TData>(result.Value);
@@ -53,14 +55,17 @@ namespace TGWebhooks.Models
 				throw new ArgumentNullException(nameof(data));
 
 			var json = JsonConvert.SerializeObject(data ?? throw new ArgumentNullException(nameof(data)));
-			var result = await databaseContext.DataEntries.FirstOrDefaultAsync(x => x.ModuleUid == moduleUid && x.RepositoryId == repositoryId && x.Key == key, cancellationToken).ConfigureAwait(false);
-			if (result == default(DataEntry))
+			using (await databaseContext.LockToCallStack(cancellationToken).ConfigureAwait(false))
 			{
-				result = new DataEntry() { ModuleUid = moduleUid, RepositoryId = repositoryId };
-				databaseContext.DataEntries.Add(result);
+				var result = await databaseContext.DataEntries.FirstOrDefaultAsync(x => x.ModuleUid == moduleUid && x.RepositoryId == repositoryId && x.Key == key, cancellationToken).ConfigureAwait(false);
+				if (result == default(DataEntry))
+				{
+					result = new DataEntry() { ModuleUid = moduleUid, RepositoryId = repositoryId };
+					databaseContext.DataEntries.Add(result);
+				}
+				result.Value = json;
+				await databaseContext.Save(cancellationToken).ConfigureAwait(false);
 			}
-			result.Value = json;
-			await databaseContext.Save(cancellationToken).ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />
