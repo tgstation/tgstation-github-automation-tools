@@ -60,7 +60,7 @@ namespace TGWebhooks.Models
 				var result = await databaseContext.DataEntries.FirstOrDefaultAsync(x => x.ModuleUid == moduleUid && x.RepositoryId == repositoryId && x.Key == key, cancellationToken).ConfigureAwait(false);
 				if (result == default(DataEntry))
 				{
-					result = new DataEntry() { ModuleUid = moduleUid, RepositoryId = repositoryId };
+					result = new DataEntry() { ModuleUid = moduleUid, RepositoryId = repositoryId, Key = key };
 					databaseContext.DataEntries.Add(result);
 				}
 				result.Value = json;

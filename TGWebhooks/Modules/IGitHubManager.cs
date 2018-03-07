@@ -134,8 +134,11 @@ namespace TGWebhooks.Modules
 		/// Get the GitHub URL to direct a user to at the start of the Oauth flow
 		/// </summary>
 		/// <param name="callbackURL">The <see cref="Uri"/> to direct users to to complete the Oauth flow</param>
+		/// <param name="repoOwner">The <see cref="Repository.Owner"/> for the operation</param>
+		/// <param name="repoName">The <see cref="Repository.Name"/> for the operation</param>
+		/// <param name="number">The <see cref="PullRequest.Number"/> to return to on the redirect</param>
 		/// <returns>The <see cref="Uri"/> to send the user to</returns>
-		Uri GetAuthorizationURL(Uri callbackURL);
+		Uri GetAuthorizationURL(Uri callbackURL, string repoOwner, string repoName, int number);
 
 		/// <summary>
 		/// Complete the Oauth flow and load 
@@ -156,8 +159,8 @@ namespace TGWebhooks.Modules
 		/// <summary>
 		/// Checks some <paramref name="cookies"/> for the oauth cookie
 		/// </summary>
-		/// <param name="repoOwner">The <see cref="Repository.Owner"/></param>
-		/// <param name="repoName">The <see cref="Repository.Name"/></param>
+		/// <param name="repoOwner">The <see cref="Repository.Owner"/> for the operation</param>
+		/// <param name="repoName">The <see cref="Repository.Name"/> for the operation</param>
 		/// <param name="cookies">The <see cref="IRequestCookieCollection"/> to check</param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in the associated GitHub access token on success, <see langword="null"/> on failure</returns>

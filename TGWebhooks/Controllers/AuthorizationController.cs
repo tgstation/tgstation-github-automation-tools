@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 using System;
 using System.Globalization;
 using System.Threading;
@@ -50,31 +51,36 @@ namespace TGWebhooks.Controllers
 			if (await gitHubManager.CheckAuthorization(owner, name, Request.Cookies, cancellationToken).ConfigureAwait(false) != null)
 				return RedirectToAction("ReviewPullRequest", "PullRequest", new { number = prNumber });
 			
-			var redirectURI = Url.Action(nameof(Complete), new { owner, name, prNumber });
-			return Redirect(gitHubManager.GetAuthorizationURL(new Uri(String.Format(CultureInfo.InvariantCulture, "https://{0}{1}", Request.Host, redirectURI))).ToString());
+			var redirectURI = Url.Action(nameof(Complete));
+			return Redirect(gitHubManager.GetAuthorizationURL(new Uri(String.Format(CultureInfo.InvariantCulture, "https://{0}{1}", Request.Host, redirectURI)), owner, name, prNumber).ToString());
 		}
 
 		/// <summary>
 		/// Handle a GET to the <see cref="AuthorizationController"/>
 		/// </summary>
-		/// <param name="owner">The <see cref="Octokit.Repository.Owner"/> for the operation</param>
-		/// <param name="name">The <see cref="Octokit.Repository.Name"/> for the operation</param>
-		/// <param name="prNumber">A <see cref="Octokit.PullRequest.Number"/></param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in the <see cref="IActionResult"/> of the GET</returns>
-		[HttpGet("Complete/{owner}/{name}/{prNumber}")]
-		public async Task<IActionResult> Complete(string owner, string name, int prNumber, CancellationToken cancellationToken)
+		[HttpGet("Complete")]
+		public async Task<IActionResult> Complete(CancellationToken cancellationToken)
 		{
-			if (owner == null)
-				throw new ArgumentNullException(nameof(owner));
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
+			if (!Request.Query.TryGetValue("state", out StringValues state) || state.Count != 1)
+				return BadRequest();
+
+			var splits = state[0].Split('/');
+
+			if (splits.Length != 3)
+				return BadRequest();
+
+			var owner = splits[0];
+			var name = splits[1];
+			if (!Int32.TryParse(splits[2], out int number))
+				return BadRequest();
 
 			try
 			{
 				var code = Request.Query["code"];
 				await gitHubManager.CompleteAuthorization(code, Response.Cookies, cancellationToken).ConfigureAwait(false);
-				return RedirectToAction("ReviewPullRequest", "PullRequest", new { owner, name, number = prNumber });
+				return RedirectToAction("ReviewPullRequest", "PullRequest", new { owner, name, number });
 			}
 			catch (Exception e)
 			{

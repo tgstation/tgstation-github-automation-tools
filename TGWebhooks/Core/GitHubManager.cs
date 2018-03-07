@@ -26,10 +26,6 @@ namespace TGWebhooks.Core
 		/// </summary>
 		const string CookieName = Application.UserAgent + ".AuthCookie";
 		/// <summary>
-		/// The scope required on Oauth tokens
-		/// </summary>
-		const string RequiredScope = "public_repo";
-		/// <summary>
 		/// Days until a cookie for an <see cref="UserAccessToken"/> expires
 		/// </summary>
 		const int AccessTokenCookieExpriationDays = 7;
@@ -214,12 +210,21 @@ namespace TGWebhooks.Core
 		}
 
 		/// <inheritdoc />
-		public Uri GetAuthorizationURL(Uri callbackURL)
+		public Uri GetAuthorizationURL(Uri callbackURL, string repoOwner, string repoName, int number)
 		{
+			if (callbackURL == null)
+				throw new ArgumentNullException(nameof(callbackURL));
+			if (repoOwner == null)
+				throw new ArgumentNullException(nameof(repoOwner));
+			if (repoName == null)
+				throw new ArgumentNullException(nameof(repoName));
+			IssueArgumentCheck(number);
+
 			logger.LogTrace("GetAuthorizationURL for {0}", callbackURL);
 			var olr = new OauthLoginRequest(gitHubConfiguration.OauthClientID);
-			olr.Scopes.Add(RequiredScope);  //all we need
+			olr.Scopes.Add("repo");  //all we need
 			olr.RedirectUri = callbackURL;
+			olr.State = String.Concat(repoOwner, '/', repoName, '/', number);
 			var gitHubClient = gitHubClientFactory.CreateAppClient();
 			return gitHubClient.Oauth.GetGitHubLoginUrl(olr);
 		}
@@ -237,7 +242,7 @@ namespace TGWebhooks.Core
 			var otr = new OauthTokenRequest(gitHubConfiguration.OauthClientID, gitHubConfiguration.OauthSecret, code);
 			var gitHubClient = gitHubClientFactory.CreateAppClient();
 			var result = await gitHubClient.Oauth.CreateAccessToken(otr).ConfigureAwait(false);
-			if (result.AccessToken == null || !result.Scope.Contains(RequiredScope))
+			if (result.AccessToken == null)
 				//user is fucking with us, don't even bother
 				return;
 
