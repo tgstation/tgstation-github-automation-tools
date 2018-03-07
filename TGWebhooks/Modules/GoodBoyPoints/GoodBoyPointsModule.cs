@@ -186,6 +186,11 @@ namespace TGWebhooks.Modules.GoodBoyPoints
 			if(viewBag == null)
 				throw new ArgumentNullException(nameof(viewBag));
 
+#if !ENABLE_SELF_SIGN
+			if (viewBag.UserIsAuthor)
+				return;
+#endif
+
 			((IList<string>)viewBag.ModuleViews).Add("/Modules/GoodBoyPoints/Views/GoodBoyPoints.cshtml");
 			viewBag.GBPHeader = stringLocalizer["GBPHeader"];
 			viewBag.GBPBaseLabel = stringLocalizer["GBPBaseLabel"];

@@ -80,6 +80,9 @@ namespace TGWebhooks.Modules.GoodBoyPoints.Controllers
 				return Forbid();
 
 			var pullRequest = await gitHubManager.GetPullRequest(owner, name, prNumber, cancellationToken).ConfigureAwait(false);
+			if (pullRequest.User.Id == user.Id)
+				return Forbid();
+
 			await goodBoyPointsModule.SetOffset(pullRequest, offset, cancellationToken).ConfigureAwait(false);
 
 			return Ok();
