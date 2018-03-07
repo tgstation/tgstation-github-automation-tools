@@ -11,24 +11,19 @@
 		public const string Section = "GitHub";
 
 		/// <summary>
-		/// The GitHub personal access token used for pushing and API operations
-		/// </summary>
-		public string PersonalAccessToken { get; set; }
-
-		/// <summary>
 		/// The secret to use for hashing webhook payloads
 		/// </summary>
 		public string WebhookSecret { get; set; }
 
 		/// <summary>
-		/// The owner of the repository to manage
+		/// The GitHub App PEM private key
 		/// </summary>
-		public string RepoOwner { get; set; }
+		public string PemData { get; set; }
 
 		/// <summary>
-		/// The name of the repository to manage
+		/// The ISS value for creating a JWT of <see cref="PEMData"/>
 		/// </summary>
-		public string RepoName { get; set; }
+		public int AppID { get; set; }
 
 		/// <summary>
 		/// The client ID for the Oauth application

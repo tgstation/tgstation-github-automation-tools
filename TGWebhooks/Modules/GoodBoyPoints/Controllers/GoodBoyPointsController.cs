@@ -36,8 +36,17 @@ namespace TGWebhooks.Modules.GoodBoyPoints.Controllers
 		/// </summary>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in a <see cref="JsonResult"/></returns>
-		[HttpGet]
-		public async Task<IActionResult> Index(CancellationToken cancellationToken) => Json(await goodBoyPointsModule.GoodBoyPointsEntries(cancellationToken).ConfigureAwait(false));
+		[HttpGet("{owner}/{name}")]
+		public async Task<IActionResult> Index(string owner, string name, CancellationToken cancellationToken)
+		{
+			if (owner == null)
+				throw new ArgumentNullException(nameof(owner));
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+
+			var repo = await gitHubManager.GetRepository(owner, name, cancellationToken).ConfigureAwait(false);
+			return Json(await goodBoyPointsModule.GoodBoyPointsEntries(repo.Id, cancellationToken).ConfigureAwait(false));
+		}
 
 		/// <summary>
 		/// Set the <paramref name="offset"/> for a <paramref name="prNumber"/>
@@ -46,23 +55,28 @@ namespace TGWebhooks.Modules.GoodBoyPoints.Controllers
 		/// <param name="offset">The <see cref="GoodBoyPointsOffset"/> for <paramref name="prNumber"/></param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in an <see cref="IActionResult"/></returns>
-		[HttpPost("/{prNumber}")]
-		public async Task<IActionResult> SetOffset(int prNumber, [FromBody]GoodBoyPointsOffset offset, CancellationToken cancellationToken)
+		[HttpPost("{owner}/{name}/{prNumber}")]
+		public async Task<IActionResult> SetOffset(string owner, string name, int prNumber, [FromBody]GoodBoyPointsOffset offset, CancellationToken cancellationToken)
 		{
+			if (owner == null)
+				throw new ArgumentNullException(nameof(owner));
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
 			if (offset == null)
 				throw new ArgumentNullException(nameof(offset));
 
-			var token = await gitHubManager.CheckAuthorization(Request.Cookies, cancellationToken).ConfigureAwait(false);
+			var token = await gitHubManager.CheckAuthorization(owner, name, Request.Cookies, cancellationToken).ConfigureAwait(false);
 
 			if (token == null)
 				return Unauthorized();
+			
+			var user = await gitHubManager.GetUser(token).ConfigureAwait(false);
 
-			var user = await gitHubManager.GetUserLogin(token, cancellationToken).ConfigureAwait(false);
-
-			if (!await gitHubManager.UserHasWriteAccess(user).ConfigureAwait(false))
+			if (!await gitHubManager.UserHasWriteAccess(owner, name, user, cancellationToken).ConfigureAwait(false))
 				return Forbid();
 
-			await goodBoyPointsModule.SetOffset(prNumber, offset, cancellationToken).ConfigureAwait(false);
+			var pullRequest = await gitHubManager.GetPullRequest(owner, name, prNumber, cancellationToken).ConfigureAwait(false);
+			await goodBoyPointsModule.SetOffset(pullRequest, offset, cancellationToken).ConfigureAwait(false);
 
 			return Ok();
 		}

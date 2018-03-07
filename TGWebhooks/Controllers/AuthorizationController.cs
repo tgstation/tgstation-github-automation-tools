@@ -39,13 +39,18 @@ namespace TGWebhooks.Controllers
 		/// Handle a GET to the <see cref="AuthorizationController"/>
 		/// </summary>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in the <see cref="IActionResult"/> of the GET</returns>
-		[HttpGet("Login/{prNumber}")]
-		public async Task<IActionResult> Begin(int prNumber, CancellationToken cancellationToken)
+		[HttpGet("Login/{owner}/{name}/{prNumber}")]
+		public async Task<IActionResult> Begin(string owner, string name, int prNumber, CancellationToken cancellationToken)
 		{
-			if (await gitHubManager.CheckAuthorization(Request.Cookies, cancellationToken).ConfigureAwait(false) != null)
+			if (owner == null)
+				throw new ArgumentNullException(nameof(owner));
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+
+			if (await gitHubManager.CheckAuthorization(owner, name, Request.Cookies, cancellationToken).ConfigureAwait(false) != null)
 				return RedirectToAction("ReviewPullRequest", "PullRequest", new { number = prNumber });
 			
-			var redirectURI = Url.Action(nameof(Complete), new { prNumber });
+			var redirectURI = Url.Action(nameof(Complete), new { owner, name, prNumber });
 			return Redirect(gitHubManager.GetAuthorizationURL(new Uri(String.Format(CultureInfo.InvariantCulture, "https://{0}{1}", Request.Host, redirectURI))).ToString());
 		}
 
@@ -55,14 +60,19 @@ namespace TGWebhooks.Controllers
 		/// <param name="prNumber">A <see cref="Octokit.PullRequest.Number"/></param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in the <see cref="IActionResult"/> of the GET</returns>
-		[HttpGet("Complete/{prNumber}")]
-		public async Task<IActionResult> Complete(int prNumber, CancellationToken cancellationToken)
+		[HttpGet("Complete/{owner}/{name}/{prNumber}")]
+		public async Task<IActionResult> Complete(string owner, string name, int prNumber, CancellationToken cancellationToken)
 		{
+			if (owner == null)
+				throw new ArgumentNullException(nameof(owner));
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+
 			try
 			{
 				var code = Request.Query["code"];
 				await gitHubManager.CompleteAuthorization(code, Response.Cookies, cancellationToken).ConfigureAwait(false);
-				return RedirectToAction("ReviewPullRequest", "PullRequest", new { number = prNumber });
+				return RedirectToAction("ReviewPullRequest", "PullRequest", new { owner, name, number = prNumber });
 			}
 			catch (Exception e)
 			{
@@ -75,11 +85,15 @@ namespace TGWebhooks.Controllers
 		/// </summary>
 		/// <param name="prNumber">The <see cref="Octokit.PullRequest.Number"/> to redirect to, defaults to the first open pull request</param>
 		/// <returns>An <see cref="RedirectToActionResult"/></returns>
-		[HttpGet("SignOut/{prNumber}")]
-		public async Task<IActionResult> SignOut(int prNumber)
+		[HttpGet("SignOut/{owner}/{name}/{prNumber}")]
+		public async Task<IActionResult> SignOut(string owner, string name, int prNumber, CancellationToken cancellationToken)
 		{
+			if (owner == null)
+				throw new ArgumentNullException(nameof(owner));
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
 			gitHubManager.ExpireAuthorization(Response.Cookies);
-			return RedirectToAction("ReviewPullRequest", "PullRequest", new { number = prNumber > 0 ? prNumber : (await gitHubManager.GetOpenPullRequests().ConfigureAwait(false))[0].Number });
+			return RedirectToAction("ReviewPullRequest", "PullRequest", new { owner, name, number = prNumber > 0 ? prNumber : (await gitHubManager.GetOpenPullRequests(owner, name, cancellationToken).ConfigureAwait(false))[0].Number });
 		}
 
 		/// <summary>
@@ -87,10 +101,10 @@ namespace TGWebhooks.Controllers
 		/// </summary>
 		/// <returns>An <see cref="RedirectToActionResult"/></returns>
 		[HttpGet("SignOut")]
-		public async Task<IActionResult> SignOut()
+		public IActionResult SignOut()
 		{
 			gitHubManager.ExpireAuthorization(Response.Cookies);
-			return RedirectToAction("ReviewPullRequest", "PullRequest", new { number = (await gitHubManager.GetOpenPullRequests().ConfigureAwait(false))[0].Number });
+			return View();
 		}
 	}
 }

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TGWebhooks.Models
+﻿namespace TGWebhooks.Models
 {
 	/// <summary>
 	/// Update for a <see cref="Modules.IModule"/>'s enabled status

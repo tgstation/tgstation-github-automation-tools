@@ -74,72 +74,78 @@ namespace TGWebhooks.Controllers
 		/// <param name="number">The <see cref="PullRequest.Number"/></param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="ViewResult"/></returns>
-		[HttpGet("{number}")]
-		public async Task<IActionResult> ReviewPullRequest(int number, CancellationToken cancellationToken)
+		[HttpGet("{owner}/{name}/{number}")]
+		public async Task<IActionResult> ReviewPullRequest(string owner, string name, int number, CancellationToken cancellationToken)
 		{
-			var prTask = gitHubManager.GetPullRequest(number);
-			var tokenTask = gitHubManager.CheckAuthorization(Request.Cookies, cancellationToken);
-			var componentInitializeTask = componentProvider.Initialize(cancellationToken);
+			if (owner == null)
+				throw new ArgumentNullException(nameof(owner));
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+
+			var prTask = gitHubManager.GetPullRequest(owner, name, number, cancellationToken);
+			var tokenTask = gitHubManager.CheckAuthorization(owner, name, Request.Cookies, cancellationToken);
 			var pr = await prTask.ConfigureAwait(false);
 
-			await componentInitializeTask.ConfigureAwait(false);
-			if (pr.State.Value == ItemState.Open)
+			using (await componentProvider.UsingRepositoryId(pr.Base.Repository.Id, cancellationToken).ConfigureAwait(false))
 			{
-				var tasks = componentProvider.MergeRequirements.Select(x => x.EvaluateFor(pr, cancellationToken));
-				await Task.WhenAll(tasks).ConfigureAwait(false);
-
-
-				var resultDic = new Dictionary<IMergeRequirement, AutoMergeStatus>();
-				foreach (var I in Enumerable.Zip(componentProvider.MergeRequirements, tasks, (x, y) => new Tuple<IMergeRequirement, AutoMergeStatus>(x, y.Result)))
+				if (pr.State.Value == ItemState.Open)
 				{
-					++I.Item2.RequiredProgress;
-					++I.Item2.Progress;
-					resultDic.Add(I.Item1, I.Item2);
+					var tasks = componentProvider.MergeRequirements.Select(x => x.EvaluateFor(pr, cancellationToken));
+					await Task.WhenAll(tasks).ConfigureAwait(false);
+
+
+					var resultDic = new Dictionary<IMergeRequirement, AutoMergeStatus>();
+					foreach (var I in Enumerable.Zip(componentProvider.MergeRequirements, tasks, (x, y) => new Tuple<IMergeRequirement, AutoMergeStatus>(x, y.Result)))
+					{
+						++I.Item2.RequiredProgress;
+						++I.Item2.Progress;
+						resultDic.Add(I.Item1, I.Item2);
+					}
+
+					ViewBag.Statuses = resultDic;
+					ViewBag.PullRequestClosed = false;
+				}
+				else
+					ViewBag.PullRequestClosed = true;
+
+				ViewBag.Title = stringLocalizer["PullRequest", number];
+				ViewBag.Modules = stringLocalizer["ManageModules"];
+				ViewBag.PRNumber = number;
+				ViewBag.RepoOwner = pr.Base.Repository.Owner;
+				ViewBag.RepoName = pr.Base.Repository.Name;
+				ViewBag.PullRequestAuthor = pr.User.Login;
+				ViewBag.PullRequestAuthorID = pr.User.Id;
+				ViewBag.PullRequestTitle = pr.Title;
+				ViewBag.PullRequestNumber = pr.Number;
+				ViewBag.PullRequestHref = pr.HtmlUrl;
+				ViewBag.PullRequestAuthorLogin = pr.User.Login;
+
+				ViewBag.CloseMessage = stringLocalizer["CloseMessage"];
+				ViewBag.MergeRequirements = stringLocalizer["MergeRequirements"];
+
+
+				var token = await tokenTask.ConfigureAwait(false);
+				if (token == null)
+				{
+					ViewBag.AuthHref = Url.Action("Begin", "Authorization", new { prNumber = number });
+					ViewBag.AuthTitle = stringLocalizer["SignIn"];
+					ViewBag.IsMaintainer = false;
+					ViewBag.UserIsAuthor = false;
+				}
+				else
+				{
+					var user = await gitHubManager.GetUser(token).ConfigureAwait(false);
+					ViewBag.UserIsAuthor = pr.User.Id == user.Id;
+					ViewBag.IsMaintainer = await gitHubManager.UserHasWriteAccess(pr.Base.Repository.Owner.Login, pr.Base.Repository.Name, user, cancellationToken).ConfigureAwait(false);
+					ViewBag.UserLogin = user.Login;
+					ViewBag.AuthHref = Url.Action("SignOut", "Authorization", new { prNumber = number });
+					ViewBag.AuthTitle = stringLocalizer["SignOut", user.Login];
 				}
 
-				ViewBag.Statuses = resultDic;
-				ViewBag.PullRequestClosed = false;
+				ViewBag.ModuleViews = new List<string>();
+
+				await componentProvider.AddViewVars(pr, (object)ViewBag, cancellationToken).ConfigureAwait(false);
 			}
-			else
-				ViewBag.PullRequestClosed = true;
-
-			ViewBag.Title = stringLocalizer["PullRequest", number];
-			ViewBag.Modules = stringLocalizer["ManageModules"];
-			ViewBag.PRNumber = number;
-			ViewBag.RepoOwner = gitHubConfiguration.RepoOwner;
-			ViewBag.RepoName = gitHubConfiguration.RepoName;
-			ViewBag.PullRequestAuthor = pr.User.Login;
-			ViewBag.PullRequestAuthorID = pr.User.Id;
-			ViewBag.PullRequestTitle = pr.Title;
-			ViewBag.PullRequestNumber = pr.Number;
-			ViewBag.PullRequestHref = pr.HtmlUrl;
-			ViewBag.PullRequestAuthorLogin = pr.User.Login;
-
-			ViewBag.CloseMessage = stringLocalizer["CloseMessage"];
-			ViewBag.MergeRequirements = stringLocalizer["MergeRequirements"];
-
-
-			var token = await tokenTask.ConfigureAwait(false);
-			if (token == null)
-			{
-				ViewBag.AuthHref = Url.Action("Begin", "Authorization", new { prNumber = number });
-				ViewBag.AuthTitle = stringLocalizer["SignIn"];
-				ViewBag.IsMaintainer = false;
-				ViewBag.UserIsAuthor = false;
-			}
-			else
-			{
-				var user = await gitHubManager.GetUserLogin(token, cancellationToken).ConfigureAwait(false);
-				ViewBag.UserIsAuthor = pr.User.Id == user.Id;
-				ViewBag.IsMaintainer = await gitHubManager.UserHasWriteAccess(user).ConfigureAwait(false);
-				ViewBag.UserLogin = user.Login;
-				ViewBag.AuthHref = Url.Action("SignOut", "Authorization", new { prNumber = number });
-				ViewBag.AuthTitle = stringLocalizer["SignOut", user.Login];
-			}
-
-			ViewBag.ModuleViews = new List<string>();
-
-			await componentProvider.AddViewVars(pr, (object)ViewBag, cancellationToken).ConfigureAwait(false);
 
 			return View();
 		}

@@ -8,20 +8,28 @@ namespace TGWebhooks.Models
 	/// <summary>
 	/// Represents a database containing models
 	/// </summary>
-    interface IDatabaseContext : IInitializable
+    interface IDatabaseContext
 	{
 		/// <summary>
-		/// The <see cref="AccessTokenEntry"/>s in the database
+		/// The <see cref="UserAccessToken"/>s in the database
 		/// </summary>
-		DbSet<AccessTokenEntry> AccessTokenEntries { get; set; }
+		DbSet<UserAccessToken> UserAccessTokens { get; set; }
 		/// <summary>
-		/// The <see cref="KeyValuePair"/>s in the database
+		/// The <see cref="DataEntry"/>s in the database
 		/// </summary>
-		DbSet<KeyValuePair> KeyValuePairs { get; set; }
+		DbSet<DataEntry> DataEntries { get; set; }
 		/// <summary>
 		/// The <see cref="ModuleMetadata"/>s in the database
 		/// </summary>
 		DbSet<ModuleMetadata> ModuleMetadatas { get; set; }
+		/// <summary>
+		/// The <see cref="Installation"/>s in the database
+		/// </summary>
+		DbSet<Installation> Installations { get; set; }
+		/// <summary>
+		/// The <see cref="InstallationRepository"/>s in the database
+		/// </summary>
+		DbSet<InstallationRepository> InstallationRepositories { get; set; }
 
 		/// <summary>
 		/// Save changes to the <see cref="IDatabaseContext"/>
@@ -29,5 +37,12 @@ namespace TGWebhooks.Models
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
 		Task Save(CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Ensure the <see cref="IDatabaseContext"/> is ready
+		/// </summary>
+		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
+		/// <returns>A <see cref="Task"/> representing the running operation</returns>
+		Task Initialize(CancellationToken cancellationToken);
 	}
 }

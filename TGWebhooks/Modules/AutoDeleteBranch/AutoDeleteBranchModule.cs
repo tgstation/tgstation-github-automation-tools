@@ -62,7 +62,7 @@ namespace TGWebhooks.Modules.AutoDeleteBranch
 			if (payload.PullRequest.Base.Repository.Id != payload.PullRequest.Head.Repository.Id)
 				return;
 
-			await gitHubManager.DeleteBranch(payload.PullRequest.Head.Ref).ConfigureAwait(false);
+			await gitHubManager.DeleteBranch(payload.PullRequest.Base.Repository.Id, payload.PullRequest.Head.Ref, cancellationToken).ConfigureAwait(false);
 		}
 
 		/// <inheritdoc />

@@ -66,24 +66,30 @@ namespace TGWebhooks.Controllers
 		/// </summary>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in the <see cref="IActionResult"/> of the action</returns>
-		[HttpGet]
-		public async Task<IActionResult> Index(CancellationToken cancellationToken)
+		[HttpGet("{owner}/{name}")]
+		public async Task<IActionResult> Index(string owner, string name, CancellationToken cancellationToken)
 		{
-			var token = await gitHubManager.CheckAuthorization(Request.Cookies, cancellationToken).ConfigureAwait(false);
+			if (owner == null)
+				throw new ArgumentNullException(nameof(owner));
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+
+			var token = await gitHubManager.CheckAuthorization(owner, name, Request.Cookies, cancellationToken).ConfigureAwait(false);
 
 			if (token == null)
 				return Unauthorized();
+			
+			var user = await gitHubManager.GetUser(token).ConfigureAwait(false);
 
-			var user = await gitHubManager.GetUserLogin(token, cancellationToken).ConfigureAwait(false);
-
-			if (!await gitHubManager.UserHasWriteAccess(user).ConfigureAwait(false))
+			if (!await gitHubManager.UserHasWriteAccess(owner, name, user, cancellationToken).ConfigureAwait(false))
 				return Forbid();
 
 			ViewBag.Title = stringLocalizer["Title"];
 			ViewBag.Modules = ViewBag.Title;
 			ViewBag.AuthHref = String.Concat(generalConfiguration.RootURL.ToString(), "Authorize/SignOut");
 			ViewBag.AuthTitle = stringLocalizer["SignOut", user.Login];
-			ViewBag.ModulesMap = await moduleManager.ModuleStatuses(cancellationToken).ConfigureAwait(false);
+			var repo = await gitHubManager.GetRepository(owner, name, cancellationToken).ConfigureAwait(false);
+			ViewBag.ModulesMap = await moduleManager.ModuleStatuses(repo.Id, cancellationToken).ConfigureAwait(false);
 			ViewBag.IsMaintainer = true;
 			return View();
 		}
@@ -94,33 +100,38 @@ namespace TGWebhooks.Controllers
 		/// <param name="moduleUpdate">The <see cref="ModuleUpdate"/> to run</param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in the <see cref="IActionResult"/> of the action</returns>
-		[HttpPost]
-		public async Task<IActionResult> Update([FromBody] ModuleUpdate moduleUpdate, CancellationToken cancellationToken)
+		[HttpPost("{owner}/{name}")]
+		public async Task<IActionResult> Update(string owner, string name, [FromBody] ModuleUpdate moduleUpdate, CancellationToken cancellationToken)
 		{
+			if (owner == null)
+				throw new ArgumentNullException(nameof(owner));
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
 			if (moduleUpdate == null)
 				throw new ArgumentNullException(nameof(moduleUpdate));
 
 			logger.LogTrace("Begin module update operation: {0} => {1}", moduleUpdate.Uid, moduleUpdate.Enabled);
-			var token = await gitHubManager.CheckAuthorization(Request.Cookies, cancellationToken).ConfigureAwait(false);
+			var token = await gitHubManager.CheckAuthorization(owner, name, Request.Cookies, cancellationToken).ConfigureAwait(false);
 
 			if (token == null)
 			{
 				logger.LogDebug("Module update aborted, user unauthorized!");
 				return Unauthorized();
 			}
+			
+			var user = await gitHubManager.GetUser(token).ConfigureAwait(false);
 
-			var user = await gitHubManager.GetUserLogin(token, cancellationToken).ConfigureAwait(false);
-
-			if (!await gitHubManager.UserHasWriteAccess(user).ConfigureAwait(false))
+			if (!await gitHubManager.UserHasWriteAccess(owner, name, user, cancellationToken).ConfigureAwait(false))
 			{
 				logger.LogDebug("Module update aborted, user is not maintainer!");
 				return Forbid();
 			}
 
+			var repo = await gitHubManager.GetRepository(owner, name, cancellationToken).ConfigureAwait(false);
 			try
 			{
 				logger.LogInformation("User {0} setting enabled status of module {1} to {2}", user.Login, moduleUpdate.Uid, moduleUpdate.Enabled);
-				await moduleManager.SetModuleEnabled(new Guid(moduleUpdate.Uid), moduleUpdate.Enabled, cancellationToken).ConfigureAwait(false);
+				await moduleManager.SetModuleEnabled(new Guid(moduleUpdate.Uid), repo.Id, moduleUpdate.Enabled, cancellationToken).ConfigureAwait(false);
 			}
 			catch (Exception e)
 			{

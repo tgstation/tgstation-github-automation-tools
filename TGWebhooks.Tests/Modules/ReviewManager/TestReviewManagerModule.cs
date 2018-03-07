@@ -24,9 +24,7 @@ namespace TGWebhooks.Modules.ReviewManager.Tests
 
 			var plugin = Instantiate();
 
-			MockGitHubManager.Setup(x => x.GetPullRequestReviews(PR)).Returns(Task.FromResult(reviews));
-			MockGitHubManager.Setup(x => x.UserHasWriteAccess(It.IsAny<User>())).Returns(Task.FromResult(true));
-			MockGitHubManager.Setup(x => x.UserHasWriteAccess(reviews[3].User)).Returns(Task.FromResult(false));
+			MockGitHubManager.Setup(x => x.GetPullRequestReviews(PR, default)).Returns(Task.FromResult(reviews));
 
 			var result = await plugin.EvaluateFor(PR, CancellationToken.None).ConfigureAwait(false);
 			Assert.AreEqual(1, result.Progress);

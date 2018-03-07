@@ -16,7 +16,7 @@ namespace TGWebhooks.Core
 		/// </summary>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task{TResult}"/> resulting in all <see cref="IModule"/>s and their enabled status</returns>
-		Task<IDictionary<IModule, bool>> ModuleStatuses(CancellationToken cancellationToken);
+		Task<IDictionary<IModule, bool>> ModuleStatuses(long repositoryId, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Enable or disable a <see cref="IModule"/>
@@ -25,6 +25,6 @@ namespace TGWebhooks.Core
 		/// <param name="enabled">The new enabled status for the <see cref="IModule"/></param>
 		/// <param name="cancellationToken">The <see cref="CancellationToken"/> for the operation</param>
 		/// <returns>A <see cref="Task"/> representing the running operation</returns>
-		Task SetModuleEnabled(Guid uid, bool enabled, CancellationToken cancellationToken);
+		Task SetModuleEnabled(Guid uid, long repositoryId, bool enabled, CancellationToken cancellationToken);
 	}
 }

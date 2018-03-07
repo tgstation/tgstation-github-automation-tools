@@ -130,15 +130,7 @@ namespace TGWebhooks.Controllers
 					logger.LogDebug(e, "Failed to deserialize payload JSON!");
 					return BadRequest(e);
 				}
-
-				//ensure the payload is from the configured sender
-				logger.LogTrace("Checking payload repository.");
-				if (payload.Repository.Owner.Login != gitHubConfiguration.RepoOwner || payload.Repository.Name != gitHubConfiguration.RepoName)
-				{
-					logger.LogDebug("Payload received from incorrectly configured repository!");
-					return Forbid();
-				}
-
+				
 				logger.LogTrace("Queuing payload processing job.");
 				//we pass in json because of the limitations of background job
 				autoMergeHandler.InvokeHandlers<TPayload>(json);

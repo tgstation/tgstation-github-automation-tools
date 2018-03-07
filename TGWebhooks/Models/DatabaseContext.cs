@@ -14,12 +14,21 @@ namespace TGWebhooks.Models
 	sealed class DatabaseContext : DbContext, IDatabaseContext
 #pragma warning restore CA1812
 	{
-		/// <inheridoc />
-		public DbSet<AccessTokenEntry> AccessTokenEntries { get; set; }
-		/// <inheridoc />
-		public DbSet<KeyValuePair> KeyValuePairs { get; set; }
-		/// <inheridoc />
+		/// <inheritdoc />
+		public DbSet<UserAccessToken> UserAccessTokens { get; set; }
+
+		/// <inheritdoc />
+		public DbSet<DataEntry> DataEntries { get; set; }
+
+		/// <inheritdoc />
 		public DbSet<ModuleMetadata> ModuleMetadatas { get; set; }
+
+		/// <inheritdoc />
+		public DbSet<Installation> Installations { get; set; }
+
+		/// <inheritdoc />
+		public DbSet<InstallationRepository> InstallationRepositories { get; set; }
+
 		/// <summary>
 		/// The <see cref="DbSet{TEntity}"/> for <see cref="Log"/>s
 		/// </summary>
@@ -89,6 +98,11 @@ namespace TGWebhooks.Models
 
 			// real relation database can map table:
 			modelBuilder.Entity<Log>().ToTable(nameof(Log));
+
+			//set up multikeys
+			modelBuilder.Entity<DataEntry>().HasKey(x => new { x.ModuleUid, x.RepositoryId, x.Key });
+			modelBuilder.Entity<ModuleMetadata>().HasKey(x => new { x.Uid, x.RepositoryId });
+			modelBuilder.Entity<InstallationRepository>().HasKey(x => new { x.Id, x.Slug });
 		}
 
 		/// <inheridoc />

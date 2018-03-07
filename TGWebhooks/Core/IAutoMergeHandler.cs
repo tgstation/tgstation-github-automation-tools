@@ -9,10 +9,10 @@ namespace TGWebhooks.Core
 	public interface IAutoMergeHandler : IPayloadHandler<PullRequestEventPayload>
 	{
 		/// <summary>
-		/// Schedule a recheck of a given <paramref name="prNumber"/>
+		/// Schedule a recheck of a given <paramref name="pullRequest"/>
 		/// </summary>
-		/// <param name="prNumber">The <see cref="PullRequest.Number"/> to recheck</param>
-		void RecheckPullRequest(int prNumber);
+		/// <param name="pullRequest">The <see cref="PullRequest"/> to recheck</param>
+		void RecheckPullRequest(PullRequest pullRequest);
 
 		/// <summary>
 		/// Invoke the active <see cref="IPayloadHandler{TPayload}"/> for a given <typeparamref name="TPayload"/>
